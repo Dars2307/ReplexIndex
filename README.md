@@ -1,11 +1,11 @@
-# Nexora — Discover. Understand. Connect.
+# Replex — Discover. Understand. Connect.
 
 Agent-native software discovery and contextual intelligence infrastructure.
 
 ---
 
-## What is Nexora?
-Nexora is a software discovery platform that indexes public software repositories, analyzes their operational purposes, evaluates compatibility against developer environments, and exposes this intelligence to both human developers and autonomous AI agents.
+## What is Replex?
+Replex is a software discovery platform that indexes public software repositories, analyzes their operational purposes, evaluates compatibility against developer environments, and exposes this intelligence to both human developers and autonomous AI agents.
 
 ## Key Capabilities
 - **Purpose Intelligence Engine:** Classifies tools into technical domains, functional purposes, supported runtimes, and implementation approaches.
@@ -43,12 +43,18 @@ To connect external AI coding agents, add to your MCP client configuration:
 ```json
 {
   "mcpServers": {
-    "nexora": {
+    "replex": {
       "url": "http://localhost:3000/api/v1/mcp"
     }
   }
 }
 ```
+
+---
+
+## Storage & Database
+
+> **Note:** The application currently uses in-memory storage — all data resets when the server restarts. The `packages/database/schema.ts` file describes the planned persistent schema (PostgreSQL via Drizzle ORM) but is not yet wired up. To enable persistence, install `drizzle-orm` and `pg`, provision a PostgreSQL database, and wire the schema to a database client.
 
 ---
 

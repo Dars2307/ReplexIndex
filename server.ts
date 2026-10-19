@@ -18,6 +18,26 @@ const port = process.env.PORT || 3000;
 
 app.use(express.json());
 
+// CORS — allow requests from the configured frontend origin
+app.use((req, res, next) => {
+  const origin = process.env.APP_URL || 'http://localhost:5173';
+  res.setHeader('Access-Control-Allow-Origin', origin);
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Api-Key, Authorization');
+  if (req.method === 'OPTIONS') return res.status(204).end();
+  next();
+});
+
+function requireApiKey(req: any, res: any, next: any) {
+  const apiKey = process.env.REPLEX_API_KEY;
+  if (!apiKey) return next(); // no key configured = open in dev mode
+  const provided = req.headers['x-api-key'] || (req.headers.authorization || '').replace('Bearer ', '');
+  if (provided !== apiKey) {
+    return res.status(401).json({ error: 'API key required', hint: 'Pass your key via X-Api-Key header or Bearer token' });
+  }
+  next();
+}
+
 // In-memory repositories store backed by SEED_REPOSITORIES
 const repoStore: Map<string, Repository> = new Map();
 for (const repo of SEED_REPOSITORIES) {
@@ -157,7 +177,7 @@ app.get('/api/v1/repositories/:owner/:repo/compatibility', (req: Request, res: R
 });
 
 // 6. Compare Repositories
-app.post('/api/v1/compare', (req: Request, res: Response) => {
+app.post('/api/v1/compare', requireApiKey, (req: Request, res: Response) => {
   const ids: string[] = req.body.ids || [];
   const targetStack: string = req.body.targetStack || '';
 
@@ -237,7 +257,7 @@ app.get('/api/v1/collections', (_req: Request, res: Response) => {
   res.json({ collections: collectionsStore });
 });
 
-app.post('/api/v1/collections', (req: Request, res: Response) => {
+app.post('/api/v1/collections', requireApiKey, (req: Request, res: Response) => {
   const { name, description, isPrivate } = req.body;
   if (!name) return res.status(400).json({ error: 'Name is required' });
 
@@ -259,7 +279,7 @@ app.get('/api/v1/watchlists', (_req: Request, res: Response) => {
   res.json({ watchlists: watchlistsStore });
 });
 
-app.post('/api/v1/watchlists', (req: Request, res: Response) => {
+app.post('/api/v1/watchlists', requireApiKey, (req: Request, res: Response) => {
   const { name, targetType, targetValue } = req.body;
   if (!name || !targetType || !targetValue) {
     return res.status(400).json({ error: 'Missing required watchlist fields' });
@@ -295,7 +315,7 @@ app.get('/api/v1/system/status', (_req: Request, res: Response) => {
 });
 
 // 13. Ingest GitHub Repository On-Demand
-app.post('/api/v1/ingest', async (req: Request, res: Response) => {
+app.post('/api/v1/ingest', requireApiKey, async (req: Request, res: Response) => {
   const { repoQuery } = req.body;
   if (!repoQuery) {
     return res.status(400).json({ error: 'repoQuery parameter (e.g. "owner/repo") is required' });
@@ -320,7 +340,7 @@ app.post('/api/v1/ingest', async (req: Request, res: Response) => {
 // ----------------------------------------------------
 // Model Context Protocol (MCP) JSON-RPC 2.0 Endpoint
 // ----------------------------------------------------
-app.post('/api/v1/mcp', async (req: Request, res: Response) => {
+app.post('/api/v1/mcp', requireApiKey, async (req: Request, res: Response) => {
   const { jsonrpc, method, params, id } = req.body;
 
   if (jsonrpc !== '2.0') {

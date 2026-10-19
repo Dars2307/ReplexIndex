@@ -1,5 +1,6 @@
 import { ApiKey, Collection, Repository, Watchlist, ActivityNotification } from '../types/index.ts';
 import { SEED_REPOSITORIES } from '../data/seedRepositories.ts';
+import { createHash, randomBytes } from 'crypto';
 
 const REPOS_STORAGE_KEY = 'replex_repositories_v1';
 const COLLECTIONS_STORAGE_KEY = 'replex_collections_v1';
@@ -205,7 +206,7 @@ class StorageService {
             id: 'key_dev_live_8912',
             name: 'Local Agent Development',
             prefix: 'nex_live_8912',
-            hashedSecret: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+            hashedSecret: 'seed-key-hash', // placeholder — real validation is server-side
             createdAt: new Date().toISOString(),
             lastUsedAt: new Date().toISOString(),
             rateLimitTier: 'developer',
@@ -404,15 +405,15 @@ class StorageService {
   }
 
   public createApiKey(name: string, rateLimitTier: ApiKey['rateLimitTier'] = 'developer'): { apiKey: ApiKey; rawSecret: string } {
-    const randomSuffix = Math.random().toString(36).substring(2, 10);
-    const rawSecret = `nex_${rateLimitTier}_${randomSuffix}_${Date.now().toString(36)}`;
-    const prefix = `nex_${rateLimitTier}_${randomSuffix.substring(0, 4)}`;
+    const rawSecret = randomBytes(32).toString('hex');
+    const prefix = `nex_${rateLimitTier}_${rawSecret.substring(0, 8)}`;
+    const hashedSecret = createHash('sha256').update(rawSecret).digest('hex');
 
     const apiKey: ApiKey = {
       id: `key_${Date.now()}`,
       name,
       prefix,
-      hashedSecret: `sha256_${Date.now()}`,
+      hashedSecret,
       createdAt: new Date().toISOString(),
       lastUsedAt: null,
       rateLimitTier,
