@@ -332,7 +332,7 @@ export const DiscoverHome: React.FC<DiscoverHomeProps> = ({
               Give your coding agents the power to discover and execute verified code.
             </h2>
             <p className="mt-3 text-sm text-[var(--text-secondary)] leading-relaxed">
-              Nexora provides a live Model Context Protocol (MCP) server that connects Cursor, Claude Desktop, Antigravity, and autonomous LLM agents to verified repository graphs and manifest compatibility engines.
+              Replex provides a live Model Context Protocol (MCP) server that connects Cursor, Claude Desktop, Antigravity, and autonomous LLM agents to verified repository graphs and manifest compatibility engines.
             </p>
             <div className="mt-6 flex items-center gap-3 flex-wrap">
               <button

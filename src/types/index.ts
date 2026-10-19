@@ -1,5 +1,5 @@
 /**
- * Nexora Core Data Contracts & Domain Types
+ * Replex Core Data Contracts & Domain Types
  * Adheres to Section 2 (Product Scope), Section 3 (Differentiation), and Section 9 (Data Model)
  */
 

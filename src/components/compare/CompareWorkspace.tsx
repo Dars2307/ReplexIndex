@@ -32,7 +32,7 @@ export const CompareWorkspace: React.FC<CompareWorkspaceProps> = ({
       const compat = evaluateCompatibility(r, userStack);
       return `• ${r.name} (${r.fullName}): ${r.purpose?.functionalPurpose} | License: ${r.license?.spdxId} | Readiness: ${r.agentReadiness?.score}% | Compat with ${userStack}: ${compat.status}`;
     });
-    navigator.clipboard.writeText(`### NEXORA COMPARISON MATRIX\nTarget Stack: ${userStack}\n\n${lines.join('\n')}`);
+    navigator.clipboard.writeText(`### REPLEX COMPARISON MATRIX\nTarget Stack: ${userStack}\n\n${lines.join('\n')}`);
     setCopiedShare(true);
     setTimeout(() => setCopiedShare(false), 2000);
   };

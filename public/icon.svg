@@ -7,8 +7,8 @@
   <line x1="256" y1="48" x2="256" y2="464" stroke="#1A2533" stroke-width="2"/>
   <line x1="48" y1="256" x2="464" y2="256" stroke="#1A2533" stroke-width="2"/>
   
-  <!-- Nexora Precision Atlas Star Glyph -->
-  <path d="M256 112L282 230L400 256L282 282L256 400L230 282L112 256L230 230Z" fill="url(#nexora-grad)" stroke="#52D5C5" stroke-width="4" stroke-linejoin="round"/>
+  <!-- Replex Precision Atlas Star Glyph -->
+  <path d="M256 112L282 230L400 256L282 282L256 400L230 282L112 256L230 230Z" fill="url(#replex-grad)" stroke="#52D5C5" stroke-width="4" stroke-linejoin="round"/>
   <!-- Central core -->
   <circle cx="256" cy="256" r="18" fill="#0B1018" stroke="#52D5C5" stroke-width="4"/>
   <circle cx="256" cy="256" r="6" fill="#75E5D7"/>
@@ -24,7 +24,7 @@
   <circle cx="172" cy="172" r="4" fill="#718296"/>
 
   <defs>
-    <linearGradient id="nexora-grad" x1="112" y1="112" x2="400" y2="400" gradientUnits="userSpaceOnUse">
+    <linearGradient id="replex-grad" x1="112" y1="112" x2="400" y2="400" gradientUnits="userSpaceOnUse">
       <stop stop-color="#52D5C5" stop-opacity="0.85"/>
       <stop offset="0.5" stop-color="#1A2533" stop-opacity="0.6"/>
       <stop offset="1" stop-color="#52D5C5" stop-opacity="0.95"/>

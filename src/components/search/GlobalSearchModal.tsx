@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Search, X, Star, ShieldCheck, CheckCircle2, AlertTriangle, ArrowRight, CornerDownLeft, Sparkles } from 'lucide-react';
+import { Search, X, Star, ShieldCheck, CheckCircle2, AlertTriangle, ArrowRight, CornerDownLeft } from 'lucide-react';
 import type { Repository } from '../../types/index.ts';
 import { evaluateCompatibility } from '../../engines/compatibility.ts';
 
@@ -24,7 +24,6 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Auto focus input when opened
   useEffect(() => {
     if (isOpen) {
       setSearchTerm('');
@@ -33,29 +32,23 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
     }
   }, [isOpen]);
 
-  // Global Escape and Arrow Key handling
   useEffect(() => {
     if (!isOpen) return;
-
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         e.preventDefault();
         onClose();
       }
     };
-
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
 
-  // Filter repositories based on search term
   const filtered = useMemo(() => {
     const q = searchTerm.trim().toLowerCase();
     if (!q) {
-      // Return top starred/popular tools by default for quick access
       return [...repositories].sort((a, b) => b.stars - a.stars).slice(0, 7);
     }
-
     const tokens = q.split(/\s+/).filter(Boolean);
     return repositories
       .filter((repo) => {
@@ -65,7 +58,6 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
       .slice(0, 8);
   }, [searchTerm, repositories]);
 
-  // Handle keyboard list navigation
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'ArrowDown') {
       e.preventDefault();
@@ -96,12 +88,12 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
       aria-labelledby="global-search-heading"
     >
       <div
-        className="w-full max-w-2xl bg-[#131B27] border border-[#223044] rounded-2xl shadow-2xl overflow-hidden flex flex-col text-xs text-[#F2F6FA]"
+        className="w-full max-w-2xl bg-[var(--surface-1)] border border-[var(--border-subtle)] rounded-2xl shadow-2xl overflow-hidden flex flex-col text-xs text-[var(--text-primary)]"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Search Input Bar */}
-        <div className="flex items-center gap-3 px-4 py-3.5 border-b border-[#1E2B3C] bg-[#0B1018]">
-          <Search className="w-5 h-5 text-[#52D5C5] shrink-0" />
+        {/* Search Input */}
+        <div className="flex items-center gap-3 px-4 py-3.5 border-b border-[var(--border-subtle)] bg-[var(--canvas)]">
+          <Search className="w-5 h-5 text-[var(--accent)] shrink-0" />
           <input
             ref={inputRef}
             type="text"
@@ -111,8 +103,8 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
               setSelectedIndex(0);
             }}
             onKeyDown={handleKeyDown}
-            placeholder="Search tools by name, description, category, or stack (e.g. 'video', 'orm', 'drizzle')..."
-            className="flex-1 bg-transparent text-sm text-[#F2F6FA] placeholder-[#718296] focus:outline-hidden"
+            placeholder="Search tools by name, category, or stack..."
+            className="flex-1 bg-transparent text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-hidden"
           />
           {searchTerm && (
             <button
@@ -120,33 +112,33 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
                 setSearchTerm('');
                 inputRef.current?.focus();
               }}
-              className="p-1 text-[#718296] hover:text-[#F2F6FA]"
+              className="p-1 text-[var(--text-muted)] hover:text-[var(--text-primary)]"
               aria-label="Clear search"
             >
               <X className="w-4 h-4" />
             </button>
           )}
-          <kbd className="hidden sm:inline-flex items-center px-2 py-0.5 text-[10px] font-mono font-medium text-[#718296] bg-[#1A2533] border border-[#223044] rounded">
+          <kbd className="hidden sm:inline-flex items-center px-2 py-0.5 text-[10px] font-mono font-medium text-[var(--text-muted)] bg-[var(--surface-2)] border border-[var(--border-subtle)] rounded">
             ESC
           </kbd>
         </div>
 
-        {/* Results List */}
-        <div className="max-h-[360px] overflow-y-auto divide-y divide-[#1E2B3C]/50 p-1.5">
+        {/* Results */}
+        <div className="max-h-[360px] overflow-y-auto divide-y divide-[var(--border-subtle)]/50 p-1.5">
           {filtered.length === 0 ? (
-            <div className="py-12 text-center text-[#718296] space-y-2">
-              <Search className="w-8 h-8 mx-auto text-[#223044]" />
-              <p className="text-sm font-medium text-[#A4B3C3]">No tools matched "{searchTerm}"</p>
-              <p className="text-[11px]">Try searching by keyword, purpose, or broader technology terms.</p>
+            <div className="py-12 text-center text-[var(--text-muted)] space-y-2">
+              <Search className="w-8 h-8 mx-auto text-[var(--border-subtle)]" />
+              <p className="text-sm font-medium text-[var(--text-secondary)]">No tools matched "{searchTerm}"</p>
+              <p className="text-[11px]">Try broader keywords or technology terms.</p>
               {onNavigateToAtlasWithQuery && searchTerm.trim() && (
                 <button
                   onClick={() => {
                     onNavigateToAtlasWithQuery(searchTerm.trim());
                     onClose();
                   }}
-                  className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#1A2533] hover:bg-[#223044] text-[#52D5C5] rounded-md font-medium"
+                  className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 bg-[var(--surface-2)] hover:bg-[var(--surface-raised)] text-[var(--accent)] rounded-md font-medium cursor-pointer"
                 >
-                  <span>Search across all facets in Atlas</span>
+                  <span>Search in full directory</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               )}
@@ -167,58 +159,54 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
                   }}
                   onMouseEnter={() => setSelectedIndex(idx)}
                   className={`p-3 rounded-lg flex items-center justify-between gap-4 cursor-pointer transition-colors ${
-                    isSelected ? 'bg-[#1A2533] border border-[#52D5C5]/40' : 'hover:bg-[#162130]'
+                    isSelected ? 'bg-[var(--surface-2)] border border-[var(--accent)]/40' : 'hover:bg-[var(--surface-2)]'
                   }`}
                 >
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 mb-1 flex-wrap">
-                      <span className="font-semibold text-sm text-[#F2F6FA] truncate">{repo.name}</span>
-                      <span className="text-[11px] text-[#718296] font-mono truncate">/{repo.owner.login}</span>
-                      <span className="text-[11px] text-[#52D5C5] bg-[#52D5C5]/10 px-2 py-0.2 rounded font-medium">
+                      <span className="font-semibold text-sm text-[var(--text-primary)] truncate">{repo.name}</span>
+                      <span className="text-[11px] text-[var(--text-muted)] font-mono truncate">/{repo.owner.login}</span>
+                      <span className="text-[11px] text-[var(--accent)] bg-[var(--accent)]/10 px-2 py-0.5 rounded font-medium">
                         {repo.purpose?.technicalCategory}
                       </span>
                     </div>
-                    <p className="text-[11px] text-[#A4B3C3] line-clamp-1 leading-relaxed">
+                    <p className="text-[11px] text-[var(--text-secondary)] line-clamp-1 leading-relaxed">
                       {repo.description}
                     </p>
                   </div>
 
-                  {/* Metadata Chips */}
                   <div className="flex items-center gap-3 shrink-0">
-                    {/* Compatibility */}
                     <div className="flex items-center gap-1 text-[11px]">
                       {compat.status === 'confirmed_match' ? (
-                        <span className="text-[#34D399] flex items-center gap-1">
+                        <span className="text-emerald-400 flex items-center gap-1">
                           <CheckCircle2 className="w-3 h-3" />
                           <span className="hidden sm:inline">Compatible</span>
                         </span>
                       ) : compat.status === 'conflict' ? (
-                        <span className="text-[#F87171] flex items-center gap-1">
+                        <span className="text-rose-400 flex items-center gap-1">
                           <AlertTriangle className="w-3 h-3" />
                           <span className="hidden sm:inline">Conflict</span>
                         </span>
                       ) : (
-                        <span className="text-[#FBBF24] flex items-center gap-1">
+                        <span className="text-amber-400 flex items-center gap-1">
                           <CheckCircle2 className="w-3 h-3" />
                           <span className="hidden sm:inline">Partial</span>
                         </span>
                       )}
                     </div>
 
-                    {/* Agent Readiness */}
-                    <div className="flex items-center gap-1 font-mono text-[11px] text-[#A4B3C3]" title="Agent Readiness">
-                      <ShieldCheck className="w-3 h-3 text-[#52D5C5]" />
+                    <div className="flex items-center gap-1 font-mono text-[11px] text-[var(--text-secondary)]" title="Agent Readiness">
+                      <ShieldCheck className="w-3 h-3 text-[var(--accent)]" />
                       <span>{repo.agentReadiness?.score}%</span>
                     </div>
 
-                    {/* Stars */}
-                    <div className="flex items-center gap-1 font-mono text-[11px] text-[#A4B3C3]">
-                      <Star className="w-3 h-3 text-[#FBBF24]" />
+                    <div className="flex items-center gap-1 font-mono text-[11px] text-[var(--text-secondary)]">
+                      <Star className="w-3 h-3 text-amber-400" />
                       <span>{formattedStars}</span>
                     </div>
 
                     {isSelected && (
-                      <CornerDownLeft className="w-3.5 h-3.5 text-[#52D5C5] hidden sm:block" />
+                      <CornerDownLeft className="w-3.5 h-3.5 text-[var(--accent)] hidden sm:block" />
                     )}
                   </div>
                 </div>
@@ -227,16 +215,16 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
           )}
         </div>
 
-        {/* Footer shortcuts */}
-        <div className="flex items-center justify-between px-4 py-2.5 bg-[#0B1018] border-t border-[#1E2B3C] text-[11px] text-[#718296]">
+        {/* Footer */}
+        <div className="flex items-center justify-between px-4 py-2.5 bg-[var(--canvas)] border-t border-[var(--border-subtle)] text-[11px] text-[var(--text-muted)]">
           <div className="flex items-center gap-3">
             <span className="flex items-center gap-1">
-              <kbd className="px-1.5 py-0.5 rounded bg-[#131B27] border border-[#223044] text-[10px]">↑</kbd>
-              <kbd className="px-1.5 py-0.5 rounded bg-[#131B27] border border-[#223044] text-[10px]">↓</kbd>
+              <kbd className="px-1.5 py-0.5 rounded bg-[var(--surface-1)] border border-[var(--border-subtle)] text-[10px]">↑</kbd>
+              <kbd className="px-1.5 py-0.5 rounded bg-[var(--surface-1)] border border-[var(--border-subtle)] text-[10px]">↓</kbd>
               Navigate
             </span>
             <span className="flex items-center gap-1">
-              <kbd className="px-1.5 py-0.5 rounded bg-[#131B27] border border-[#223044] text-[10px]">↵</kbd>
+              <kbd className="px-1.5 py-0.5 rounded bg-[var(--surface-1)] border border-[var(--border-subtle)] text-[10px]">↵</kbd>
               Inspect
             </span>
           </div>
@@ -247,9 +235,9 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
                 onNavigateToAtlasWithQuery(searchTerm.trim());
                 onClose();
               }}
-              className="text-[#52D5C5] hover:underline flex items-center gap-1 font-medium"
+              className="text-[var(--accent)] hover:underline flex items-center gap-1 font-medium cursor-pointer"
             >
-              <span>Explore "{searchTerm}" in Atlas</span>
+              <span>Explore "{searchTerm}" in Search</span>
               <ArrowRight className="w-3 h-3" />
             </button>
           )}

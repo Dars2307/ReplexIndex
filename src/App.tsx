@@ -9,7 +9,7 @@ import { CompareWorkspace } from './components/compare/CompareWorkspace.tsx';
 import { LibraryWorkspace } from './components/library/LibraryWorkspace.tsx';
 import { DeveloperPlatform } from './components/developer/DeveloperPlatform.tsx';
 import { RepositoryDetailModal } from './components/detail/RepositoryDetailModal.tsx';
-import { SettingsModal } from './components/settings/SettingsModal.tsx';
+
 import { OfflineIndicator } from './components/pwa/OfflineIndicator.tsx';
 import { GlobalSearchModal } from './components/search/GlobalSearchModal.tsx';
 
@@ -32,9 +32,6 @@ export default function App() {
   const [isGlobalSearchOpen, setIsGlobalSearchOpen] = useState(false);
   const [activeSearchQuery, setActiveSearchQuery] = useState('');
   const [activeSearchCategory, setActiveSearchCategory] = useState<TechnicalCategory | 'All'>('All');
-
-  // Settings modal
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   // Quick save to collection modal
   const [savingRepo, setSavingRepo] = useState<Repository | null>(null);
@@ -136,7 +133,6 @@ export default function App() {
         unreadNotificationsCount={unreadNotifsCount}
         preferences={preferences}
         onUpdatePreferences={(p) => storageService.setPreferences(p)}
-        onOpenSettings={() => setIsSettingsOpen(true)}
         onOpenGlobalSearch={() => setIsGlobalSearchOpen(true)}
         compareCount={comparedRepoIds.length}
       />
@@ -240,14 +236,6 @@ export default function App() {
           const found = repositories.find((r) => r.id.toLowerCase() === id.toLowerCase());
           if (found) setSelectedRepository(found);
         }}
-      />
-
-      {/* Settings Modal */}
-      <SettingsModal
-        isOpen={isSettingsOpen}
-        onClose={() => setIsSettingsOpen(false)}
-        preferences={preferences}
-        onUpdatePreferences={(p) => storageService.setPreferences(p)}
       />
 
       {/* Quick Save to Collection Modal */}
