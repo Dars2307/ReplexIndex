@@ -16,6 +16,8 @@ import {
   ExternalLink,
   ChevronRight,
   Compass,
+  Zap,
+  FlaskConical,
 } from 'lucide-react';
 import type { Repository, TechnicalCategory } from '../../types/index.ts';
 import { CATEGORIES } from '../../data/categories.ts';
@@ -71,10 +73,12 @@ export const DiscoverHome: React.FC<DiscoverHomeProps> = ({
       {/* Hero Section */}
       <section className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 pt-16 sm:pt-24 pb-16 text-center">
         {/* Release / Status Pill */}
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--surface-1)] border border-[var(--border-subtle)] text-xs text-[var(--text-secondary)] shadow-sm mb-6 hover:border-[var(--accent)]/50 transition-colors">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--surface-1)] border border-[var(--accent)]/20 text-xs text-[var(--text-secondary)] shadow-sm mb-6 hover:border-[var(--accent)]/50 transition-colors">
           <span className="flex h-2 w-2 rounded-full bg-[var(--accent)] animate-pulse" />
-          <span className="font-medium text-[var(--accent)]">Agent-Native Intelligence</span>
-          <span className="text-[var(--text-muted)]">·</span>
+          <span className="font-semibold text-[var(--accent)]">Replex</span>
+          <span className="text-[var(--border-strong)]">·</span>
+          <span className="font-medium text-[var(--text-secondary)]">Agent Intelligence Platform</span>
+          <span className="text-[var(--border-strong)]">·</span>
           <span>Verified for {userStack}</span>
         </div>
 
@@ -88,12 +92,12 @@ export const DiscoverHome: React.FC<DiscoverHomeProps> = ({
         </h1>
 
         <p className="mt-5 text-base sm:text-lg text-[var(--text-secondary)] max-w-2xl mx-auto leading-relaxed">
-          The software intelligence catalog engineered for human developers and autonomous AI agents. Grounded in deterministic manifest evidence, compatibility scoring, and live Model Context Protocol (MCP) tooling.
+          Replex is the agent intelligence platform built for human developers and autonomous AI agents — grounded in deterministic manifest evidence, compatibility scoring, and live MCP tooling.
         </p>
 
         {/* Central Prominent Search Bar */}
         <form onSubmit={handleSearchSubmit} className="mt-8 max-w-2xl mx-auto relative group">
-          <div className="relative flex items-center bg-[var(--surface-1)] border-2 border-[var(--border-subtle)] focus-within:border-[var(--accent)] focus-within:ring-4 focus-within:ring-[var(--accent)]/15 rounded-2xl shadow-xl transition-all overflow-hidden p-1.5">
+          <div className="relative flex items-center bg-[var(--surface-1)] border-2 border-[var(--border-subtle)] focus-within:border-[var(--accent)] focus-within:shadow-[0_0_0_4px_var(--accent-glow),0_8px_32px_rgba(0,0,0,0.3)] rounded-2xl shadow-lg transition-all overflow-hidden p-1.5">
             <div className="pl-4 pr-2 text-[var(--text-muted)] group-focus-within:text-[var(--accent)] transition-colors">
               <Search className="w-5 h-5" />
             </div>
@@ -101,12 +105,12 @@ export const DiscoverHome: React.FC<DiscoverHomeProps> = ({
               type="text"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              placeholder="Search across all repositories by capability, stack, or keyword..."
-              className="w-full h-12 bg-transparent text-sm sm:text-base text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-hidden px-2"
+              placeholder="Search by capability, stack, or keyword..."
+              className="w-full h-12 bg-transparent text-sm sm:text-base text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none px-2"
             />
             <button
               type="submit"
-              className="px-5 py-2.5 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[#0B1018] font-bold text-xs sm:text-sm transition-all flex items-center gap-2 shadow-md shrink-0 cursor-pointer"
+              className="px-5 py-2.5 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent-hover)] hover:shadow-[0_4px_16px_var(--accent-glow)] active:scale-95 text-[#090E16] font-bold text-xs sm:text-sm transition-all flex items-center gap-2 shadow-md shrink-0 cursor-pointer"
             >
               <span>Explore</span>
               <ArrowRight className="w-4 h-4" />
@@ -135,31 +139,31 @@ export const DiscoverHome: React.FC<DiscoverHomeProps> = ({
           </div>
         </form>
 
-        {/* Live Metrics Ribbon (Supabase style) */}
-        <div className="mt-14 grid grid-cols-2 sm:grid-cols-4 gap-4 p-5 rounded-2xl bg-[var(--surface-1)]/80 border border-[var(--border-subtle)] backdrop-blur-md shadow-sm max-w-4xl mx-auto">
-          <div className="text-center p-2">
-            <div className="text-2xl sm:text-3xl font-extrabold font-mono text-[var(--text-primary)]">
+        {/* Live Metrics Ribbon */}
+        <div className="mt-14 grid grid-cols-2 sm:grid-cols-4 max-w-4xl mx-auto rounded-2xl overflow-hidden border border-[var(--border-subtle)] bg-[var(--surface-1)]/90 backdrop-blur-md shadow-md">
+          <div className="text-center px-4 py-5 border-r border-b sm:border-b-0 border-[var(--border-subtle)]">
+            <div className="text-2xl sm:text-3xl font-extrabold font-mono tabular-nums text-[var(--accent)]">
               {repositories.length}
             </div>
-            <div className="text-xs text-[var(--text-muted)] mt-0.5">Verified Repositories</div>
+            <div className="text-[11px] text-[var(--text-muted)] mt-1 font-medium">Verified Repositories</div>
           </div>
-          <div className="text-center p-2 border-l border-[var(--border-subtle)]">
-            <div className="text-2xl sm:text-3xl font-extrabold font-mono text-[var(--accent)]">
+          <div className="text-center px-4 py-5 border-b sm:border-b-0 sm:border-r border-[var(--border-subtle)]">
+            <div className="text-2xl sm:text-3xl font-extrabold font-mono tabular-nums text-[var(--accent)]">
               100%
             </div>
-            <div className="text-xs text-[var(--text-muted)] mt-0.5">Manifest Determinism</div>
+            <div className="text-[11px] text-[var(--text-muted)] mt-1 font-medium">Manifest Determinism</div>
           </div>
-          <div className="text-center p-2 border-l border-[var(--border-subtle)]">
+          <div className="text-center px-4 py-5 border-r border-[var(--border-subtle)]">
             <div className="text-2xl sm:text-3xl font-extrabold font-mono text-[var(--text-primary)]">
               4-Tier
             </div>
-            <div className="text-xs text-[var(--text-muted)] mt-0.5">Compatibility Matrix</div>
+            <div className="text-[11px] text-[var(--text-muted)] mt-1 font-medium">Compatibility Matrix</div>
           </div>
-          <div className="text-center p-2 border-l border-[var(--border-subtle)]">
-            <div className="text-2xl sm:text-3xl font-extrabold font-mono text-cyan-400">
-              Native
+          <div className="text-center px-4 py-5">
+            <div className="text-2xl sm:text-3xl font-extrabold font-mono text-[var(--accent)]">
+              MCP
             </div>
-            <div className="text-xs text-[var(--text-muted)] mt-0.5">MCP Protocol Ready</div>
+            <div className="text-[11px] text-[var(--text-muted)] mt-1 font-medium">Protocol Ready</div>
           </div>
         </div>
       </section>
@@ -194,7 +198,7 @@ export const DiscoverHome: React.FC<DiscoverHomeProps> = ({
               <div
                 key={repo.id}
                 onClick={() => onSelectRepository(repo)}
-                className="group relative p-6 bg-[var(--surface-1)] hover:bg-[var(--surface-2)] border border-[var(--border-subtle)] hover:border-[var(--accent)]/50 rounded-2xl transition-all duration-200 cursor-pointer flex flex-col justify-between shadow-xs"
+                className="group relative p-6 bg-[var(--surface-1)] hover:bg-[var(--surface-2)] border border-[var(--border-subtle)] hover:border-[var(--accent)]/40 rounded-2xl transition-all duration-200 cursor-pointer flex flex-col justify-between shadow-xs hover:shadow-[0_8px_32px_rgba(0,0,0,0.25),0_0_0_1px_rgba(77,217,200,0.12)]"
               >
                 <div>
                   <div className="flex items-center justify-between gap-2 mb-3">
@@ -283,7 +287,7 @@ export const DiscoverHome: React.FC<DiscoverHomeProps> = ({
               <div
                 key={cat.id}
                 onClick={() => onSearch('', cat.id)}
-                className="p-5 bg-[var(--surface-1)] hover:bg-[var(--surface-2)] border border-[var(--border-subtle)] hover:border-[var(--accent)]/50 rounded-2xl transition-all cursor-pointer group shadow-xs flex flex-col justify-between"
+                className="p-5 bg-[var(--surface-1)] hover:bg-[var(--surface-2)] border border-[var(--border-subtle)] hover:border-[var(--accent)]/40 rounded-2xl transition-all cursor-pointer group shadow-xs hover:shadow-[0_8px_24px_rgba(0,0,0,0.2),0_0_0_1px_rgba(77,217,200,0.1)] flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-center justify-between gap-2 mb-3">
@@ -295,6 +299,8 @@ export const DiscoverHome: React.FC<DiscoverHomeProps> = ({
                       {cat.id === 'Databases' && <Database className="w-4 h-4" />}
                       {cat.id === 'Backend Engineering' && <Server className="w-4 h-4" />}
                       {cat.id === 'DevOps & Infrastructure' && <Terminal className="w-4 h-4" />}
+                      {cat.id === 'Developer Productivity' && <Zap className="w-4 h-4" />}
+                      {cat.id === 'Testing' && <FlaskConical className="w-4 h-4" />}
                     </div>
                     <span className="text-xs font-mono font-semibold px-2 py-0.5 rounded bg-[var(--surface-2)] text-[var(--text-secondary)]">
                       {count} tools
@@ -323,21 +329,32 @@ export const DiscoverHome: React.FC<DiscoverHomeProps> = ({
 
       {/* Agent-Native Section */}
       <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-14 border-t border-[var(--border-subtle)]">
-        <div className="p-8 sm:p-12 rounded-3xl bg-gradient-to-br from-[var(--surface-1)] to-[var(--surface-2)] border border-[var(--border-subtle)] shadow-xl relative overflow-hidden">
-          <div className="max-w-2xl">
-            <span className="text-xs font-semibold text-[var(--accent)] uppercase tracking-wider mb-2 block">
-              Architected for Autonomous Agents
-            </span>
+        <div className="p-8 sm:p-12 rounded-3xl bg-gradient-to-br from-[var(--surface-1)] via-[var(--surface-1)] to-[var(--surface-2)] border border-[var(--accent)]/20 shadow-[0_0_40px_rgba(77,217,200,0.06),inset_0_1px_0_rgba(77,217,200,0.08)] relative overflow-hidden">
+          {/* Decorative glow */}
+          <div className="absolute top-0 right-0 w-72 h-72 bg-[var(--accent)]/8 blur-3xl rounded-full -translate-y-1/2 translate-x-1/3 pointer-events-none" />
+          <div className="absolute bottom-0 left-1/2 w-64 h-32 bg-[var(--accent)]/5 blur-2xl pointer-events-none" />
+
+          <div className="relative max-w-2xl">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="flex h-5 w-5 items-center justify-center rounded bg-[var(--accent)]/15 border border-[var(--accent)]/25">
+                <svg className="w-2.5 h-2.5 text-[var(--accent)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <polygon points="12 2 15 9 22 12 15 15 12 22 9 15 2 12 9 9" />
+                </svg>
+              </div>
+              <span className="text-xs font-semibold text-[var(--accent)] uppercase tracking-wider">
+                Replex MCP Integration
+              </span>
+            </div>
             <h2 className="text-2xl sm:text-4xl font-extrabold text-[var(--text-primary)] tracking-tight leading-tight">
               Give your coding agents the power to discover and execute verified code.
             </h2>
-            <p className="mt-3 text-sm text-[var(--text-secondary)] leading-relaxed">
+            <p className="mt-3 text-sm text-[var(--text-secondary)] leading-relaxed max-w-xl">
               Replex provides a live Model Context Protocol (MCP) server that connects Cursor, Claude Desktop, Antigravity, and autonomous LLM agents to verified repository graphs and manifest compatibility engines.
             </p>
             <div className="mt-6 flex items-center gap-3 flex-wrap">
               <button
                 onClick={() => onSearch('agent mcp autonomous')}
-                className="px-5 py-2.5 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[#0B1018] font-bold text-xs transition-colors shadow-sm cursor-pointer"
+                className="px-5 py-2.5 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent-hover)] hover:shadow-[0_4px_16px_var(--accent-glow)] active:scale-95 text-[#090E16] font-bold text-xs transition-all shadow-sm cursor-pointer"
               >
                 Explore Agent Tools
               </button>
@@ -346,7 +363,7 @@ export const DiscoverHome: React.FC<DiscoverHomeProps> = ({
                   const ev = new CustomEvent('navigate_tab', { detail: 'platform' });
                   window.dispatchEvent(ev);
                 }}
-                className="px-4 py-2.5 rounded-xl bg-[var(--canvas)] hover:bg-[var(--surface-1)] text-[var(--text-primary)] border border-[var(--border-subtle)] font-medium text-xs transition-colors cursor-pointer"
+                className="px-4 py-2.5 rounded-xl bg-[var(--canvas)] hover:bg-[var(--surface-1)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-[var(--border-subtle)] hover:border-[var(--border-strong)] font-medium text-xs transition-all cursor-pointer"
               >
                 Inspect MCP Server Specs
               </button>
