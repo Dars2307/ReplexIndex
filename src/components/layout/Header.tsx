@@ -43,14 +43,14 @@ export const Header: React.FC<HeaderProps> = ({
         <button
           onClick={() => onNavigate('discover')}
           className="flex items-center gap-2 text-lg font-bold tracking-tight text-[var(--text-primary)] hover:text-[var(--accent)] transition-colors shrink-0 group cursor-pointer"
-          aria-label="Nexora Home"
+          aria-label="Replex Home"
         >
           <div className="w-7 h-7 rounded-lg bg-[var(--accent)]/10 border border-[var(--accent)]/20 flex items-center justify-center text-[var(--accent)] group-hover:bg-[var(--accent)]/20 group-hover:shadow-[0_0_8px_var(--accent)/30] transition-all">
             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <polygon points="12 2 15 9 22 12 15 15 12 22 9 15 2 12 9 9" />
             </svg>
           </div>
-          <span className="font-display bg-gradient-to-r from-[var(--text-primary)] to-[var(--text-secondary)] bg-clip-text text-transparent group-hover:from-[var(--accent)] group-hover:to-[var(--accent-hover)] transition-all">Nexora</span>
+          <span className="font-display bg-gradient-to-r from-[var(--text-primary)] to-[var(--text-secondary)] bg-clip-text text-transparent group-hover:from-[var(--accent)] group-hover:to-[var(--accent-hover)] transition-all">Replex</span>
         </button>
 
         {/* Nav Links */}

@@ -75,7 +75,7 @@ export const DiscoverHome: React.FC<DiscoverHomeProps> = ({
         {/* Release / Status Pill */}
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--surface-1)] border border-[var(--accent)]/20 text-xs text-[var(--text-secondary)] shadow-sm mb-6 hover:border-[var(--accent)]/50 transition-colors">
           <span className="flex h-2 w-2 rounded-full bg-[var(--accent)] animate-pulse" />
-          <span className="font-semibold text-[var(--accent)]">Nexora</span>
+          <span className="font-semibold text-[var(--accent)]">Replex</span>
           <span className="text-[var(--border-strong)]">·</span>
           <span className="font-medium text-[var(--text-secondary)]">Agent Intelligence Platform</span>
           <span className="text-[var(--border-strong)]">·</span>
@@ -92,7 +92,7 @@ export const DiscoverHome: React.FC<DiscoverHomeProps> = ({
         </h1>
 
         <p className="mt-5 text-base sm:text-lg text-[var(--text-secondary)] max-w-2xl mx-auto leading-relaxed">
-          Nexora is the agent intelligence platform built for human developers and autonomous AI agents — grounded in deterministic manifest evidence, compatibility scoring, and live MCP tooling.
+          Replex is the agent intelligence platform built for human developers and autonomous AI agents — grounded in deterministic manifest evidence, compatibility scoring, and live MCP tooling.
         </p>
 
         {/* Central Prominent Search Bar */}
@@ -342,14 +342,14 @@ export const DiscoverHome: React.FC<DiscoverHomeProps> = ({
                 </svg>
               </div>
               <span className="text-xs font-semibold text-[var(--accent)] uppercase tracking-wider">
-                Nexora MCP Integration
+                Replex MCP Integration
               </span>
             </div>
             <h2 className="text-2xl sm:text-4xl font-extrabold text-[var(--text-primary)] tracking-tight leading-tight">
               Give your coding agents the power to discover and execute verified code.
             </h2>
             <p className="mt-3 text-sm text-[var(--text-secondary)] leading-relaxed max-w-xl">
-              Nexora provides a live Model Context Protocol (MCP) server that connects Cursor, Claude Desktop, Antigravity, and autonomous LLM agents to verified repository graphs and manifest compatibility engines.
+              Replex provides a live Model Context Protocol (MCP) server that connects Cursor, Claude Desktop, Antigravity, and autonomous LLM agents to verified repository graphs and manifest compatibility engines.
             </p>
             <div className="mt-6 flex items-center gap-3 flex-wrap">
               <button

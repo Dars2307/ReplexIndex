@@ -82,7 +82,7 @@ export const MCP_TOOLS: McpToolDefinition[] = [
   },
   {
     name: 'list_categories',
-    description: 'List all top-level technical categories and subcategories in the Nexora taxonomy.',
+    description: 'List all top-level technical categories and subcategories in the Replex taxonomy.',
     inputSchema: {
       type: 'object',
       properties: {},

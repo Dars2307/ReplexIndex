@@ -13,7 +13,7 @@ export const PWAInstallButton: React.FC = () => {
       <button
         onClick={install}
         className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-[#0B1018] bg-[#52D5C5] hover:bg-[#75E5D7] rounded-md transition-colors whitespace-nowrap shrink-0"
-        aria-label="Install Nexora App"
+        aria-label="Install Replex App"
       >
         <Download className="w-3.5 h-3.5" />
         <span>Install App</span>
@@ -27,7 +27,7 @@ export const PWAInstallButton: React.FC = () => {
         <button
           onClick={() => setShowIOSGuide(true)}
           className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-[#A4B3C3] hover:text-[#F2F6FA] bg-[#1A2533] border border-[#223044] rounded-md transition-colors whitespace-nowrap shrink-0"
-          aria-label="Install Nexora on iOS"
+          aria-label="Install Replex on iOS"
         >
           <Share2 className="w-3.5 h-3.5" />
           <span>Add to Home</span>
@@ -37,7 +37,7 @@ export const PWAInstallButton: React.FC = () => {
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-xs">
             <div className="w-full max-w-sm rounded-xl bg-[#131B27] border border-[#223044] p-6 shadow-2xl">
               <div className="flex items-center justify-between pb-3 border-b border-[#1E2B3C]">
-                <h3 className="text-sm font-semibold text-[#F2F6FA]">Install Nexora on iPhone / iPad</h3>
+                <h3 className="text-sm font-semibold text-[#F2F6FA]">Install Replex on iPhone / iPad</h3>
                 <button
                   onClick={() => setShowIOSGuide(false)}
                   className="text-[#718296] hover:text-[#F2F6FA]"

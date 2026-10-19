@@ -90,7 +90,7 @@
   }
 }
 
-/* Nexora brand accent glow utility */
+/* Replex brand accent glow utility */
 .nexora-glow {
   box-shadow: 0 0 20px var(--accent-glow), 0 0 40px rgba(77, 217, 200, 0.06);
 }
