@@ -1,4 +1,11 @@
 /**
+ * Aspirational database schema — not connected to the running application.
+ * The app currently uses in-memory storage (see src/services/storage.ts).
+ * To enable persistence: install drizzle-orm, set up PostgreSQL, and wire
+ * this schema to a database client.
+ *
+ * Install: npm install drizzle-orm pg
+ *
  * Nexora PostgreSQL Schema Definition (Drizzle ORM)
  * Corresponds to Section 9: Data Model
  */

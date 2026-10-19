@@ -179,7 +179,7 @@ export const DeveloperPlatform: React.FC<DeveloperPlatformProps> = ({
             <div>
               <h2 className="text-sm font-bold text-[var(--text-primary)]">Autonomous Agent MCP Integration</h2>
               <p className="mt-1 text-xs text-[var(--text-secondary)]">
-                Connect Claude Code, Cursor, Windsurf, or custom AI coding agents to Replex via the Model Context Protocol.
+                Connect Claude Code, Cursor, Windsurf, or custom AI coding agents to Nexora via the Model Context Protocol.
               </p>
             </div>
             <button
@@ -188,10 +188,10 @@ export const DeveloperPlatform: React.FC<DeveloperPlatformProps> = ({
                   JSON.stringify(
                     {
                       mcpServers: {
-                        replex: {
+                        nexora: {
                           command: 'node',
                           args: ['server.js'],
-                          env: { REPLEX_API_KEY: 'your-api-key-here' },
+                          env: { NEXORA_API_KEY: 'your-api-key-here' },
                         },
                       },
                     },

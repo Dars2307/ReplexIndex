@@ -45,7 +45,7 @@ export class GitHubClient {
 
     const headers: Record<string, string> = {
       Accept: 'application/vnd.github.v3+json',
-      'User-Agent': 'Replex-Agent-Intelligence/1.0',
+      'User-Agent': 'Nexora-Agent-Intelligence/1.0',
     };
 
     const res = await fetch(url, { headers });
@@ -72,7 +72,7 @@ export class GitHubClient {
       const readmeRes = await fetch(`https://api.github.com/repos/${owner}/${repoName}/readme`, {
         headers: {
           Accept: 'application/vnd.github.raw+json',
-          'User-Agent': 'Replex-Agent-Intelligence/1.0',
+          'User-Agent': 'Nexora-Agent-Intelligence/1.0',
         },
       });
       if (readmeRes.ok) {

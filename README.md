@@ -52,6 +52,12 @@ To connect external AI coding agents, add to your MCP client configuration:
 
 ---
 
+## Storage & Database
+
+> **Note:** The application currently uses in-memory storage — all data resets when the server restarts. The `packages/database/schema.ts` file describes the planned persistent schema (PostgreSQL via Drizzle ORM) but is not yet wired up. To enable persistence, install `drizzle-orm` and `pg`, provision a PostgreSQL database, and wire the schema to a database client.
+
+---
+
 ## Documentation Index
 - [Product Definition](PRODUCT.md)
 - [System Architecture](docs/ARCHITECTURE.md)
