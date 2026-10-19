@@ -60,7 +60,7 @@ export const RepositoryDetailModal: React.FC<RepositoryDetailModalProps> = ({
   const readiness = repository.agentReadiness;
 
   const copyForAgent = () => {
-    const text = `### NEXORA TOOL INTELLIGENCE REPORT
+    const text = `### REPLEX TOOL INTELLIGENCE REPORT
 **Repository:** ${repository.fullName}
 **URL:** ${repository.htmlUrl}
 **Category:** ${repository.purpose?.technicalCategory} (${repository.purpose?.subcategories.join(', ')})

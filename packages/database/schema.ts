@@ -6,7 +6,7 @@
  *
  * Install: npm install drizzle-orm pg
  *
- * Nexora PostgreSQL Schema Definition (Drizzle ORM)
+ * Replex PostgreSQL Schema Definition (Drizzle ORM)
  * Corresponds to Section 9: Data Model
  */
 
@@ -85,8 +85,8 @@ export const repositories = pgTable(
     upstreamCreatedAt: timestamp('upstream_created_at', { withTimezone: true }).notNull(),
     upstreamPushedAt: timestamp('upstream_pushed_at', { withTimezone: true }).notNull(),
     upstreamUpdatedAt: timestamp('upstream_updated_at', { withTimezone: true }).notNull(),
-    lastNexoraFetchAt: timestamp('last_nexora_fetch_at', { withTimezone: true }).defaultNow().notNull(),
-    lastNexoraClassifiedAt: timestamp('last_nexora_classified_at', { withTimezone: true }).defaultNow().notNull(),
+    lastReplexFetchAt: timestamp('last_replex_fetch_at', { withTimezone: true }).defaultNow().notNull(),
+    lastReplexClassifiedAt: timestamp('last_replex_classified_at', { withTimezone: true }).defaultNow().notNull(),
   },
   (table) => ({
     nameIdx: index('idx_repositories_name').on(table.name),

@@ -29,7 +29,7 @@ app.use((req, res, next) => {
 });
 
 function requireApiKey(req: any, res: any, next: any) {
-  const apiKey = process.env.NEXORA_API_KEY;
+  const apiKey = process.env.REPLEX_API_KEY;
   if (!apiKey) return next(); // no key configured = open in dev mode
   const provided = req.headers['x-api-key'] || (req.headers.authorization || '').replace('Bearer ', '');
   if (provided !== apiKey) {
@@ -303,7 +303,7 @@ app.get('/api/v1/system/status', (_req: Request, res: Response) => {
   const rateLimit = gitHubClient.getRateLimitInfo();
 
   res.json({
-    service: 'Nexora Intelligence Platform',
+    service: 'Replex Intelligence Platform',
     version: '1.0.0-production',
     uptimeSeconds: Math.floor((Date.now() - startTime) / 1000),
     indexedRepositoriesCount: allRepos.length,
@@ -407,7 +407,7 @@ async function startServer() {
   }
 
   const server = app.listen(port, () => {
-    console.log(`Nexora Intelligence Server listening on http://localhost:${port}`);
+    console.log(`Replex Intelligence Server listening on http://localhost:${port}`);
   });
 
   server.on('error', (err: any) => {
@@ -415,7 +415,7 @@ async function startServer() {
       const fallbackPort = Number(port) + 1;
       console.warn(`Port ${port} is occupied by another process, falling back to port ${fallbackPort}...`);
       app.listen(fallbackPort, () => {
-        console.log(`Nexora Intelligence Server listening on http://localhost:${fallbackPort}`);
+        console.log(`Replex Intelligence Server listening on http://localhost:${fallbackPort}`);
       });
     } else {
       console.error('Server error:', err);

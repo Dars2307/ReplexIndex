@@ -2,12 +2,12 @@ import { ApiKey, Collection, Repository, Watchlist, ActivityNotification } from 
 import { SEED_REPOSITORIES } from '../data/seedRepositories.ts';
 import { createHash, randomBytes } from 'crypto';
 
-const REPOS_STORAGE_KEY = 'nexora_repositories_v1';
-const COLLECTIONS_STORAGE_KEY = 'nexora_collections_v1';
-const WATCHLISTS_STORAGE_KEY = 'nexora_watchlists_v1';
-const NOTIFICATIONS_STORAGE_KEY = 'nexora_notifications_v1';
-const API_KEYS_STORAGE_KEY = 'nexora_api_keys_v1';
-const USER_PREFS_KEY = 'nexora_user_prefs_v1';
+const REPOS_STORAGE_KEY = 'replex_repositories_v1';
+const COLLECTIONS_STORAGE_KEY = 'replex_collections_v1';
+const WATCHLISTS_STORAGE_KEY = 'replex_watchlists_v1';
+const NOTIFICATIONS_STORAGE_KEY = 'replex_notifications_v1';
+const API_KEYS_STORAGE_KEY = 'replex_api_keys_v1';
+const USER_PREFS_KEY = 'replex_user_prefs_v1';
 
 export interface UserPreferences {
   theme: 'dark' | 'light';
