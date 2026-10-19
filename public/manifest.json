@@ -1,8 +1,8 @@
 {
   "id": "/",
-  "name": "Replex — Software Discovery & Intelligence",
-  "short_name": "Replex",
-  "description": "Agent-native software discovery and contextual intelligence infrastructure. Discover, understand, and connect tools with compatibility intelligence and MCP tools.",
+  "name": "Nexora — Agent Intelligence Platform",
+  "short_name": "Nexora",
+  "description": "Nexora is the agent intelligence platform for discovering, evaluating, and connecting open-source tools. Built for human developers and autonomous AI agents with MCP-native tooling.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
