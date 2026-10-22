@@ -9,6 +9,7 @@ process.env.NODE_ENV = 'test';
 process.env.TOKEN_ENCRYPTION_KEY = randomBytes(32).toString('base64');
 delete process.env.SUPABASE_SECRET_KEY;
 delete process.env.GITHUB_TOKEN;
+delete process.env.GEMINI_API_KEY;
 delete process.env.SUPABASE_URL;
 delete process.env.VITE_SUPABASE_URL;
 delete process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -242,6 +243,18 @@ describe('HTTP API', () => {
       body: JSON.stringify({ fullNames: ['../x', 'y'] }),
     });
     assert.equal(res.status, 400);
+  });
+
+  test('AI search requires sign-in and reports its status', async () => {
+    const res = await fetch(`${base}/api/v1/ai/search`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt: 'a decompiler for android apps' }),
+    });
+    assert.equal(res.status, 401);
+    const status = await (await fetch(`${base}/api/v1/ai/status`)).json();
+    assert.equal(status.signedIn, false);
+    assert.equal(typeof status.limit, 'number');
   });
 
   test('unknown API routes are JSON 404s', async () => {

@@ -11,6 +11,8 @@ JWT (web app) or a personal API key `rpx_…`. Errors are JSON:
 | GET | `/api/v1/discover/trending` | optional | `{ rising, breakout }`. Query: `window` (`day`/`week`/`month`), `language`, `topic` |
 | GET | `/api/v1/repos/:owner/:repo` | optional | Repository with purpose, readiness, latest release, README extract; `compatibility` for `?stack=` or the profile stack |
 | POST | `/api/v1/compare` | optional | Body `{ fullNames: string[2..4], targetStack? }` |
+| GET | `/api/v1/ai/status` | optional | `{ enabled, signedIn, limit, remaining }` for AI search |
+| POST | `/api/v1/ai/search` | required | Body `{ prompt }` (≤400 chars). Gemini plans 2–3 GitHub searches and suggests well-known repos (each confirmed to exist on GitHub), then checks every candidate against the request. Returns `{ interpretation, queries, results: [{ repository, verdict: "match"\|"partial"\|null, score, why }], considered, confirmedSuggestions, verified, remaining }`. 25 per user per day; `verified: false` means the AI check was unavailable and results are unranked |
 | POST | `/api/v1/me/bootstrap` | session | Create the caller's Replex profile on first sign-in |
 | POST | `/api/v1/me/github-token` | session | Body `{ providerToken }`; verified against the user's GitHub login, stored encrypted |
 | POST | `/api/v1/me/keys` | session | Body `{ name }` → `{ key, record }`. The raw key is returned once; max 10 active |

@@ -2,7 +2,8 @@ import { Search as SearchIcon, SearchX, SlidersHorizontal } from 'lucide-react';
 import { useEffect, useState, type FormEvent, type InputHTMLAttributes } from 'react';
 import type { DiscoverySearchResult, Repository } from '../types/index.ts';
 import { RepoCard, RepoGridSkeleton } from '../components/repo.tsx';
-import { Button, cn, EmptyState, ErrorState, Input, PageHeader } from '../components/ui.tsx';
+import { AiSearch } from '../components/AiSearch.tsx';
+import { Button, cn, EmptyState, ErrorState, Input, PageHeader, Segmented } from '../components/ui.tsx';
 import { api } from '../lib/api.ts';
 import { formatNumber } from '../lib/format.ts';
 import { invalidate, useQuery } from '../lib/query.ts';
@@ -86,6 +87,7 @@ function Select({ label, value, onChange, options }: { label: string; value: str
 
 export function SearchPage() {
   const [params, setParams] = useSearchParams();
+  const mode: 'github' | 'ai' = params.get('mode') === 'ai' ? 'ai' : 'github';
   const q = params.get('q') || '';
   const language = params.get('language') || '';
   const topic = params.get('topic') || '';
@@ -136,9 +138,38 @@ export function SearchPage() {
     setParams({ q: draft.trim() || undefined });
   };
 
+  const modeSwitch = (
+    <Segmented
+      label="Search mode"
+      value={mode}
+      onChange={(v) => setParams({ mode: v === 'ai' ? 'ai' : undefined })}
+      options={[
+        { value: 'github', label: 'Search GitHub' },
+        { value: 'ai', label: 'Ask AI ✦' },
+      ]}
+    />
+  );
+
+  if (mode === 'ai') {
+    return (
+      <>
+        <PageHeader
+          title="Search"
+          description="Describe what you need in plain English. The AI searches GitHub several ways, then checks each result against your request."
+          actions={modeSwitch}
+        />
+        <AiSearch />
+      </>
+    );
+  }
+
   return (
     <>
-      <PageHeader title="Search" description="Search every public repository on GitHub. Results are classified and scored for agent-readiness." />
+      <PageHeader
+        title="Search"
+        description="Search every public repository on GitHub. Results are classified and scored for agent-readiness."
+        actions={modeSwitch}
+      />
 
       <form role="search" onSubmit={submit} className="mb-3 flex gap-2">
         <div className="relative flex-1">

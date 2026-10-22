@@ -201,7 +201,13 @@ function SaveDialog({ repo, onClose }: { repo: Repository; onClose: () => void }
   );
 }
 
-export function RepoCard({ repo, rank }: { repo: Repository; rank?: number }) {
+export interface RepoInsight {
+  verdict: 'match' | 'partial' | 'no';
+  score: number;
+  why: string;
+}
+
+export function RepoCard({ repo, rank, insight }: { repo: Repository; rank?: number; insight?: RepoInsight }) {
   const [owner, name] = repo.fullName.split('/');
   const readiness = repo.agentReadiness?.score ?? 0;
   return (
@@ -229,6 +235,15 @@ export function RepoCard({ repo, rank }: { repo: Repository; rank?: number }) {
       </div>
 
       <p className="mt-3 line-clamp-2 min-h-10 text-fg-muted">{repo.description || 'No description provided.'}</p>
+
+      {insight && (
+        <p className="relative z-10 mt-3 flex items-start gap-2 rounded-md border border-border bg-bg px-2.5 py-2 text-[13px] leading-5">
+          <Badge tone={insight.verdict === 'match' ? 'success' : 'warning'} className="mt-px shrink-0">
+            {insight.verdict === 'match' ? 'Match' : 'Partial'}
+          </Badge>
+          <span className="text-fg">{insight.why}</span>
+        </p>
+      )}
 
       {repo.topics.length > 0 && (
         <ul className="mt-3 flex h-5 flex-wrap gap-1 overflow-hidden" aria-label="Topics">

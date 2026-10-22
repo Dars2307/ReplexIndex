@@ -7,6 +7,7 @@ now, scores each project for how ready it is for AI coding agents, and gives
 Claude, Cursor and any MCP client a private, per-user line into your library.
 
 - **Live discovery** — full GitHub search with language, topic, age and star filters; nothing is limited to a curated list.
+- **Ask AI** — describe what you need in plain English; Gemini searches GitHub several ways, confirms its own suggestions exist, and checks every result against your request.
 - **Rising & breakout** — new repositories ranked by stars this day/week/month, plus projects under 90 days old already past 1,000 stars.
 - **Agent readiness** — a transparent 0–100 score (licence, docs, install instructions, types, maintenance).
 - **Stack compatibility** — evidence-based fit against your stack (e.g. Next.js + TypeScript + Tailwind).
@@ -41,6 +42,7 @@ Discovery works without any keys. Accounts need Supabase (below).
 | `SUPABASE_URL`, `SUPABASE_SECRET_KEY` | server only | Supabase secret key (`sb_secret_…`; legacy `SUPABASE_SERVICE_ROLE_KEY` also accepted) for keys, MCP and caching |
 | `TOKEN_ENCRYPTION_KEY` | server only | 32 random bytes (base64); encrypts users' GitHub tokens at rest |
 | `GITHUB_TOKEN` | server only, optional | fallback token for signed-out visitors |
+| `GEMINI_API_KEY` | server only, optional | enables AI smart search (Search → Ask AI) |
 | `APP_URL` | server | public URL; pins CORS for account routes |
 
 ### Supabase setup

@@ -7,61 +7,14 @@ import { api, del, post } from '../lib/api.ts';
 import { timeAgo } from '../lib/format.ts';
 import { listAgentEvents, listKeys, type AgentEvent, type ApiKeyRecord } from '../lib/library.ts';
 import { invalidate, useQuery } from '../lib/query.ts';
+import { CLIENT_GROUPS, MCP_CLIENTS } from '../lib/mcpClients.ts';
+import { useSearchParams } from '../lib/router.tsx';
 import { useToast } from '../lib/toast.tsx';
 
 interface ToolInfo {
   name: string;
   title: string;
   description: string;
-}
-
-const CLIENTS = ['Claude Code', 'Claude Desktop', 'Cursor', 'VS Code', 'HTTP'] as const;
-type Client = (typeof CLIENTS)[number];
-
-function snippet(client: Client, url: string, key: string): { code: string; where: string } {
-  switch (client) {
-    case 'Claude Code':
-      return { where: 'Run in your terminal', code: `claude mcp add --transport http replex ${url} \\\n  --header "Authorization: Bearer ${key}"` };
-    case 'Claude Desktop':
-      return {
-        where: 'Settings → Developer → Edit config (claude_desktop_config.json)',
-        code: JSON.stringify(
-          {
-            mcpServers: {
-              replex: {
-                command: 'npx',
-                args: ['-y', 'mcp-remote', url, '--header', 'Authorization:${REPLEX_AUTH}'],
-                env: { REPLEX_AUTH: `Bearer ${key}` },
-              },
-            },
-          },
-          null,
-          2,
-        ),
-      };
-    case 'Cursor':
-      return {
-        where: '~/.cursor/mcp.json',
-        code: JSON.stringify({ mcpServers: { replex: { url, headers: { Authorization: `Bearer ${key}` } } } }, null, 2),
-      };
-    case 'VS Code':
-      return {
-        where: '.vscode/mcp.json — VS Code prompts for the key and stores it securely',
-        code: JSON.stringify(
-          {
-            servers: { replex: { type: 'http', url, headers: { Authorization: 'Bearer ${input:replex-key}' } } },
-            inputs: [{ type: 'promptString', id: 'replex-key', description: 'Replex API key', password: true }],
-          },
-          null,
-          2,
-        ),
-      };
-    case 'HTTP':
-      return {
-        where: 'Test from any terminal',
-        code: `curl ${url} \\\n  -H "Authorization: Bearer ${key}" \\\n  -H "Content-Type: application/json" \\\n  -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"trending_repositories","arguments":{"window":"week"}}}'`,
-      };
-  }
 }
 
 export function AgentsPage() {
@@ -77,7 +30,8 @@ function Agents() {
   const keys = useQuery<ApiKeyRecord[]>('keys', listKeys, 10_000);
   const events = useQuery<AgentEvent[]>('agent-events', () => listAgentEvents(30), 10_000);
   const tools = useQuery<{ tools: ToolInfo[] }>('mcp-tools', () => api('/api/v1/mcp/tools'), 60 * 60_000);
-  const [client, setClient] = useState<Client>('Claude Code');
+  const [params, setParams] = useSearchParams();
+  const client = MCP_CLIENTS.find((c) => c.id === params.get('client')) ?? MCP_CLIENTS.find((c) => c.id === 'claude-code')!;
   const [creating, setCreating] = useState(false);
   const [newKey, setNewKey] = useState<string | null>(null);
   const [revoking, setRevoking] = useState<ApiKeyRecord | null>(null);
@@ -86,7 +40,7 @@ function Agents() {
   const url = `${window.location.origin}/api/mcp`;
   const active = keys.data?.filter((k) => !k.revoked_at) ?? [];
   const keyNames = new Map((keys.data ?? []).map((k) => [k.id, k.name]));
-  const shown = snippet(client, url, newKey ?? 'rpx_YOUR_KEY');
+  const code = client.snippet(url, newKey ?? 'rpx_YOUR_KEY');
 
   const create = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -153,7 +107,7 @@ function Agents() {
         </Card>
       )}
 
-      <div className="grid gap-6 xl:grid-cols-5">
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-5">
         <div className="space-y-6 xl:col-span-3">
           <Card>
             <div className="flex items-center justify-between gap-3 border-b border-border px-5 py-3">
@@ -164,31 +118,67 @@ function Agents() {
                 <span className="size-1.5 rounded-full bg-success" aria-hidden /> MCP server live
               </Badge>
             </div>
-            <div className="px-5 pt-4">
-              <div role="tablist" aria-label="MCP client" className="-mx-1 flex gap-1 overflow-x-auto pb-1 scrollbar-thin">
-                {CLIENTS.map((c) => (
-                  <button
-                    key={c}
-                    type="button"
-                    role="tab"
-                    id={`tab-${c}`}
-                    aria-selected={client === c}
-                    aria-controls="client-panel"
-                    onClick={() => setClient(c)}
-                    className={cn(
-                      'h-8 shrink-0 rounded-sm px-3 text-[13px] font-medium pointer-coarse:h-11',
-                      client === c ? 'bg-muted text-fg' : 'text-fg-muted hover:text-fg',
-                    )}
-                  >
-                    {c}
-                  </button>
+            {/* Phones: one compact grouped picker instead of 22 touch-size chips. */}
+            <div className="px-5 pt-4 sm:hidden">
+              <label htmlFor="mcp-client" className="mb-1.5 block text-[12px] font-medium text-fg-subtle">
+                Your client
+              </label>
+              <select
+                id="mcp-client"
+                value={client.id}
+                onChange={(e) => setParams({ client: e.target.value })}
+                className="h-11 w-full rounded-sm border border-input bg-surface px-3 text-fg"
+              >
+                {CLIENT_GROUPS.map((group) => (
+                  <optgroup key={group} label={group}>
+                    {MCP_CLIENTS.filter((c) => c.group === group).map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.name}
+                        {c.unsupported ? ' (not yet)' : ''}
+                      </option>
+                    ))}
+                  </optgroup>
                 ))}
-              </div>
+              </select>
             </div>
-            <div id="client-panel" role="tabpanel" aria-labelledby={`tab-${client}`} className="px-5 pb-5 pt-3">
-              <p className="mb-2 text-[13px] text-fg-muted">{shown.where}</p>
-              <CodeBlock code={shown.code} />
-              <dl className="mt-4 grid gap-2 text-[13px] sm:grid-cols-2">
+            <div role="radiogroup" aria-label="MCP client" className="hidden gap-3 px-5 pt-4 sm:grid">
+              {CLIENT_GROUPS.map((group) => (
+                <div key={group}>
+                  <h3 className="mb-1.5 text-[12px] font-medium text-fg-subtle">{group}</h3>
+                  <div className="flex flex-wrap gap-1.5">
+                    {MCP_CLIENTS.filter((c) => c.group === group).map((c) => (
+                      <button
+                        key={c.id}
+                        type="button"
+                        role="radio"
+                        aria-checked={client.id === c.id}
+                        onClick={() => setParams({ client: c.id })}
+                        className={cn(
+                          'h-7 rounded-full border px-2.5 text-[12.5px] font-medium transition-colors pointer-coarse:h-10 pointer-coarse:px-3.5',
+                          client.id === c.id
+                            ? 'border-transparent bg-primary text-primary-fg'
+                            : 'border-border bg-surface text-fg-muted hover:border-border-strong hover:text-fg',
+                          c.unsupported && client.id !== c.id && 'opacity-60',
+                        )}
+                      >
+                        {c.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="px-5 pb-5 pt-4" aria-live="polite">
+              <p className="mb-2 text-[13px] text-fg-muted">
+                <span className="font-medium text-fg">{client.name}</span> · {client.where}
+              </p>
+              {client.unsupported ? (
+                <p className="rounded-md soft-warning px-3 py-2.5 text-[13px] whitespace-pre-line">{code}</p>
+              ) : (
+                <CodeBlock code={code} />
+              )}
+              {client.note && <p className="mt-2 text-[12.5px] text-fg-subtle">{client.note}</p>}
+              <dl className="mt-4 grid grid-cols-1 gap-2 text-[13px] sm:grid-cols-2">
                 <div className="flex items-center gap-2 rounded-md border border-border px-3 py-2">
                   <dt className="text-fg-subtle">Endpoint</dt>
                   <dd className="min-w-0 flex-1 truncate font-mono text-[12px]" translate="no">

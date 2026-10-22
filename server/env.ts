@@ -23,6 +23,13 @@ export const env = {
   supabaseServiceKey: real(process.env.SUPABASE_SECRET_KEY) || real(process.env.SUPABASE_SERVICE_ROLE_KEY),
   githubToken: real(process.env.GITHUB_TOKEN),
   tokenEncryptionKey: real(process.env.TOKEN_ENCRYPTION_KEY),
+  geminiKey: real(process.env.GEMINI_API_KEY),
+  // Measured on the free tier (Oct 2026): 3.5 Flash ≈2s, 3.5 Flash-Lite ≈6s.
+  geminiModel: real(process.env.GEMINI_MODEL) || 'gemini-3.5-flash',
+  geminiFallbackModels: (real(process.env.GEMINI_FALLBACK_MODELS) || 'gemini-3-flash-preview,gemini-3.5-flash-lite')
+    .split(',')
+    .map((m) => m.trim())
+    .filter(Boolean),
   appUrl: process.env.APP_URL || 'http://localhost:3000',
   isProduction: process.env.NODE_ENV === 'production' || Boolean(process.env.VERCEL),
 };

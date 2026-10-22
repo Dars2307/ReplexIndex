@@ -1,6 +1,7 @@
 import express, { type NextFunction, type Request, type Response } from 'express';
 import type { TrendingWindow } from '../src/types/index.ts';
 import { evaluateCompatibility } from '../src/engines/compatibility.ts';
+import { AI_DAILY_LIMIT, aiConfigured, aiSearchesToday, smartSearch } from './ai.ts';
 import { authenticate } from './auth.ts';
 import { canEncrypt, encryptSecret, mintApiKey } from './crypto.ts';
 import { env, supabaseConfigured } from './env.ts';
@@ -91,6 +92,7 @@ app.get('/api/health', (_req, res) => {
     accounts: supabaseConfigured,
     serverGithubToken: Boolean(env.githubToken),
     tokenEncryption: canEncrypt(),
+    aiSearch: aiConfigured(),
     githubRateLimit: lastGithubRateLimit(),
   });
 });
@@ -169,6 +171,36 @@ app.post(
       targetStack: stack || null,
       repositories: repos.map((r) => ({ repository: r, compatibility: stack ? evaluateCompatibility(r, stack) : null })),
     });
+  }),
+);
+
+// ---------------------------------------------------------------------------
+// AI smart search (Gemini). Signed-in only and capped per user per day so the
+// free tier can't be drained.
+// ---------------------------------------------------------------------------
+app.get(
+  '/api/v1/ai/status',
+  authenticate('optional'),
+  route(async (req, res) => {
+    const used = req.caller ? await aiSearchesToday(req.caller.userId) : 0;
+    res.json({ enabled: aiConfigured(), signedIn: Boolean(req.caller), limit: AI_DAILY_LIMIT, remaining: Math.max(0, AI_DAILY_LIMIT - used) });
+  }),
+);
+
+app.post(
+  '/api/v1/ai/search',
+  authenticate('required', 'search:read'),
+  route(async (req, res) => {
+    const prompt = text(req.body?.prompt, 400);
+    if (prompt.length < 3) throw new HttpError(400, 'Describe what you are looking for in a few words');
+    const used = await aiSearchesToday(req.caller!.userId);
+    if (used >= AI_DAILY_LIMIT) {
+      throw new HttpError(429, `You've used all ${AI_DAILY_LIMIT} AI searches for today — regular search is unlimited`, 'ai_daily_limit');
+    }
+    const result = await smartSearch(prompt, await githubTokenFor(req.caller!.userId));
+    recordSearch(req.caller!.userId, prompt, { mode: 'ai' }, req.caller!.via === 'session' ? 'web' : 'api', result.results.length);
+    res.setHeader('Cache-Control', 'private, no-store');
+    res.json({ ...result, remaining: Math.max(0, AI_DAILY_LIMIT - used - 1) });
   }),
 );
 
