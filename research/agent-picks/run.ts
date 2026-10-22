@@ -66,7 +66,8 @@ for (const [i, t] of tasks.entries()) {
 const all = results.flatMap((r) => r.picks);
 const top = results.map((r) => r.picks[0]).filter(Boolean);
 const count = (list: typeof all, v: Verdict) => list.filter((p) => p.facts.verdict === v).length;
-const bad: Verdict[] = ['missing', 'deprecated', 'archived', 'stale'];
+const bad: Verdict[] = ['missing', 'deprecated', 'archived', 'stale']; // dead or broken
+const flagged: Verdict[] = [...bad, 'dormant']; // listed in the report
 const pct = (n: number, d: number) => (d ? `${Math.round((n / d) * 100)}%` : '–');
 const fmtNum = (n: number | null) => (n === null ? '–' : n >= 1e6 ? `${(n / 1e6).toFixed(1)}M` : n >= 1e3 ? `${Math.round(n / 1e3)}k` : String(n));
 const date = new Date().toISOString().slice(0, 10);
@@ -80,7 +81,7 @@ const lines = [
   '',
   '| | All picks | First picks |',
   '|---|---|---|',
-  ...bad.map((v) => `| ${v} | ${count(all, v)} (${pct(count(all, v), all.length)}) | ${count(top, v)} (${pct(count(top, v), top.length)}) |`),
+  ...flagged.map((v) => `| ${v} | ${count(all, v)} (${pct(count(all, v), all.length)}) | ${count(top, v)} (${pct(count(top, v), top.length)}) |`),
   `| **any problem** | **${all.filter((p) => bad.includes(p.facts.verdict)).length} (${pct(all.filter((p) => bad.includes(p.facts.verdict)).length, all.length)})** | **${top.filter((p) => bad.includes(p.facts.verdict)).length} (${pct(top.filter((p) => bad.includes(p.facts.verdict)).length, top.length)})** |`,
   '',
   `Errors: ${results.filter((r) => r.error).length} · refusals: ${results.filter((r) => r.refused).length}`,
@@ -90,7 +91,7 @@ const lines = [
   '| Task | Rank | Package | Verdict | Why | Weekly downloads |',
   '|---|---|---|---|---|---|',
   ...results.flatMap((r) =>
-    r.picks.filter((p) => bad.includes(p.facts.verdict)).map((p) => `| ${r.id} | ${p.rank} | \`${p.package}\` | ${p.facts.verdict} | ${p.facts.reason.replace(/\|/g, '/')} | ${fmtNum(p.facts.weeklyDownloads)} |`),
+    r.picks.filter((p) => flagged.includes(p.facts.verdict)).map((p) => `| ${r.id} | ${p.rank} | \`${p.package}\` | ${p.facts.verdict} | ${p.facts.reason.replace(/\|/g, '/')} | ${fmtNum(p.facts.weeklyDownloads)} |`),
   ),
   '',
   '## All picks',

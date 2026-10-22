@@ -1,7 +1,9 @@
 // Reality check for one recommended package: registry + downloads + GitHub.
 import type { Ecosystem } from './tasks.ts';
 
-export type Verdict = 'missing' | 'deprecated' | 'archived' | 'stale' | 'ok' | 'unknown';
+// dormant: the package has had no release for 3+ years even though its
+// repository is active (often renamed or superseded, e.g. apollo-client).
+export type Verdict = 'missing' | 'deprecated' | 'archived' | 'stale' | 'dormant' | 'ok' | 'unknown';
 
 export interface PackageFacts {
   ecosystem: Ecosystem;
@@ -20,14 +22,21 @@ export interface PackageFacts {
 }
 
 const YEAR = 365 * 24 * 3600 * 1000;
+
+// Picks the registry can't judge fairly. Python standard-library modules have
+// ancient look-alike packages on PyPI; some real projects only ship from GitHub.
+const PYTHON_STDLIB = new Set(['argparse', 'asyncio', 'json', 'csv', 'sqlite3', 'logging', 'unittest', 'dataclasses', 'typing', 'urllib', 'http', 'datetime', 'pathlib']);
+const GITHUB_ONLY: Record<string, string> = {
+  'uwebsockets.js': 'uNetworking/uWebSockets.js',
+};
 const githubToken = process.env.GITHUB_TOKEN || '';
 const cache = new Map<string, Promise<PackageFacts>>();
 
 async function getJson(url: string, headers: Record<string, string> = {}): Promise<{ status: number; body: any }> {
   for (let attempt = 0; ; attempt++) {
     const res = await fetch(url, { headers: { 'User-Agent': 'replex-research', ...headers }, signal: AbortSignal.timeout(20_000) });
-    if ((res.status === 429 || res.status >= 500) && attempt < 2) {
-      await new Promise((r) => setTimeout(r, 1500 * (attempt + 1)));
+    if ((res.status === 429 || res.status >= 500) && attempt < 5) {
+      await new Promise((r) => setTimeout(r, 3000 * (attempt + 1)));
       continue;
     }
     return { status: res.status, body: res.ok ? await res.json().catch(() => null) : null };
@@ -86,6 +95,10 @@ async function pypiFacts(name: string): Promise<Omit<PackageFacts, 'repoArchived
 }
 
 function judge(f: Omit<PackageFacts, 'verdict' | 'reason'>): Pick<PackageFacts, 'verdict' | 'reason'> {
+  if (f.ecosystem === 'pypi' && PYTHON_STDLIB.has(f.name.toLowerCase())) return { verdict: 'ok', reason: 'Built into Python (standard library)' };
+  if (!f.exists && GITHUB_ONLY[f.name.toLowerCase()]) {
+    return { verdict: 'missing', reason: `Real project (${GITHUB_ONLY[f.name.toLowerCase()]}) but not on npm under this name; the install command fails` };
+  }
   if (!f.exists) return { verdict: 'missing', reason: `No package named "${f.name}" on ${f.ecosystem === 'npm' ? 'npm' : 'PyPI'}` };
   if (f.deprecatedMessage) return { verdict: 'deprecated', reason: f.deprecatedMessage.slice(0, 200) };
   if (f.repoArchived) return { verdict: 'archived', reason: `GitHub repository ${f.repo} is archived` };
@@ -96,6 +109,7 @@ function judge(f: Omit<PackageFacts, 'verdict' | 'reason'>): Pick<PackageFacts, 
     return { verdict: 'stale', reason: `Last release ${years} years ago${pushAge !== null ? `, last commit ${(pushAge / YEAR).toFixed(1)} years ago` : ''}` };
   }
   if (releaseAge === null) return { verdict: 'unknown', reason: 'No release date found' };
+  if (releaseAge > 3 * YEAR) return { verdict: 'dormant', reason: `No release for ${(releaseAge / YEAR).toFixed(1)} years (repository still active)` };
   return { verdict: 'ok', reason: 'Maintained' };
 }
 
