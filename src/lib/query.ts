@@ -14,10 +14,14 @@ function emit(key: string) {
   listeners.get(key)?.forEach((fn) => fn());
 }
 
+/**
+ * Mark matching queries stale. Mounted queries refetch immediately and keep
+ * showing their current data meanwhile; unmounted ones refetch on next use.
+ */
 export function invalidate(prefix: string) {
-  for (const key of cache.keys()) {
+  for (const [key, entry] of cache) {
     if (key.startsWith(prefix)) {
-      cache.delete(key);
+      entry.at = 0;
       emit(key);
     }
   }
@@ -65,7 +69,12 @@ export function useQuery<T>(key: string | null, fetcher: () => Promise<T>, stale
 
   useEffect(() => {
     if (!key) return;
-    const fn = () => force((n) => n + 1);
+    const fn = () => {
+      const entry = cache.get(key);
+      // Invalidated (at === 0) and not already loading: refetch now.
+      if (entry && !entry.promise && entry.at === 0) load(key);
+      force((n) => n + 1);
+    };
     if (!listeners.has(key)) listeners.set(key, new Set());
     listeners.get(key)!.add(fn);
     load(key);
