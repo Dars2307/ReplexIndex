@@ -2,6 +2,7 @@ import { ArrowLeft, CircleCheck, CircleDashed, CircleX, ExternalLink, GitFork, G
 import type { ReactNode } from 'react';
 import type { CompatibilityEvidence, Repository } from '../types/index.ts';
 import { CompareToggle, LanguageDot, ReadinessRing, readinessTone, SaveButton } from '../components/repo.tsx';
+import { RepoReview } from '../components/RepoReview.tsx';
 import { Avatar, Badge, Card, CodeBlock, cn, ErrorState, Input, Skeleton } from '../components/ui.tsx';
 import { api } from '../lib/api.ts';
 import { useAuth } from '../lib/auth.tsx';
@@ -221,6 +222,8 @@ export function RepoPage({ owner, name }: { owner: string; name: string }) {
 
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
+          <RepoReview fullName={repo.fullName} stack={stack} />
+
           <Card className="p-5">
             <div className="flex items-start gap-4">
               <ReadinessRing score={readiness.score} size={56} />
@@ -353,7 +356,7 @@ export function RepoPage({ owner, name }: { owner: string; name: string }) {
             <Card className="p-5">
               <h2 className="mb-3 text-base font-semibold">Install</h2>
               <CodeBlock code={repo.installCommand} />
-              <p className="mt-2 text-[12px] text-fg-subtle">Inferred from the primary language — check the README for the exact package name.</p>
+              <p className="mt-2 text-[12px] text-fg-subtle">The first install command in the README.</p>
             </Card>
           )}
 

@@ -5,10 +5,11 @@ import { AppShell } from './components/AppShell.tsx';
 import { EmptyState, Skeleton } from './components/ui.tsx';
 import { useAuth } from './lib/auth.tsx';
 import { Link, matchPath, useRouter } from './lib/router.tsx';
-import { supabase } from './lib/supabase.ts';
+import { accountsEnabled, supabase } from './lib/supabase.ts';
 import { DiscoverPage } from './pages/Discover.tsx';
 import { LandingPage } from './pages/Landing.tsx';
 import { SearchPage } from './pages/Search.tsx';
+import { SignInPage } from './pages/SignIn.tsx';
 
 // First paint ships Landing/Discover/Search; everything else loads on demand.
 const AgentsPage = lazy(() => import('./pages/Agents.tsx').then((m) => ({ default: m.AgentsPage })));
@@ -37,6 +38,7 @@ const TITLES: [string, string][] = [
   ['/history', 'History'],
   ['/agents', 'Agents & MCP'],
   ['/settings', 'Settings'],
+  ['/signin', 'Sign in'],
 ];
 
 function AuthCallback() {
@@ -106,12 +108,25 @@ function Routes(): ReactNode {
     document.title = repo ? `${repo.owner}/${repo.name} · Replex` : title ? `${title} · Replex` : 'Replex — Find any repository. Hand it to your agents.';
   }, [path]);
 
+  const nextParam = location.search.get('next') || '';
+  const signInNext = nextParam.startsWith('/') && !nextParam.startsWith('//') ? nextParam : '/discover';
+
   useEffect(() => {
     if (path === '/' && ready && user) navigate('/discover', { replace: true });
-  }, [path, ready, user, navigate]);
+    if (path === '/signin' && ready && user) navigate(signInNext, { replace: true });
+  }, [path, ready, user, navigate, signInNext]);
 
   if (path === '/auth/callback') return <AuthCallback />;
   if (path === '/') return ready && user ? null : <LandingPage />;
+
+  // Everything past the landing page is for signed-in users. Without Supabase
+  // (local development) there are no accounts, so the app stays open.
+  if (accountsEnabled && !ready) return <PageFallback />;
+  if (accountsEnabled && !user) {
+    const query = location.search.toString();
+    return <SignInPage next={path === '/signin' ? signInNext : path + (query ? `?${query}` : '')} />;
+  }
+  if (path === '/signin') return null;
 
   let page: ReactNode;
   const repo = matchPath('/repo/:owner/:name', path);

@@ -25,7 +25,7 @@ const isPublic = (item: any) => item && item.private !== true && (item.visibilit
 // ---------------------------------------------------------------------------
 const memory = new Map<string, { payload: unknown; expires: number }>();
 
-async function cacheGet<T>(key: string): Promise<T | null> {
+export async function cacheGet<T>(key: string): Promise<T | null> {
   const hit = memory.get(key);
   if (hit && hit.expires > Date.now()) return hit.payload as T;
   const admin = getAdmin();
@@ -41,7 +41,7 @@ async function cacheGet<T>(key: string): Promise<T | null> {
   return data.payload as T;
 }
 
-async function cacheSet(key: string, payload: unknown, ttlSeconds: number): Promise<void> {
+export async function cacheSet(key: string, payload: unknown, ttlSeconds: number): Promise<void> {
   const expires = Date.now() + ttlSeconds * 1000;
   if (memory.size > 500) memory.clear();
   memory.set(key, { payload, expires });
@@ -125,12 +125,21 @@ const FRAMEWORK_HINTS: [string, string][] = [
 ];
 const BUILD_HINTS: [string, string][] = [['vite', 'Vite'], ['turborepo', 'Turborepo'], ['webpack', 'Webpack'], ['cargo', 'Cargo']];
 
-function installCommandFor(name: string, language: string, htmlUrl: string): string {
-  if (language === 'TypeScript' || language === 'JavaScript') return `npm install ${name}`;
-  if (language === 'Python') return `pip install ${name}`;
-  if (language === 'Rust') return `cargo add ${name}`;
-  if (language === 'Go') return `go get ${htmlUrl.replace('https://', '')}`;
-  return '';
+// The first install command the README actually documents. Never guessed from
+// the repository name: "npm install next.js" is not how you install Next.js.
+const INSTALL_LINE = new RegExp(
+  String.raw`^\s*(?:\$\s*)?(` +
+    // Scaffolders may stand alone ("npx create-next-app@latest")...
+    String.raw`(?:npx (?:create-[\w.@/-]+|[\w.@/-]+@latest)|(?:npm|pnpm|yarn|bun) create [\w.@/-]+)(?: [^\n${'`'}|;&<>]{1,100})?` +
+    // ...package installs always name what to install.
+    String.raw`|(?:npm (?:i|install)|pnpm (?:add|i|install)|yarn add|bun add|pip3? install|uv (?:add|pip install)|pipx install|cargo (?:add|install)|go (?:get|install)|brew install|gem install|composer require|dotnet add package) [^\n${'`'}|;&<>]{1,120}` +
+    String.raw`)\s*$`,
+  'm',
+);
+
+function installCommandFor(readme: string): string {
+  const match = readme.match(INSTALL_LINE);
+  return match ? match[1].trim().replace(/\s+/g, ' ') : '';
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -151,7 +160,7 @@ export function toRepository(data: any, readmeText = ''): Repository {
   const license = data.license
     ? { key: data.license.key, name: data.license.name, spdxId: data.license.spdx_id || 'NOASSERTION' }
     : null;
-  const installCommand = installCommandFor(data.name, primaryLanguage, data.html_url);
+  const installCommand = installCommandFor(readmeText);
   const stackEvidence = {
     frameworks,
     buildTools,
@@ -287,8 +296,15 @@ export async function searchGithub(query: DiscoveryQuery, token: string): Promis
 
   const params = new URLSearchParams({ q, per_page: String(perPage), page: String(page) });
   if (sort) params.set('sort', sort);
-  const res = await github(`/search/repositories?${params}`, token);
-  const json = await res.json();
+  let json = await (await github(`/search/repositories?${params}`, token)).json();
+  // GitHub's search times out under load and answers "0 results", then keeps
+  // serving that empty page from its own cache for the same parameters. Retry
+  // once with a no-op parameter (order is ignored without sort; with sort,
+  // desc is the default) so the request misses that cache.
+  if (!json.items?.length && !params.has('order')) {
+    params.set('order', 'desc');
+    json = await (await github(`/search/repositories?${params}`, token)).json();
+  }
   // Results are cached for everyone and indexed publicly, so never let a
   // private repository through, whatever scopes the token happens to have.
   const items: Repository[] = (json.items || []).filter(isPublic).map((item: unknown) => toRepository(item));
@@ -300,7 +316,8 @@ export async function searchGithub(query: DiscoveryQuery, token: string): Promis
     perPage,
     items,
   };
-  await cacheSet(key, result, 600);
+  // Keep empty or partial answers briefly so a GitHub hiccup isn't served for ten minutes.
+  await cacheSet(key, result, items.length && !result.incomplete ? 600 : 60);
   indexRepositories(items);
   return result;
 }
@@ -376,4 +393,67 @@ export async function getRepository(fullName: string, token: string): Promise<Re
   await cacheSet(key, repo, 6 * 3600);
   indexRepositories([repo]);
   return repo;
+}
+
+// ---------------------------------------------------------------------------
+// Health signals: facts from GitHub that an AI review is grounded in
+// ---------------------------------------------------------------------------
+export interface HealthSignals {
+  /** CI check runs on the default branch's latest commit; null when none were found */
+  checks: { total: number; passed: number; failed: number; pending: number; failing: string[] } | null;
+  lastCommitAt: string | null;
+  /** Open issues labelled "bug"; null when GitHub search was unavailable */
+  openBugs: number | null;
+  /** Most-discussed open issues (titles are third-party text) */
+  topIssues: { title: string; comments: number; labels: string[]; url: string }[];
+}
+
+export async function getHealthSignals(fullName: string, token: string): Promise<HealthSignals> {
+  if (!isValidFullName(fullName)) throw new HttpError(400, 'Use the "owner/repo" format', 'bad_repo');
+  const key = `health:${fullName.toLowerCase()}`;
+  const cached = await cacheGet<HealthSignals>(key);
+  if (cached) return cached;
+
+  const path = repoPath(fullName);
+  const json = async (p: string) => (await github(p, token)).json();
+  // HEAD resolves to the default branch, so no extra call to look it up.
+  const [checksRes, commitsRes, bugsRes, issuesRes] = await Promise.allSettled([
+    json(`/repos/${path}/commits/HEAD/check-runs?per_page=100`),
+    json(`/repos/${path}/commits?per_page=1`),
+    json(`/search/issues?${new URLSearchParams({ q: `repo:${fullName} is:issue is:open label:bug`, per_page: '1' })}`),
+    json(`/repos/${path}/issues?state=open&sort=comments&direction=desc&per_page=20`),
+  ]);
+
+  let checks: HealthSignals['checks'] = null;
+  if (checksRes.status === 'fulfilled' && Array.isArray(checksRes.value?.check_runs) && checksRes.value.check_runs.length) {
+    const runs: { name: string; status: string; conclusion: string | null }[] = checksRes.value.check_runs;
+    const failedRuns = runs.filter((r) => ['failure', 'timed_out', 'action_required', 'startup_failure'].includes(r.conclusion ?? ''));
+    checks = {
+      total: runs.length,
+      passed: runs.filter((r) => ['success', 'neutral', 'skipped'].includes(r.conclusion ?? '')).length,
+      failed: failedRuns.length,
+      pending: runs.filter((r) => r.status !== 'completed').length,
+      failing: [...new Set(failedRuns.map((r) => String(r.name).slice(0, 80)))].slice(0, 5),
+    };
+  }
+  const commit = commitsRes.status === 'fulfilled' && Array.isArray(commitsRes.value) ? commitsRes.value[0] : null;
+  const signals: HealthSignals = {
+    checks,
+    lastCommitAt: commit?.commit?.committer?.date ?? commit?.commit?.author?.date ?? null,
+    openBugs: bugsRes.status === 'fulfilled' && typeof bugsRes.value?.total_count === 'number' ? bugsRes.value.total_count : null,
+    topIssues:
+      issuesRes.status === 'fulfilled' && Array.isArray(issuesRes.value)
+        ? issuesRes.value
+            .filter((i: { pull_request?: unknown }) => !i.pull_request)
+            .slice(0, 10)
+            .map((i: { title: string; comments: number; labels: { name: string }[]; html_url: string }) => ({
+              title: String(i.title).slice(0, 160),
+              comments: i.comments,
+              labels: (i.labels || []).map((l) => String(l.name).slice(0, 40)).slice(0, 4),
+              url: i.html_url,
+            }))
+        : [],
+  };
+  await cacheSet(key, signals, 3 * 3600);
+  return signals;
 }

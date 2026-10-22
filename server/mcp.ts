@@ -1,6 +1,7 @@
 import type { Request, Response } from 'express';
 import type { TrendingWindow } from '../src/types/index.ts';
 import { evaluateCompatibility } from '../src/engines/compatibility.ts';
+import { AI_DAILY_LIMIT, aiSearchesToday, cachedReview, reviewRepository } from './ai.ts';
 import type { Caller } from './auth.ts';
 import { HttpError } from './supabase.ts';
 import { breakoutRepositories, getRepository, githubTokenFor, isValidFullName, risingRepositories, searchGithub } from './github.ts';
@@ -183,6 +184,36 @@ export const TOOLS: ToolDef[] = [
       const repo = await getRepository(fullNameArg(args.full_name), await githubTokenFor(caller.userId));
       const stack = str(args.target_stack, 200) || (await targetStackFor(caller.userId)) || 'Next.js + TypeScript';
       return { repository: repo.fullName, compatibility: evaluateCompatibility(repo, stack) };
+    },
+  },
+  {
+    name: 'review_repository',
+    scope: 'repositories:read',
+    title: 'AI review and agent brief',
+    description:
+      'Gemini review of one repository grounded in GitHub evidence (CI checks on the latest commit, commit recency, open bugs, most-discussed issues, README): a verdict, health notes, known issues, stack fit, setup steps and a Markdown brief for coding agents. Uses one of the 25 daily AI requests unless a review for the same commit and stack is cached.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        full_name: { type: 'string', description: '"owner/repo" or a github.com URL' },
+        target_stack: { type: 'string', description: 'e.g. "Next.js + TypeScript". Defaults to your profile stack.' },
+      },
+      required: ['full_name'],
+    },
+    annotations: READ_ONLY,
+    async run(args, caller) {
+      const token = await githubTokenFor(caller.userId);
+      const repo = await getRepository(fullNameArg(args.full_name), token);
+      const stack = str(args.target_stack, 200) || (await targetStackFor(caller.userId));
+      let review = await cachedReview(repo, stack);
+      if (!review) {
+        if ((await aiSearchesToday(caller.userId)) >= AI_DAILY_LIMIT) {
+          throw new ToolInputError(`Daily AI limit reached (${AI_DAILY_LIMIT}). Use get_repository and check_compatibility instead.`);
+        }
+        review = await reviewRepository(repo, stack, token);
+        recordSearch(caller.userId, repo.fullName, { mode: 'review', stack: stack || undefined }, 'mcp', 1);
+      }
+      return review;
     },
   },
   {

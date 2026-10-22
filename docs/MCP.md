@@ -21,6 +21,7 @@ is logged to the user's **Recent agent activity**.
 | `get_repository` | Full intelligence for one repository, including readiness and latest release |
 | `compare_repositories` | 2–4 repositories side by side, scored against a stack |
 | `check_compatibility` | Evidence for/against fitting a target stack |
+| `review_repository` | Gemini review grounded in GitHub evidence (CI, commits, bugs, issues, README): verdict, health, known issues, stack fit, setup steps and a Markdown `agentBrief`. Uses the 25/day AI allowance unless cached |
 | `list_collections` | The user's collections with counts |
 | `get_collection` | Repositories in one collection (by name or id) |
 | `save_to_collection` | Save a repository; creates the collection if needed (needs `library:write`) |
