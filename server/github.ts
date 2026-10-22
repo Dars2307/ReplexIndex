@@ -288,9 +288,12 @@ export async function searchGithub(query: DiscoveryQuery, token: string): Promis
   const params = new URLSearchParams({ q, per_page: String(perPage), page: String(page) });
   if (sort) params.set('sort', sort);
   let json = await (await github(`/search/repositories?${params}`, token)).json();
-  // GitHub's search times out under load and answers "0 results, incomplete";
-  // one retry usually returns the real results.
-  if (json.incomplete_results && !json.items?.length) {
+  // GitHub's search times out under load and answers "0 results", then keeps
+  // serving that empty page from its own cache for the same parameters. Retry
+  // once with a no-op parameter (order is ignored without sort; with sort,
+  // desc is the default) so the request misses that cache.
+  if (!json.items?.length && !params.has('order')) {
+    params.set('order', 'desc');
     json = await (await github(`/search/repositories?${params}`, token)).json();
   }
   // Results are cached for everyone and indexed publicly, so never let a
