@@ -23,7 +23,7 @@ mkdirSync(fn, { recursive: true });
 cpSync(join(root, 'dist'), join(out, 'static'), { recursive: true });
 
 await build({
-  entryPoints: [join(root, 'api', 'index.ts')],
+  entryPoints: [join(root, 'server', 'vercel-entry.ts')],
   // .cjs: the repo's package.json is "type": "module", so a CommonJS .js
   // bundle would be misread as ESM.
   outfile: join(fn, 'index.cjs'),

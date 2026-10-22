@@ -1,5 +1,5 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import { app } from '../server/app.ts';
+import { app } from './app.ts';
 
 // Vercel routes every /api/* request to this function. Its request URL is the
 // original path; if a platform rewrite ever hands us the bare "/api", recover

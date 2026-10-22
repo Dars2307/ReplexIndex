@@ -19,7 +19,7 @@ Claude, Cursor and any MCP client a private, per-user line into your library.
 | Layer | Technology |
 |---|---|
 | Web | React 19, Vite 8, Tailwind CSS v4, Motion, Geist fonts |
-| API | Express on a single Vercel function (`api/index.ts` → `server/app.ts`) |
+| API | Express on a single Vercel function (`server/vercel-entry.ts` → `server/app.ts`) |
 | Data & auth | Supabase — Postgres schema `replex` with row-level security; GitHub OAuth |
 | GitHub | REST search/repos API with each user's own token, Postgres-backed cache |
 | Agents | Model Context Protocol, Streamable HTTP (stateless JSON) at `/api/mcp` |
