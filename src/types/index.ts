@@ -134,6 +134,23 @@ export interface Repository {
   readmeExtract?: string;
   readmeUrl?: string;
   installCommand?: string;
+  latestRelease?: {
+    tag: string;
+    name: string | null;
+    publishedAt: string;
+    url: string;
+  } | null;
+}
+
+export type TrendingWindow = 'day' | 'week' | 'month';
+
+export interface DiscoverySearchResult {
+  query: string;
+  total: number;
+  incomplete: boolean;
+  page: number;
+  perPage: number;
+  items: Repository[];
 }
 
 export interface SearchFilters {

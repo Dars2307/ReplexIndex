@@ -1,77 +1,58 @@
-# Nexora Architecture & System Specification
-
-## 1. Architectural Overview
-Nexora is architected as an **agent-native software discovery and contextual intelligence platform**. Rather than cloning full codebases, Nexora operates as a precision metadata intelligence engine that indexes public software repositories, analyzes their operational purposes and technical environments, and exposes verified intelligence to both human developers and autonomous AI agents.
+# Architecture
 
 ```text
-External Metadata Sources (GitHub API v3, Package Registries)
-                      │
-                      ▼
-         [Discovery & Ingestion Worker]
-         • Rate-limit prober & exponential backoff
-         • Canonical URL deduplication
-         • Metadata normalization
-                      │
-                      ▼
-    ┌─────────────────┴──────────────────┐
-    ▼                                    ▼
-[Purpose Intelligence Engine]  [Compatibility Engine]
-• Technical Category           • Environment token parsing
-• Functional Purpose           • Dependency conflict check
-• Intended Audience            • Version compatibility notes
-• Supported Runtimes           • Grounded evidence builder
-    │                                    │
-    └─────────────────┬──────────────────┘
-                      ▼
-        [Agent Readiness Evaluator]
-        • License clarity verification
-        • Documentation availability check
-        • Native type definition check
-        • CLI installation command extraction
-                      │
-                      ▼
-      [Unified Storage & Ranking Layer]
-      • PostgreSQL Schema (Drizzle ORM)
-      • Multi-signal ranking algorithm
-      • Relationship graph generator
-                      │
-        ┌─────────────┴─────────────┐
-        ▼                           ▼
-[REST API v1 Gateway]      [Model Context Protocol (MCP)]
-• /api/v1/search           • JSON-RPC 2.0 Server
-• /api/v1/repositories     • search_repositories
-• /api/v1/compare          • get_repository
-• /api/v1/compatibility    • compare_repositories
-• /api/v1/ingest           • find_compatible_tools
-        │                           │
-        └─────────────┬─────────────┘
-                      ▼
-          [Web Application & PWA]
-          • Precision Atlas Design System
-          • React 19 + TypeScript + Vite
-          • Offline shell with Service Worker
+Browser (React SPA)                     AI agents (Claude, Cursor, …)
+   │  Supabase JS (RLS, own rows)            │  Bearer rpx_… key
+   │  fetch /api/* with session JWT          │  POST /api/mcp (JSON-RPC)
+   ▼                                         ▼
+┌──────────────────────── Express API (one Vercel function) ───────────────────────┐
+│ auth.ts     session JWT → user, or rpx_ key → sha256 lookup → user + scopes      │
+│ github.ts   search / rising / breakout / repo detail · token per user · cache     │
+│ mcp.ts      initialize · tools/list · tools/call (9 tools) · activity log         │
+│ library.ts  collections · history · profile (always scoped to caller.userId)      │
+└──────────────────────────────────────────────────────────────────────────────────┘
+        │ service role                                   │ user / server token
+        ▼                                                ▼
+Supabase Postgres — schema "replex"                 GitHub REST API
+profiles · searches · collections · collection_items · watchlists · api_keys
+agent_events · user_github_tokens (encrypted) · github_cache · repos (index)
 ```
 
-## 2. Core Subsystems
+## Request paths
 
-### Engine A — Discovery & Ingestion
-- Ingests public repositories via official GitHub API v3 endpoints (`/repos/{owner}/{repo}`) and README manifests.
-- Tracks discrete timestamps separately: `upstreamCreatedAt`, `upstreamPushedAt`, `upstreamUpdatedAt`, `lastNexoraFetchAt`, and `lastNexoraClassifiedAt`.
-- Enforces strict rate-limit budgets using `x-ratelimit-remaining` and exponential recovery checkpoints.
+- **Per-user library data** (collections, history, profile, key list, activity) is
+  read and written by the browser directly through Supabase. Row-level security
+  restricts every query to the signed-in user's rows.
+- **Everything that needs a secret** goes through the API: minting and revoking API
+  keys, storing the user's GitHub token, GitHub calls, and MCP.
+- **The service-role client bypasses RLS**, so every server query is explicitly
+  scoped by `caller.userId`; user ids are never taken from request input.
 
-### Engine B — Purpose Intelligence
-- Multi-label classification system mapping repositories to top-level domains: Design & UI, Frontend Engineering, Backend Engineering, Video & Multimedia, AI & Machine Learning, Databases, DevOps & Infrastructure, Developer Productivity, and Testing.
-- Distinguishes implementation approach (e.g. headless unstyled primitives, declarative canvas, native Rust binary) from functional purpose.
+## GitHub access
 
-### Engine C — Compatibility Intelligence
-- Evaluates repository manifest evidence against the caller's target environment (e.g., `Next.js + TypeScript + Tailwind`).
-- Emits deterministic status signals: `confirmed_match`, `potential_match`, `conflict`, or `unknown`.
-- Never claims compatibility without supporting peer evidence.
+- GitHub has no trending API, and the OSS Insight event ranking has been
+  unavailable since March 2026, so trending is computed from search:
+  *rising* = created inside the window, sorted by stars; *breakout* = created in the
+  last 90 days with at least 1,000 stars.
+- Supabase only exposes a user's GitHub token right after OAuth. The client posts
+  it once to `/api/v1/me/github-token`; the server checks it belongs to the same
+  GitHub login, encrypts it (AES-256-GCM) and stores it. Searches then use the
+  user's own limits (30 search requests/min, 5,000 core requests/hour), falling
+  back to `GITHUB_TOKEN`.
+- Responses are cached in memory per instance and in `replex.github_cache`
+  (search 10 min, trending via search 10 min, repo detail 6 h), and every result is
+  upserted into `replex.repos`, a full-text-indexed catalogue that grows with use.
 
-### Engine D — Multi-Signal Search
-- Computes relevance using a balanced multi-signal formula preventing single-metric star dominance:
-  $$\text{Score} = \text{TextMatch}(40) + \text{CategoryFit}(15) + \text{CompatibilityEvidence}(20) + \text{AgentReadiness}(15) + \text{Freshness}(10) + \text{LogStars}(10)$$
+## Classification
 
-### Engine E — Model Context Protocol (MCP) Server
-- Implements official JSON-RPC 2.0 transport at `/api/v1/mcp`.
-- Exposes tools to external autonomous agents (`search_repositories`, `get_repository`, `find_similar_repositories`, `compare_repositories`, `find_compatible_tools`, `explain_repository`, `get_repository_relationships`).
+`src/engines/classification.ts` scores 15 categories with weighted, word-boundary
+matches (GitHub topics weigh more than description words, README text least). The
+readiness score (`readiness.ts`) and stack compatibility (`compatibility.ts`) are
+deterministic and explainable; no LLM is involved.
+
+## Shared Supabase project
+
+Replex runs in the `replex` schema of a shared project ("My Repos"). It adds no
+triggers to the shared `auth.users` table — the app creates its own profile row on
+first sign-in (`POST /api/v1/me/bootstrap`) — and "delete my data" removes Replex
+rows only, leaving the shared sign-in identity for the user's other apps.

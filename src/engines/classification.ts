@@ -10,219 +10,266 @@ interface ClassificationInput {
   dependencies?: string[];
 }
 
+interface Rule {
+  category: TechnicalCategory;
+  topics: string[];
+  terms: string[];
+  subcategories: [string, string[]][];
+  audience: string;
+}
+
+// Topics are exact GitHub topic matches (strong signal); terms are whole-word
+// matches in name/description (medium) and README (weak).
+const RULES: Rule[] = [
+  {
+    category: 'Security',
+    topics: ['security', 'reverse-engineering', 'malware-analysis', 'pentesting', 'penetration-testing', 'ctf', 'exploit', 'vulnerability', 'decompiler', 'disassembler', 'binary-analysis', 'fuzzing', 'osint', 'red-team', 'forensics', 'cryptography'],
+    terms: ['reverse engineering', 'decompiler', 'disassembler', 'debugger', 'malware', 'exploit', 'vulnerability', 'pentest', 'penetration testing', 'fuzzer', 'fuzzing', 'osint', 'ctf', 'forensics', 'sandbox escape', 'binary analysis', 'firmware', 'security scanner', 'secrets scanning'],
+    subcategories: [
+      ['Reverse Engineering', ['reverse', 'decompil', 'disassembl', 'binary', 'firmware', 'ghidra', 'ida']],
+      ['Offensive Security', ['exploit', 'pentest', 'red team', 'c2']],
+      ['Vulnerability Scanning', ['scanner', 'vulnerability', 'cve', 'sast']],
+      ['Malware Analysis', ['malware', 'yara', 'sandbox']],
+      ['Fuzzing', ['fuzz']],
+    ],
+    audience: 'Security researchers, reverse engineers and application security teams',
+  },
+  {
+    category: 'AI & Machine Learning',
+    topics: ['ai', 'llm', 'llms', 'machine-learning', 'deep-learning', 'nlp', 'ai-agents', 'agents', 'rag', 'transformers', 'generative-ai', 'openai', 'anthropic', 'mcp', 'model-context-protocol', 'computer-vision', 'diffusion', 'pytorch', 'langchain', 'chatgpt', 'claude'],
+    terms: ['llm', 'large language model', 'language model', 'ai agent', 'ai agents', 'agentic', 'rag', 'retrieval augmented', 'embeddings', 'inference', 'fine-tuning', 'fine tune', 'transformer', 'diffusion', 'neural network', 'machine learning', 'mcp server', 'model context protocol', 'prompt', 'chatbot', 'speech recognition', 'text-to-speech'],
+    subcategories: [
+      ['Autonomous Agents', ['agent', 'agentic', 'autonomous']],
+      ['RAG & Vector Search', ['rag', 'retrieval', 'vector', 'embedding']],
+      ['Inference & Serving', ['inference', 'serving', 'quantiz', 'gguf', 'vllm']],
+      ['Training & Fine-tuning', ['training', 'fine-tun', 'lora']],
+      ['MCP & Tooling', ['mcp', 'model context protocol', 'tool calling']],
+      ['Computer Vision', ['vision', 'image', 'diffusion', 'segmentation']],
+    ],
+    audience: 'AI engineers, agent developers and ML practitioners',
+  },
+  {
+    category: 'Video & Multimedia',
+    topics: ['video', 'audio', 'ffmpeg', 'streaming', 'webrtc', 'media', 'video-editor', 'music'],
+    terms: ['video editor', 'video', 'transcoding', 'motion graphics', 'screen recording', 'audio', 'podcast', 'livestream', 'webrtc', 'ffmpeg'],
+    subcategories: [
+      ['Editing & Timelines', ['editor', 'timeline']],
+      ['Transcoding & Processing', ['transcod', 'ffmpeg', 'encode']],
+      ['Streaming & WebRTC', ['stream', 'hls', 'webrtc']],
+      ['Audio Engineering', ['audio', 'sound', 'music']],
+    ],
+    audience: 'Media engineers, creative developers and video application builders',
+  },
+  {
+    category: 'Design & UI',
+    topics: ['ui', 'components', 'design-system', 'icons', 'animation', 'tailwindcss', 'tailwind', 'shadcn', 'ui-components', 'figma', 'css'],
+    terms: ['component library', 'design system', 'icon library', 'icons', 'ui kit', 'primitives', 'animation library', 'tailwind', 'shadcn', 'figma'],
+    subcategories: [
+      ['Component Libraries', ['component', 'ui kit']],
+      ['Design Systems', ['design system', 'tokens']],
+      ['Iconography', ['icon']],
+      ['Motion & Animation', ['animation', 'motion']],
+      ['Accessibility Primitives', ['accessible', 'a11y', 'aria', 'headless']],
+    ],
+    audience: 'Frontend developers, design-systems engineers and UI designers',
+  },
+  {
+    category: 'Mobile Development',
+    topics: ['android', 'ios', 'react-native', 'flutter', 'swift', 'kotlin', 'mobile', 'expo', 'swiftui'],
+    terms: ['android', 'ios app', 'react native', 'flutter', 'mobile app', 'swiftui', 'jetpack compose', 'expo'],
+    subcategories: [
+      ['Cross-platform', ['react native', 'flutter', 'expo']],
+      ['Native iOS', ['ios', 'swift']],
+      ['Native Android', ['android', 'kotlin']],
+    ],
+    audience: 'Mobile developers',
+  },
+  {
+    category: 'Gaming',
+    topics: ['game', 'game-engine', 'gamedev', 'unity', 'godot', 'emulator', 'minecraft', 'games'],
+    terms: ['game engine', 'game', 'emulator', 'gamedev', 'godot', 'unity', 'unreal'],
+    subcategories: [
+      ['Game Engines', ['engine']],
+      ['Emulation', ['emulator', 'emulation']],
+    ],
+    audience: 'Game developers and emulation enthusiasts',
+  },
+  {
+    category: 'Databases',
+    topics: ['database', 'sql', 'nosql', 'orm', 'postgres', 'postgresql', 'sqlite', 'redis', 'vector-database', 'mongodb'],
+    terms: ['database', 'orm', 'query builder', 'key-value store', 'postgres', 'sqlite', 'vector database', 'time series'],
+    subcategories: [
+      ['ORMs & Query Builders', ['orm', 'query builder']],
+      ['Relational Systems', ['relational', 'postgres', 'sql']],
+      ['Vector Databases', ['vector']],
+      ['Embedded Engines', ['embedded', 'sqlite', 'duckdb']],
+    ],
+    audience: 'Backend architects, database administrators and data engineers',
+  },
+  {
+    category: 'Data & Analytics',
+    topics: ['data-science', 'analytics', 'data-visualization', 'etl', 'dataframe', 'jupyter', 'pandas', 'bi'],
+    terms: ['analytics', 'data pipeline', 'etl', 'dataframe', 'data visualization', 'dashboard', 'business intelligence', 'web scraping', 'scraper'],
+    subcategories: [
+      ['Visualization', ['visualiz', 'chart', 'dashboard']],
+      ['Pipelines & ETL', ['pipeline', 'etl', 'ingest']],
+      ['Scraping', ['scrap', 'crawl']],
+    ],
+    audience: 'Data engineers, analysts and data scientists',
+  },
+  {
+    category: 'DevOps & Infrastructure',
+    topics: ['docker', 'kubernetes', 'ci-cd', 'devops', 'monitoring', 'terraform', 'self-hosted', 'homelab', 'observability', 'infrastructure-as-code'],
+    terms: ['infrastructure', 'deployment', 'container', 'kubernetes', 'docker', 'self-hosted', 'observability', 'monitoring', 'ci/cd', 'terraform'],
+    subcategories: [
+      ['Containers & Orchestration', ['container', 'docker', 'kubernetes']],
+      ['Platform & Deployment', ['deploy', 'paas', 'cloud', 'self-hosted']],
+      ['Observability', ['monitor', 'telemetry', 'observab', 'logging']],
+    ],
+    audience: 'DevOps engineers, SREs and platform teams',
+  },
+  {
+    category: 'Backend Engineering',
+    topics: ['backend', 'api', 'microservices', 'server', 'graphql', 'rest-api', 'grpc', 'web-framework'],
+    terms: ['web framework', 'rest api', 'graphql', 'http server', 'microservice', 'backend', 'rpc'],
+    subcategories: [
+      ['Web Frameworks', ['framework', 'router']],
+      ['Jobs & Queues', ['queue', 'job', 'worker']],
+      ['RPC & Protocols', ['rpc', 'grpc', 'trpc', 'graphql']],
+    ],
+    audience: 'Backend engineers',
+  },
+  {
+    category: 'Frontend Engineering',
+    topics: ['react', 'vue', 'svelte', 'nextjs', 'vite', 'frontend', 'javascript-framework', 'solidjs', 'astro'],
+    terms: ['frontend framework', 'state management', 'single page', 'react', 'vue', 'svelte', 'static site'],
+    subcategories: [
+      ['Application Frameworks', ['framework', 'full-stack', 'meta-framework']],
+      ['State Management', ['state', 'store']],
+      ['Build Tooling', ['bundler', 'build tool']],
+      ['Forms & Validation', ['form', 'validation']],
+    ],
+    audience: 'Frontend engineers',
+  },
+  {
+    category: 'Testing',
+    topics: ['testing', 'test-runner', 'e2e', 'unit-testing', 'playwright', 'test-automation'],
+    terms: ['testing library', 'test framework', 'test runner', 'end-to-end', 'e2e', 'mocking', 'snapshot testing'],
+    subcategories: [['Unit & E2E Testing', ['test']]],
+    audience: 'Engineers and QA teams',
+  },
+  {
+    category: 'Automation',
+    topics: ['automation', 'workflow', 'bot', 'rpa', 'scheduler', 'no-code', 'low-code'],
+    terms: ['automation', 'workflow automation', 'bot', 'browser automation', 'no-code', 'low-code', 'cron'],
+    subcategories: [
+      ['Workflow Engines', ['workflow']],
+      ['Browser Automation', ['browser', 'puppeteer', 'playwright']],
+      ['Bots', ['bot']],
+    ],
+    audience: 'Automation engineers and operations teams',
+  },
+  {
+    category: 'Developer Productivity',
+    topics: ['developer-tools', 'cli', 'linter', 'productivity', 'terminal', 'vscode-extension', 'neovim', 'git', 'dotfiles'],
+    terms: ['cli', 'command line', 'terminal', 'linter', 'formatter', 'monorepo', 'developer tool', 'editor plugin', 'neovim', 'vscode'],
+    subcategories: [
+      ['Code Quality', ['lint', 'format']],
+      ['Monorepo Tooling', ['monorepo', 'workspace']],
+      ['Command Line', ['cli', 'terminal', 'shell']],
+      ['Editors & IDEs', ['vscode', 'neovim', 'editor']],
+    ],
+    audience: 'Software engineers',
+  },
+  {
+    category: 'Documentation & Education',
+    topics: ['awesome', 'awesome-list', 'tutorial', 'education', 'learning', 'interview', 'roadmap', 'books', 'course'],
+    terms: ['awesome list', 'curated list', 'tutorial', 'course', 'learn', 'roadmap', 'cheatsheet', 'interview', 'documentation'],
+    subcategories: [
+      ['Curated Lists', ['awesome', 'curated']],
+      ['Learning Resources', ['tutorial', 'course', 'learn', 'book']],
+    ],
+    audience: 'Learners and engineers researching a topic',
+  },
+];
+
+function wordRegex(term: string): RegExp {
+  return new RegExp(`(^|[^a-z0-9])${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}($|[^a-z0-9])`);
+}
+const compiled = RULES.map((rule) => ({ rule, terms: rule.terms.map((t) => [t, wordRegex(t)] as const) }));
+
 export function classifyRepository(input: ClassificationInput): PurposeIntelligence {
-  const text = `${input.name} ${input.description} ${input.topics.join(' ')}`.toLowerCase();
+  const primary = `${input.name.replace(/[-_]/g, ' ')} ${input.description}`.toLowerCase();
+  const readme = (input.readmeText || '').slice(0, 4000).toLowerCase();
   const topics = input.topics.map((t) => t.toLowerCase());
   const lang = (input.primaryLanguage || '').toLowerCase();
-  const evidenceNotes: string[] = [];
 
-  let category: TechnicalCategory = 'Other / Unclassified';
-  const subcategories: string[] = [];
-
-  // Deterministic rule hierarchy
-  if (
-    topics.includes('video') ||
-    topics.includes('audio') ||
-    topics.includes('ffmpeg') ||
-    topics.includes('streaming') ||
-    text.includes('video editor') ||
-    text.includes('transcoding') ||
-    text.includes('motion graphics') ||
-    text.includes('screen recording')
-  ) {
-    category = 'Video & Multimedia';
-    if (text.includes('editor') || text.includes('timeline')) subcategories.push('Editing & Timelines');
-    if (text.includes('transcode') || text.includes('ffmpeg')) subcategories.push('Transcoding & Processing');
-    if (text.includes('streaming') || text.includes('hls') || text.includes('webrtc')) subcategories.push('Streaming & WebRTC');
-    if (text.includes('audio') || text.includes('sound')) subcategories.push('Audio Engineering');
-    evidenceNotes.push('Matched multimedia/video indicators in topics or description');
-  } else if (
-    topics.includes('ui') ||
-    topics.includes('components') ||
-    topics.includes('design-system') ||
-    topics.includes('icons') ||
-    topics.includes('animation') ||
-    topics.includes('tailwind') ||
-    text.includes('component library') ||
-    text.includes('design system') ||
-    text.includes('icon library') ||
-    text.includes('primitives')
-  ) {
-    category = 'Design & UI';
-    if (text.includes('component') || topics.includes('components')) subcategories.push('Component Libraries');
-    if (text.includes('design system') || topics.includes('design-system')) subcategories.push('Design Systems');
-    if (text.includes('icon') || topics.includes('icons')) subcategories.push('Iconography');
-    if (text.includes('animation') || text.includes('motion') || topics.includes('motion')) subcategories.push('Motion & Animation');
-    if (text.includes('accessible') || text.includes('a11y') || text.includes('radix')) subcategories.push('Accessibility Primitives');
-    evidenceNotes.push('Matched UI/component library terms and visual design topics');
-  } else if (
-    topics.includes('react') ||
-    topics.includes('vue') ||
-    topics.includes('svelte') ||
-    topics.includes('nextjs') ||
-    topics.includes('vite') ||
-    topics.includes('frontend') ||
-    text.includes('frontend framework') ||
-    text.includes('state management') ||
-    text.includes('client-side')
-  ) {
-    category = 'Frontend Engineering';
-    if (text.includes('framework') || text.includes('full-stack')) subcategories.push('Application Frameworks');
-    if (text.includes('state') || text.includes('store') || text.includes('zustand') || text.includes('redux')) subcategories.push('State Management');
-    if (text.includes('bundler') || text.includes('build tool') || text.includes('vite')) subcategories.push('Build Tooling');
-    if (text.includes('form') || text.includes('validation') || text.includes('zod')) subcategories.push('Data Validation & Forms');
-    evidenceNotes.push('Matched frontend application framework/state management signals');
-  } else if (
-    topics.includes('ai') ||
-    topics.includes('llm') ||
-    topics.includes('machine-learning') ||
-    topics.includes('nlp') ||
-    topics.includes('deep-learning') ||
-    text.includes('language model') ||
-    text.includes('embeddings') ||
-    text.includes('agent') ||
-    text.includes('rag')
-  ) {
-    category = 'AI & Machine Learning';
-    if (text.includes('agent') || text.includes('autonomous')) subcategories.push('Autonomous Agents');
-    if (text.includes('rag') || text.includes('vector') || text.includes('embedding')) subcategories.push('RAG & Vector Search');
-    if (text.includes('inference') || text.includes('model runner')) subcategories.push('Local & Cloud Inference');
-    if (text.includes('fine-tuning') || text.includes('training')) subcategories.push('Model Training & Tuning');
-    evidenceNotes.push('Matched artificial intelligence, agentic workflow, or ML topics');
-  } else if (
-    topics.includes('database') ||
-    topics.includes('sql') ||
-    topics.includes('nosql') ||
-    topics.includes('orm') ||
-    topics.includes('postgres') ||
-    text.includes('database') ||
-    text.includes('orm') ||
-    text.includes('query builder')
-  ) {
-    category = 'Databases';
-    if (text.includes('orm') || text.includes('query builder')) subcategories.push('ORMs & Query Builders');
-    if (text.includes('relational') || text.includes('postgres') || text.includes('sql')) subcategories.push('Relational Systems');
-    if (text.includes('vector') || text.includes('similarity')) subcategories.push('Vector Databases');
-    if (text.includes('embedded') || text.includes('sqlite') || text.includes('duckdb')) subcategories.push('Embedded Data Engines');
-    evidenceNotes.push('Matched database, query builder, or ORM patterns');
-  } else if (
-    topics.includes('docker') ||
-    topics.includes('kubernetes') ||
-    topics.includes('ci-cd') ||
-    topics.includes('devops') ||
-    topics.includes('monitoring') ||
-    text.includes('infrastructure') ||
-    text.includes('deployment') ||
-    text.includes('container')
-  ) {
-    category = 'DevOps & Infrastructure';
-    if (text.includes('container') || text.includes('docker')) subcategories.push('Containers & Virtualization');
-    if (text.includes('deploy') || text.includes('paas') || text.includes('cloud')) subcategories.push('Platform & Deployment');
-    if (text.includes('monitoring') || text.includes('telemetry') || text.includes('observability')) subcategories.push('Observability & Metrics');
-    evidenceNotes.push('Matched DevOps, deployment, or containerization tags');
-  } else if (
-    topics.includes('backend') ||
-    topics.includes('api') ||
-    topics.includes('microservice') ||
-    topics.includes('server') ||
-    text.includes('web framework') ||
-    text.includes('rest api') ||
-    text.includes('graphql')
-  ) {
-    category = 'Backend Engineering';
-    if (text.includes('fastapi') || text.includes('express') || text.includes('framework')) subcategories.push('Web Services & Frameworks');
-    if (text.includes('queue') || text.includes('job') || text.includes('worker')) subcategories.push('Background Jobs & Queues');
-    if (text.includes('rpc') || text.includes('grpc') || text.includes('trpc')) subcategories.push('RPC & Protocol Interfaces');
-    evidenceNotes.push('Matched server-side, web API, and backend framework markers');
-  } else if (
-    topics.includes('testing') ||
-    topics.includes('test-runner') ||
-    topics.includes('e2e') ||
-    text.includes('testing library') ||
-    text.includes('test framework')
-  ) {
-    category = 'Testing';
-    subcategories.push('Unit & E2E Testing');
-    evidenceNotes.push('Matched test framework indicators');
-  } else if (
-    topics.includes('developer-tools') ||
-    topics.includes('linter') ||
-    topics.includes('cli') ||
-    topics.includes('productivity') ||
-    text.includes('formatter') ||
-    text.includes('monorepo')
-  ) {
-    category = 'Developer Productivity';
-    if (text.includes('linter') || text.includes('formatter')) subcategories.push('Code Quality & Toolchains');
-    if (text.includes('monorepo') || text.includes('workspace')) subcategories.push('Monorepo Tooling');
-    if (text.includes('cli') || text.includes('terminal')) subcategories.push('Command Line Utilities');
-    evidenceNotes.push('Matched developer tools, CLI, or toolchain tags');
-  } else {
-    category = 'Other / Unclassified';
-    subcategories.push('General Software');
-    evidenceNotes.push('Insufficient specialized topic markers; classified as general');
+  let best: { rule: Rule; score: number; evidence: string[] } | null = null;
+  for (const { rule, terms } of compiled) {
+    let score = 0;
+    const evidence: string[] = [];
+    for (const topic of topics) {
+      if (rule.topics.includes(topic)) {
+        score += 3;
+        evidence.push(`topic "${topic}"`);
+      }
+    }
+    for (const [term, re] of terms) {
+      if (re.test(primary)) {
+        score += 2;
+        evidence.push(`"${term}" in description`);
+      } else if (readme && re.test(readme)) {
+        score += 0.5;
+      }
+    }
+    if (score > (best?.score ?? 0)) best = { rule, score, evidence };
   }
 
-  // Derive functional purpose
-  let functionalPurpose = input.description || `Software library providing utilities for ${input.name}`;
-  if (!functionalPurpose.endsWith('.')) functionalPurpose += '.';
+  const matched = best && best.score >= 2 ? best : null;
+  const category: TechnicalCategory = matched?.rule.category ?? 'Other / Unclassified';
+  const haystack = `${primary} ${topics.join(' ')}`;
+  const subcategories = matched
+    ? matched.rule.subcategories.filter(([, keys]) => keys.some((k) => haystack.includes(k))).map(([label]) => label)
+    : [];
 
-  // Derive intended audience
-  let intendedAudience = 'Software engineers and system architects';
-  if (category === 'Design & UI') intendedAudience = 'Frontend developers, design systems engineers, and UI designers';
-  else if (category === 'Video & Multimedia') intendedAudience = 'Media engineers, creative developers, and video application builders';
-  else if (category === 'AI & Machine Learning') intendedAudience = 'AI researchers, agent developers, and machine learning practitioners';
-  else if (category === 'DevOps & Infrastructure') intendedAudience = 'DevOps engineers, SREs, and cloud infrastructure specialists';
-  else if (category === 'Databases') intendedAudience = 'Database administrators, backend architects, and data engineers';
+  let functionalPurpose = input.description.trim() || `Open-source project ${input.name}`;
+  if (!/[.!?]$/.test(functionalPurpose)) functionalPurpose += '.';
 
-  // Supported environments
   const supportedEnvironments: string[] = [];
-  if (['typescript', 'javascript'].includes(lang) || text.includes('node') || text.includes('react')) {
-    supportedEnvironments.push('Browser', 'Node.js');
-    if (text.includes('deno')) supportedEnvironments.push('Deno');
-    if (text.includes('bun')) supportedEnvironments.push('Bun');
-  }
-  if (lang === 'python' || text.includes('python')) supportedEnvironments.push('Python 3.9+ runtime', 'Linux/macOS/Windows');
-  if (lang === 'rust' || text.includes('rust')) supportedEnvironments.push('Native (Rust toolchain)', 'WebAssembly (WASM)');
-  if (lang === 'go' || text.includes('golang')) supportedEnvironments.push('Native Go runtime', 'Containers');
-  if (supportedEnvironments.length === 0) supportedEnvironments.push('Cross-platform environment');
+  if (['typescript', 'javascript'].includes(lang)) supportedEnvironments.push('Node.js', 'Browser');
+  if (lang === 'python') supportedEnvironments.push('Python 3');
+  if (lang === 'rust') supportedEnvironments.push('Native (Rust)');
+  if (lang === 'go') supportedEnvironments.push('Native (Go)');
+  if (['c', 'c++'].includes(lang)) supportedEnvironments.push('Native (C/C++)');
+  if (['swift', 'kotlin', 'dart'].includes(lang)) supportedEnvironments.push('Mobile');
+  if (/\bwasm\b|webassembly/.test(haystack)) supportedEnvironments.push('WebAssembly');
+  if (/\bdocker\b/.test(haystack + readme)) supportedEnvironments.push('Docker');
+  if (supportedEnvironments.length === 0) supportedEnvironments.push('Cross-platform');
 
-  // Implementation approach
-  let implementationApproach = 'Modular composable architecture';
-  if (text.includes('headless')) implementationApproach = 'Headless unstyled accessible primitives with full style customizability';
-  else if (text.includes('zero-runtime')) implementationApproach = 'Zero-runtime ahead-of-time compiled architecture';
-  else if (text.includes('canvas') || text.includes('webgl')) implementationApproach = 'Hardware-accelerated canvas/WebGL rendering pipeline';
-  else if (text.includes('declarative')) implementationApproach = 'Declarative state-driven reactive model';
-  else if (text.includes('compiler') || text.includes('rust')) implementationApproach = 'High-performance compiled native binary core';
-
-  // Usage scenarios
-  const likelyUsageScenarios: string[] = [
-    `Building production web applications requiring ${input.name}`,
-    `Integrating into modern ${lang || 'full-stack'} toolchains`,
-  ];
-  if (category === 'Design & UI') {
-    likelyUsageScenarios.push('Crafting cohesive, accessible design systems', 'Rapid prototyping of interactive user interfaces');
-  } else if (category === 'Video & Multimedia') {
-    likelyUsageScenarios.push('Programmatic video generation and web-based rendering', 'Building client-side media manipulation tools');
-  } else if (category === 'AI & Machine Learning') {
-    likelyUsageScenarios.push('Deploying agentic retrieval pipelines', 'Integrating LLM workflows into existing backend services');
-  }
+  let implementationApproach = 'Modular library';
+  if (/\bheadless\b/.test(haystack)) implementationApproach = 'Headless, unstyled primitives';
+  else if (/\bcli\b|command line|terminal/.test(haystack)) implementationApproach = 'Command-line tool';
+  else if (/self-hosted|docker/.test(haystack)) implementationApproach = 'Self-hostable application';
+  else if (/\bplugin\b|extension/.test(haystack)) implementationApproach = 'Plugin / extension';
+  else if (/framework/.test(haystack)) implementationApproach = 'Framework';
+  else if (/\bwasm\b|webassembly|native/.test(haystack)) implementationApproach = 'Compiled native core';
 
   return {
     technicalCategory: category,
     subcategories: subcategories.length > 0 ? subcategories : ['General'],
     functionalPurpose,
-    intendedAudience,
+    intendedAudience: matched?.rule.audience ?? 'Software engineers',
     supportedEnvironments,
     implementationApproach,
-    likelyUsageScenarios,
+    likelyUsageScenarios: subcategories.length > 0 ? subcategories.map((s) => `${s} for ${input.name}`) : [`Using ${input.name} in a ${input.primaryLanguage || 'software'} project`],
+    // Maturity is refined from GitHub timestamps by the caller.
     maturitySignals: {
       status: 'stable',
-      releaseCadence: 'Regular active updates',
-      hasAutomatedTests: true,
-      hasTypeDefinitions: ['typescript', 'rust', 'go'].includes(lang) || text.includes('typescript'),
+      releaseCadence: 'Unknown',
+      hasAutomatedTests: /\b(test|tests|ci|coverage)\b/.test(readme),
+      hasTypeDefinitions: ['typescript', 'rust', 'go', 'swift', 'kotlin'].includes(lang) || /typescript|typed/.test(haystack),
     },
-    evidenceConfidence: category !== 'Other / Unclassified' ? 0.92 : 0.45,
-    evidenceNotes,
+    evidenceConfidence: matched ? Math.min(0.95, 0.5 + matched.score * 0.06) : 0.3,
+    evidenceNotes: matched ? matched.evidence.slice(0, 6) : ['No strong category signals in topics or description'],
   };
 }

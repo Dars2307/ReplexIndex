@@ -1,24 +1,27 @@
-# Nexora Testing & Verification Guide (TESTING.md)
+# Testing
 
-## 1. Test Suite Architecture
-Nexora verifies application logic using Node 22's native test runner (`node:test` and `node:assert/strict`), coupled with Playwright headless browser automation for interactive DOM, responsiveness, and PWA verification.
-
-## 2. Running Unit Tests
 ```bash
-node --test src/engines/engines.test.ts
+npm test          # node:test suite (server/server.test.ts)
+npm run typecheck # TypeScript across src/, server/, api/
+npm run build     # production build
 ```
 
-### Verified Scenarios:
-1. **Classification Engine:** Validates deterministic multi-label categorization for Video & Multimedia, Design & UI, and AI & Machine Learning.
-2. **Compatibility Engine:** Validates confirmed matches, framework conflicts, and unknown evidence handling.
-3. **Agent Readiness Evaluator:** Validates transparent checklist score computation.
-4. **Search & Ranking:** Validates keyword query relevance, inferred category intent, and multi-signal facet calculation.
-5. **MCP Protocol Dispatcher:** Validates `search_repositories`, `compare_repositories`, and `explain_repository` JSON-RPC execution.
+The suite covers:
+- **Crypto** — API key format, hash-only storage, AES-GCM round-trip and tamper
+  detection, constant-time comparison.
+- **GitHub query builder** — qualifier injection, newline stripping, length caps,
+  `owner/repo` validation.
+- **Classifier** — security/reverse-engineering, AI, design; word-boundary
+  matching (no false positives from substrings).
+- **MCP protocol** — version negotiation, tool listing, JSON-RPC errors, tool
+  failures as `isError`, scope enforcement.
+- **HTTP** — health without secrets, 401 + `WWW-Authenticate` on MCP, 405 on GET,
+  anonymous account routes rejected, 413 for oversized bodies, JSON 404s.
 
-## 3. End-to-End & Visual Acceptance Verification
-- Desktop Viewport: 1440x900
-- Tablet Viewport: 768x1024
-- Mobile Viewport: 390x844
-- PWA manifest and service worker presence
-- In-app install button state reflection
-- Dark and Light theme contrast compliance
+Visual checks were done in the browser at desktop (1440px) and phone (375px)
+widths in both themes, including keyboard navigation of the sidebar, command
+palette and dialogs.
+
+Not automated yet: the signed-in flows against a live Supabase project (sign-in,
+collections, key creation, MCP with a real key) — verify these manually after
+configuring GitHub OAuth.

@@ -1,71 +1,91 @@
-# Replex — Discover. Understand. Connect.
+# Replex
 
-Agent-native software discovery and contextual intelligence infrastructure.
+**Find any repository. Hand it to your agents.**
 
----
+Replex searches every public GitHub repository live, surfaces what is rising right
+now, scores each project for how ready it is for AI coding agents, and gives
+Claude, Cursor and any MCP client a private, per-user line into your library.
 
-## What is Replex?
-Replex is a software discovery platform that indexes public software repositories, analyzes their operational purposes, evaluates compatibility against developer environments, and exposes this intelligence to both human developers and autonomous AI agents.
+- **Live discovery** — full GitHub search with language, topic, age and star filters; nothing is limited to a curated list.
+- **Ask AI** — describe what you need in plain English; Gemini searches GitHub several ways, confirms its own suggestions exist, and checks every result against your request.
+- **Rising & breakout** — new repositories ranked by stars this day/week/month, plus projects under 90 days old already past 1,000 stars.
+- **Agent readiness** — a transparent 0–100 score (licence, docs, install instructions, types, maintenance).
+- **Stack compatibility** — evidence-based fit against your stack (e.g. Next.js + TypeScript + Tailwind).
+- **Your library** — collections with notes, search history and pinned searches, synced to your account.
+- **Personal MCP server** — revocable API keys; agents search on your GitHub quota and read/write only your collections.
 
-## Key Capabilities
-- **Purpose Intelligence Engine:** Classifies tools into technical domains, functional purposes, supported runtimes, and implementation approaches.
-- **Compatibility Intelligence Engine:** Evaluates repository manifests against target environments (e.g. Next.js + TypeScript + Tailwind) with transparent evidence and conflict warnings.
-- **Agent Readiness Index:** Verifiable 0–100 score breaking down licensing, documentation completeness, static typing, and configuration complexity.
-- **Side-by-Side Compare Workspace:** Direct matrix comparison of 2 to 4 tools with markdown export.
-- **Visual Spatial Graph:** Interactive SVG relationship graph mapping alternatives, ecosystems, and complementary tools.
-- **Model Context Protocol (MCP) Server:** Native JSON-RPC 2.0 endpoint at `/api/v1/mcp` for Claude, Cursor, and autonomous agent integration.
-- **Live GitHub Ingestion:** Ingest any public GitHub repository on demand via official APIs.
-- **Progressive Web App (PWA):** Installable standalone app with offline support and iOS Safari guidance.
+## Stack
 
----
+| Layer | Technology |
+|---|---|
+| Web | React 19, Vite 8, Tailwind CSS v4, Motion, Geist fonts |
+| API | Express on a single Vercel function (`server/vercel-entry.ts` → `server/app.ts`) |
+| Data & auth | Supabase — Postgres schema `replex` with row-level security; GitHub OAuth |
+| GitHub | REST search/repos API with each user's own token, Postgres-backed cache |
+| Agents | Model Context Protocol, Streamable HTTP (stateless JSON) at `/api/mcp` |
 
-## Quickstart
+## Local development
 
 ```bash
-# 1. Install dependencies
 npm install
-
-# 2. Run unit tests
-node --test src/engines/engines.test.ts
-
-# 3. Start development server (Full-stack Express + Vite on port 3000)
-npm run dev
-
-# 4. Build for production
-npm run build
-npm start
+cp .env.example .env.local   # then fill in the values (see below)
+npm run dev                  # http://localhost:3000
 ```
 
----
+Discovery works without any keys. Accounts need Supabase (below).
 
-## MCP Server Configuration
-To connect external AI coding agents, add to your MCP client configuration:
-```json
-{
-  "mcpServers": {
-    "replex": {
-      "url": "http://localhost:3000/api/v1/mcp"
-    }
-  }
-}
+### Environment
+
+| Variable | Where | Purpose |
+|---|---|---|
+| `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY` | browser | Supabase project URL and publishable key |
+| `SUPABASE_URL`, `SUPABASE_SECRET_KEY` | server only | Supabase secret key (`sb_secret_…`; legacy `SUPABASE_SERVICE_ROLE_KEY` also accepted) for keys, MCP and caching |
+| `TOKEN_ENCRYPTION_KEY` | server only | 32 random bytes (base64); encrypts users' GitHub tokens at rest |
+| `GITHUB_TOKEN` | server only, optional | fallback token for signed-out visitors |
+| `GEMINI_API_KEY` | server only, optional | enables AI smart search (Search → Ask AI) |
+| `APP_URL` | server | public URL; pins CORS for account routes |
+
+### Supabase setup
+
+Replex lives in its own `replex` schema so it can share a project with other apps.
+
+1. Run `supabase/migrations/20261022000000_replex_schema.sql` in the SQL editor.
+2. Data API → Exposed schemas: add `replex` (keep existing entries).
+3. Create a GitHub OAuth App with callback `https://<project-ref>.supabase.co/auth/v1/callback`, then enable the GitHub provider in Authentication → Sign In / Providers.
+4. Authentication → URL Configuration: add your app URLs (e.g. `http://localhost:3000/**`, `https://<your-domain>/**`).
+5. Optional: paste the branded templates from `supabase/templates/` into Authentication → Emails (`npm run emails` regenerates them).
+
+## Scripts
+
+| Command | |
+|---|---|
+| `npm run dev` | API + Vite dev server with reload |
+| `npm test` | server, crypto, classifier and MCP protocol tests |
+| `npm run typecheck` | TypeScript, no emit |
+| `npm run build` | production SPA in `dist/` |
+| `npm run vercel-build` | SPA + bundled API function in `.vercel/output` (Vercel Build Output API) |
+| `npm start` | serve `dist/` and the API locally |
+
+## Deploying to Vercel
+
+Import the repository, keep the defaults from `vercel.json`, add the environment
+variables above (Production + Preview), and deploy. Then add the deployment URL to
+Supabase's redirect URLs and to the GitHub OAuth App's homepage URL.
+
+## Connecting an agent
+
+Create a key under **Agents & MCP**, then for Claude Code:
+
+```bash
+claude mcp add --transport http replex https://<your-domain>/api/mcp --header "Authorization: Bearer rpx_..."
 ```
 
----
+See [docs/MCP.md](docs/MCP.md) for every client and tool.
 
-## Storage & Database
+## Docs
 
-> **Note:** The application currently uses in-memory storage — all data resets when the server restarts. The `packages/database/schema.ts` file describes the planned persistent schema (PostgreSQL via Drizzle ORM) but is not yet wired up. To enable persistence, install `drizzle-orm` and `pg`, provision a PostgreSQL database, and wire the schema to a database client.
+[Architecture](docs/ARCHITECTURE.md) · [API](docs/API.md) · [MCP](docs/MCP.md) · [Security](docs/SECURITY.md) · [Design](docs/DESIGN.md) · [Operations](docs/OPERATIONS.md) · [Testing](docs/TESTING.md) · [Roadmap](docs/ROADMAP.md)
 
----
+## License
 
-## Documentation Index
-- [Product Definition](PRODUCT.md)
-- [System Architecture](docs/ARCHITECTURE.md)
-- [Design System & Precision Atlas](docs/DESIGN.md)
-- [Component Research & Provenance](docs/COMPONENT_RESEARCH.md)
-- [REST API Specification](docs/API.md)
-- [Model Context Protocol Guide](docs/MCP.md)
-- [Security & Threat Model](docs/SECURITY.md)
-- [Operations & Deployment](docs/OPERATIONS.md)
-- [Testing & Verification](docs/TESTING.md)
-- [Product Roadmap](docs/ROADMAP.md)
+MIT — see [LICENSE](LICENSE).
