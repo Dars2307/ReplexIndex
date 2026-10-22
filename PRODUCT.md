@@ -1,20 +1,19 @@
-# Nexora — Product Definition (PRODUCT.md)
+# Replex — Product definition
 
-**Product Name:** Nexora  
-**Tagline:** Discover. Understand. Connect.  
-**Category:** Agent-Native Software Discovery & Contextual Intelligence Infrastructure
+**Tagline:** Find any repository. Hand it to your agents.
 
----
+Replex helps developers and their AI coding agents answer one question quickly:
+*what existing open-source project solves this, is it healthy, and will it fit my
+stack?*
 
-## 1. Executive Summary
-Nexora discovers public software repositories, tools, design resources, and development frameworks, stores lightweight descriptive metadata, classifies resources by their purposes and capabilities, and makes that intelligence searchable through human interfaces, REST APIs, and Model Context Protocol (MCP) tools.
+## Who it's for
+- Developers scouting libraries, tools and new projects — including niche areas
+  like reverse engineering, security, AI agents and design systems.
+- AI coding agents that need grounded, up-to-date answers about dependencies,
+  through the user's own MCP connection.
 
-Nexora answers:
-> "What existing software, framework, component or tool can solve my problem, why is it relevant, how does it work, and is it compatible with what I am building?"
-
-## 2. Core Value Propositions
-1. **Purpose Intelligence:** Understand what a tool accomplishes, its intended audience, supported runtimes, and implementation approach—not just keyword frequency.
-2. **Compatibility Intelligence:** Grounded evaluation of whether a resource works with the user's specific stack (e.g. Next.js + TypeScript + Tailwind), exposing confirmed matches, conflicts, and missing evidence.
-3. **Agent Readiness:** Transparent 0–100 index assessing licensing clarity, documentation availability, type definitions, and automated install instructions for autonomous coding agents.
-4. **First-Class Agent Gateway:** Official Model Context Protocol (MCP) tools allowing AI agents to query the catalog natively via structured JSON-RPC.
-5. **Precision Atlas Design:** High-density, WCAG AA compliant dark/light interface built with zero-pill discipline and tabular figures.
+## Core value
+1. **Coverage** — all public GitHub repositories, searched live.
+2. **Momentum** — what's rising this week and what broke out in the last 90 days.
+3. **Judgement** — transparent agent-readiness and stack-compatibility evidence.
+4. **Memory** — collections, notes and history that the user's agents can use.

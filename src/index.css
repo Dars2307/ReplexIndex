@@ -1,136 +1,255 @@
 @import "tailwindcss";
+@import "@fontsource-variable/geist";
+@import "@fontsource-variable/geist-mono";
 
-@theme {
-  --color-canvas: var(--canvas);
-  --color-surface-1: var(--surface-1);
-  --color-surface-2: var(--surface-2);
-  --color-surface-raised: var(--surface-raised);
-  --color-border-subtle: var(--border-subtle);
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * Replex design tokens. Neutral surfaces tinted toward hue 270, one iris
+ * accent. Contrast ratios (WCAG 2.x) were computed for every text token on
+ * every surface it is used on; see docs/DESIGN.md.
+ */
+:root {
+  color-scheme: light;
+  --bg: oklch(0.99 0.002 270);
+  --surface: oklch(1 0 0);
+  --elevated: oklch(1 0 0);
+  --muted: oklch(0.965 0.004 270);
+  --muted-strong: oklch(0.935 0.006 270);
+  --fg: oklch(0.18 0.008 270);
+  --fg-muted: oklch(0.47 0.014 270);
+  --fg-subtle: oklch(0.535 0.014 270);
+  --border: oklch(0.915 0.005 270);
+  --border-strong: oklch(0.86 0.007 270);
+  --input: oklch(0.64 0.012 270);
+  --primary: oklch(0.2 0.008 270);
+  --primary-fg: oklch(0.985 0.002 270);
+  --accent: oklch(0.52 0.2 275);
+  --accent-fg: oklch(0.99 0.004 275);
+  --link: oklch(0.5 0.2 275);
+  --success: oklch(0.52 0.115 155);
+  --warning: oklch(0.55 0.12 65);
+  --danger: oklch(0.55 0.2 25);
+  --ring: oklch(0.52 0.2 275);
+  --shadow-sm: 0 1px 2px oklch(0 0 0 / 5%);
+  --shadow-md: 0 1px 2px oklch(0 0 0 / 6%), 0 4px 12px oklch(0 0 0 / 6%);
+  --shadow-lg: 0 2px 4px oklch(0 0 0 / 6%), 0 16px 40px oklch(0 0 0 / 12%);
+  --highlight: transparent;
+  --scrim: oklch(0.15 0.01 270 / 45%);
+}
+
+.dark {
+  color-scheme: dark;
+  --bg: oklch(0.145 0.005 270);
+  --surface: oklch(0.175 0.006 270);
+  --elevated: oklch(0.205 0.007 270);
+  --muted: oklch(0.235 0.007 270);
+  --muted-strong: oklch(0.27 0.008 270);
+  --fg: oklch(0.965 0.003 270);
+  --fg-muted: oklch(0.72 0.012 270);
+  --fg-subtle: oklch(0.62 0.012 270);
+  --border: oklch(1 0 0 / 9%);
+  --border-strong: oklch(1 0 0 / 15%);
+  --input: oklch(0.52 0.012 270);
+  --primary: oklch(0.965 0.003 270);
+  --primary-fg: oklch(0.17 0.006 270);
+  --accent: oklch(0.7 0.15 275);
+  --accent-fg: oklch(0.16 0.03 275);
+  --link: oklch(0.78 0.105 275);
+  --success: oklch(0.75 0.15 155);
+  --warning: oklch(0.82 0.15 80);
+  --danger: oklch(0.7 0.18 25);
+  --ring: oklch(0.7 0.15 275);
+  --shadow-sm: 0 0 0 transparent;
+  --shadow-md: 0 1px 2px oklch(0 0 0 / 30%);
+  --shadow-lg: 0 16px 48px oklch(0 0 0 / 50%);
+  --highlight: oklch(1 0 0 / 6%);
+  --scrim: oklch(0.08 0.005 270 / 70%);
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --fg-muted: oklch(0.38 0.014 270);
+    --fg-subtle: oklch(0.42 0.014 270);
+    --border: oklch(0.75 0.008 270);
+    --border-strong: oklch(0.6 0.01 270);
+  }
+  .dark {
+    --fg-muted: oklch(0.85 0.01 270);
+    --fg-subtle: oklch(0.78 0.01 270);
+    --border: oklch(1 0 0 / 28%);
+    --border-strong: oklch(1 0 0 / 40%);
+  }
+}
+
+@theme inline {
+  --font-sans: 'Geist Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'Geist Mono Variable', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-elevated: var(--elevated);
+  --color-muted: var(--muted);
+  --color-muted-strong: var(--muted-strong);
+  --color-fg: var(--fg);
+  --color-fg-muted: var(--fg-muted);
+  --color-fg-subtle: var(--fg-subtle);
+  --color-border: var(--border);
   --color-border-strong: var(--border-strong);
-  --color-text-primary: var(--text-primary);
-  --color-text-secondary: var(--text-secondary);
-  --color-text-muted: var(--text-muted);
+  --color-input: var(--input);
+  --color-primary: var(--primary);
+  --color-primary-fg: var(--primary-fg);
   --color-accent: var(--accent);
-  --color-accent-hover: var(--accent-hover);
-  --color-focus: var(--focus);
+  --color-accent-fg: var(--accent-fg);
+  --color-link: var(--link);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-ring: var(--ring);
+  --color-scrim: var(--scrim);
 
-  --font-sans: 'DM Sans', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-display: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
 }
 
 @layer base {
-  :root, html.dark {
-    --canvas: #090E16;
-    --surface-1: #111827;
-    --surface-2: #172032;
-    --surface-raised: #1E2D44;
-    --border-subtle: #1C2B3A;
-    --border-strong: #283D56;
-    --text-primary: #F0F5FA;
-    --text-secondary: #9DB3C5;
-    --text-muted: #6A7E90;
-    --accent: #4DD9C8;
-    --accent-hover: #6EE7D8;
-    --focus: #92E5DC;
-    --accent-glow: rgba(77, 217, 200, 0.15);
-    --danger: #F87171;
-    --warning: #FBBF24;
-    --success: #34D399;
-    color-scheme: dark;
+  * {
+    border-color: var(--border);
   }
 
-  html.light {
-    --canvas: #F6F9FC;
-    --surface-1: #FFFFFF;
-    --surface-2: #EFF4F9;
-    --surface-raised: #E1EAF3;
-    --border-subtle: #C8D8E8;
-    --border-strong: #90A8BE;
-    --text-primary: #0E1A2B;
-    --text-secondary: #3D546A;
-    --text-muted: #5C7080;
-    --accent: #0D9488;
-    --accent-hover: #0F766E;
-    --focus: #14B8A6;
-    --accent-glow: rgba(13, 148, 136, 0.12);
-    --danger: #DC2626;
-    --warning: #D97706;
-    --success: #16A34A;
-    color-scheme: light;
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
   }
 
   body {
+    background: var(--bg);
+    color: var(--fg);
     font-family: var(--font-sans);
-    background-color: var(--canvas);
-    color: var(--text-primary);
-    transition: background-color 0.2s ease, color 0.2s ease;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-feature-settings: 'ss01', 'cv11';
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
-  h1, h2, h3, h4, h5, h6, .font-display {
-    font-family: var(--font-display);
-    letter-spacing: -0.01em;
+  h1, h2, h3 {
+    text-wrap: balance;
+    letter-spacing: -0.015em;
   }
 
-  code, pre, .font-mono {
-    font-family: var(--font-mono);
+  p {
+    text-wrap: pretty;
   }
 
-  /* Improve focus visibility */
+  ::selection {
+    background: color-mix(in oklch, var(--accent) 28%, transparent);
+  }
+
   :focus-visible {
-    outline: 2px solid var(--accent);
+    outline: 2px solid var(--ring);
     outline-offset: 2px;
+    border-radius: 4px;
   }
 
-  /* Input base styles */
-  input, textarea, select {
-    color-scheme: inherit;
+  input, textarea, select, button {
+    font: inherit;
+  }
+
+  select {
+    background-color: var(--surface);
+    color: var(--fg);
+  }
+
+  /* Mobile Safari zooms inputs under 16px. */
+  @media (max-width: 767px) {
+    input, textarea, select {
+      font-size: 16px;
+    }
   }
 }
 
-/* Replex brand accent glow utility */
-.nexora-glow {
-  box-shadow: 0 0 20px var(--accent-glow), 0 0 40px rgba(77, 217, 200, 0.06);
+@layer utilities {
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+  .surface-highlight {
+    box-shadow: inset 0 1px 0 var(--highlight);
+  }
+  .soft-accent {
+    background: color-mix(in oklch, var(--accent) 12%, transparent);
+    color: var(--link);
+  }
+  .soft-success {
+    background: color-mix(in oklch, var(--success) 14%, transparent);
+    color: var(--success);
+  }
+  .soft-warning {
+    background: color-mix(in oklch, var(--warning) 16%, transparent);
+    color: var(--warning);
+  }
+  .soft-danger {
+    background: color-mix(in oklch, var(--danger) 14%, transparent);
+    color: var(--danger);
+  }
+  .glass {
+    background: color-mix(in oklch, var(--bg) 78%, transparent);
+    backdrop-filter: saturate(1.6) blur(12px);
+    -webkit-backdrop-filter: saturate(1.6) blur(12px);
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    .glass {
+      background: var(--bg);
+      backdrop-filter: none;
+    }
+  }
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: var(--muted-strong) transparent;
+  }
+  .hero-grid {
+    background-image:
+      linear-gradient(to right, var(--border) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, black 30%, transparent 80%);
+    opacity: 0.6;
+  }
+  .dark .hero-grid {
+    opacity: 1;
+  }
+  .accent-glow {
+    background: radial-gradient(ellipse 60% 50% at 50% 0%, color-mix(in oklch, var(--accent) 22%, transparent), transparent 70%);
+  }
 }
 
-.nexora-text-gradient {
-  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 50%, #67e8f9 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
-/* Custom scrollbars */
-::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+@keyframes shimmer {
+  from { background-position: -200% 0; }
+  to { background-position: 200% 0; }
 }
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--surface-raised);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--border-strong);
-}
-
-/* Smooth transitions for theme switching */
-*, *::before, *::after {
-  transition-property: background-color, border-color, color, fill, stroke;
-  transition-timing-function: ease;
-  transition-duration: 150ms;
-}
-
-/* Exclude transform/opacity from blanket transition to avoid janky animations */
-button, a, [role="button"] {
-  transition-property: background-color, border-color, color, fill, stroke, box-shadow, transform, opacity;
-  transition-timing-function: ease;
-  transition-duration: 150ms;
+.skeleton {
+  background: linear-gradient(90deg, var(--muted) 25%, var(--muted-strong) 50%, var(--muted) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s linear infinite;
+  border-radius: 6px;
 }

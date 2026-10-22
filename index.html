@@ -1,30 +1,38 @@
 <!doctype html>
-<html lang="en" class="dark">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Replex — Agent Intelligence Platform</title>
-    <meta name="description" content="Replex is the agent intelligence platform for discovering, evaluating, and connecting open-source tools. Built for human developers and autonomous AI agents with MCP-native tooling." />
-    <meta property="og:title" content="Replex — Agent Intelligence Platform" />
-    <meta property="og:description" content="Replex is the agent intelligence platform for discovering, evaluating, and connecting open-source tools. Built for human developers and autonomous AI agents with MCP-native tooling." />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Replex — Find any repository. Hand it to your agents.</title>
+    <meta name="description" content="Replex searches every public GitHub repository live, surfaces what is rising right now, scores how ready each project is for AI coding agents, and connects your library to Claude, Cursor and any MCP client." />
+    <meta property="og:title" content="Replex — Find any repository. Hand it to your agents." />
+    <meta property="og:description" content="Live GitHub discovery, trending and breakout repositories, agent-readiness scores, and a personal MCP server for your coding agents." />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="theme-color" content="#0B1018" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#fcfcfd" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f1013" />
+    <meta name="color-scheme" content="dark light" />
     <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="Replex" />
     <link rel="manifest" href="/manifest.json" />
     <link rel="icon" type="image/svg+xml" href="/icon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <!-- Typography: Plus Jakarta Sans (Display), DM Sans (Body), JetBrains Mono (Data/Code) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..700&family=JetBrains+Mono:ital,wght@0,400..700;1,400..700&family=Plus+Jakarta+Sans:ital,wght@0,400..800;1,400..800&display=swap" rel="stylesheet">
+    <script>
+      // Resolve the theme before first paint to avoid a flash.
+      (function () {
+        try {
+          var pref = localStorage.getItem('replex-theme') || 'system';
+          var dark = pref === 'dark' || (pref === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
+          document.documentElement.classList.toggle('dark', dark);
+        } catch (e) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
   </head>
-  <body class="bg-[#0B1018] text-[#F2F6FA] antialiased selection:bg-[#52D5C5]/20 selection:text-[#52D5C5]">
+  <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
-

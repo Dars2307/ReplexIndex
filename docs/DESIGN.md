@@ -1,46 +1,51 @@
-# Nexora — Precision Atlas Design System (DESIGN.md)
+# Design system
 
-## 1. Design Philosophy
-**Nexora — Precision Atlas** combines editorial clarity, software research tools, spatial topology, and a premium developer workspace. The interface avoids generic "AI slop" aesthetics in favor of high-density technical utility.
+Direction: a neutral, high-density developer tool with one accent — borders
+over shadows, tabular numbers, keyboard-first. References: Apple Human Interface
+Guidelines (contrast, dark-mode elevation, reduced motion, hit targets), Vercel's
+Web Interface Guidelines and Geist, shadcn/ui tokens and the sidebar-07 shell,
+and the restraint of Linear, Raycast and Supabase.
 
-## 2. Core Visual Invariants & Anti-Slop Rules
-1. **Zero-Pill Metadata Discipline:** Metadata (categories, languages, licenses, timestamps) must be rendered as clean, unboxed text separated by subtle typographic dots (`·`) or slashes (`/`). Bordered pills or colored capsules are reserved strictly for interactive clickable buttons or filter tabs.
-2. **Top Bar Contract:** Exactly three zones separated by `gap-8`:
-   - Zone 1: Brand title wordmark, single line
-   - Zone 2: 4–5 single-line navigation links (`whitespace-nowrap shrink-0`)
-   - Zone 3: 1 primary action or tool group (PWA Install, Ingestion, Theme, Settings)
-3. **No Fake Mechanical Clutter:** No `// 01` comment headers, no fake version tags ("SYNTHEX v4.8"), no decorative status dots pulsing next to static headlines, and no fabricated telemetry tickers.
-4. **No Hallucinated Scoreboards:** Agent Readiness is presented as a transparent, checklist-backed calculation with verifiable facts, not an arbitrary 0-100 vanity score.
-5. **Mobile Sticky Cap $\le 15\%$:** Bottom navigation and fixed bars are kept ultra-compact ($\le 56\text{px}$) with touch targets $\ge 44\text{px}$.
+## Tokens (`src/index.css`)
+Neutral surfaces tinted toward hue 270 with an iris accent (hue 275), defined in
+oklch for light (`:root`) and dark (`.dark`). Contrast was computed (WCAG 2.x):
 
-## 3. Color Palette Tokens
+| Token | Dark | Light | Ratio on bg |
+|---|---|---|---|
+| `--fg` | 0.965 0.003 270 | 0.18 0.008 270 | ≈18:1 |
+| `--fg-muted` | 0.72 0.012 270 | 0.47 0.014 270 | ≥5.8:1 |
+| `--fg-subtle` | 0.62 0.012 270 | 0.535 0.014 270 | ≥4.6:1 |
+| `--accent` | 0.70 0.15 275 | 0.52 0.20 275 | ≥5.7:1 with its fg |
+| `--input` (borders) | 0.52 0.012 270 | 0.64 0.012 270 | ≥3:1 (WCAG 1.4.11) |
 
-### Dark Theme (Default)
-- **Canvas:** `#0B1018`
-- **Primary Surface (Surface 1):** `#131B27`
-- **Secondary Surface (Surface 2):** `#1A2533`
-- **Raised Surface:** `#223044`
-- **Subtle Border:** `#1E2B3C`
-- **Strong Border:** `#2D3E54`
-- **Primary Text:** `#F2F6FA`
-- **Secondary Text:** `#A4B3C3`
-- **Muted Text:** `#718296`
-- **Accent (Teal Cyan):** `#52D5C5`
-- **Accent Hover:** `#75E5D7`
-- **Success:** `#34D399`
-- **Warning:** `#FBBF24`
-- **Conflict / Danger:** `#F87171`
+`prefers-contrast: more` raises muted text and borders; `prefers-reduced-transparency`
+removes glass blur.
 
-### Light Theme
-- **Canvas:** `#F5F7F8`
-- **Primary Surface:** `#FFFFFF`
-- **Secondary Surface:** `#EAF0F2`
-- **Primary Text:** `#16232C`
-- **Muted Text:** `#526471`
-- **Accent:** `#0D9488`
+## Type
+Geist (UI) and Geist Mono (code, slugs, numbers), self-hosted via Fontsource.
+Scale: 12 / 13 / 14 (body) / 16 / 20 / 24 / 32, marketing 48–60. Weights 400/500/600.
+Counts use `tabular-nums`. Mobile inputs are 16px to prevent zoom.
 
-## 4. Typography Scale & Tabular Discipline
-- **Display / Brand:** *Plus Jakarta Sans* (Weight: 700–800)
-- **Body & Controls:** *DM Sans* (Weight: 400–600, Line-height: 1.5–1.6)
-- **Data, Telemetry & Code:** *JetBrains Mono* (`font-mono tabular-nums`)
-- All numbers, star counts, dates, and scores use tabular numerals to prevent layout jitter.
+## Shape, space, elevation
+Radius 4 (badges) · 6 (controls) · 10 (cards) · 12 (dialogs) · 16 (sheets).
+4px spacing grid; controls 28/32/40px tall and at least 44px on touch devices.
+Dark mode elevates with lighter surfaces and a 1px top highlight; light mode uses a
+hairline border plus a two-layer soft shadow.
+
+## Motion
+Motion (`motion/react`): 120 ms micro, 160–200 ms menus/popovers (ease-out
+`0.22,1,0.36,1`), spring `{stiffness 420, damping 34}` for dialogs and toasts,
+exits faster than entries. Transform/opacity only. Respects
+`prefers-reduced-motion` and a per-account "Reduce motion" setting.
+
+## Accessibility checklist
+Skip link · landmarks · focus moves to the page heading on navigation ·
+visible `:focus-visible` rings · focus-trapped dialogs that restore focus ·
+keyboard menus (arrows/Home/End/Esc) · combobox semantics in the command palette ·
+polite live region for toasts · icon buttons always labelled · colour never the
+only signal (icons + text for status) · `translate="no"` on repository names and
+code.
+
+## Effects used deliberately
+A masked grid and soft accent glow on the landing hero only. No looping effects
+inside the app.

@@ -1,55 +1,27 @@
-# Nexora REST API Documentation (API.md)
+# REST API
 
-Base URL: `http://localhost:3000/api/v1`
+Base path: `/api`. Authentication is a bearer token — either a Supabase session
+JWT (web app) or a personal API key `rpx_…`. Errors are JSON:
+`{ "error": "message", "code": "machine_code" }`.
 
-## Endpoints Summary
+| Method | Path | Auth | Description |
+|---|---|---|---|
+| GET | `/api/health` | — | Service status and configuration flags (no secrets) |
+| GET | `/api/v1/discover/search` | optional | Live GitHub search. Query: `q`, `language`, `topic`, `sort` (`stars`/`updated`/`forks`), `created` (days), `pushed` (days), `minStars`, `page` (≤10), `perPage` (≤50). Signed-in searches are added to history. |
+| GET | `/api/v1/discover/trending` | optional | `{ rising, breakout }`. Query: `window` (`day`/`week`/`month`), `language`, `topic` |
+| GET | `/api/v1/repos/:owner/:repo` | optional | Repository with purpose, readiness, latest release, README extract; `compatibility` for `?stack=` or the profile stack |
+| POST | `/api/v1/compare` | optional | Body `{ fullNames: string[2..4], targetStack? }` |
+| POST | `/api/v1/me/bootstrap` | session | Create the caller's Replex profile on first sign-in |
+| POST | `/api/v1/me/github-token` | session | Body `{ providerToken }`; verified against the user's GitHub login, stored encrypted |
+| POST | `/api/v1/me/keys` | session | Body `{ name }` → `{ key, record }`. The raw key is returned once; max 10 active |
+| DELETE | `/api/v1/me/keys/:id` | session | Revoke a key |
+| DELETE | `/api/v1/me/data` | session | Delete all Replex data for the caller |
+| GET | `/api/v1/mcp/tools` | — | Public list of MCP tools |
+| POST | `/api/mcp`, `/api/v1/mcp` | API key | MCP Streamable HTTP endpoint — see [MCP.md](MCP.md) |
 
-### 1. Search Repositories
-`GET /api/v1/search`
-Query Parameters:
-- `q` (string): Natural language search query or keywords
-- `category` (string, optional): Domain category
-- `language` (string, optional): Programming language
-- `framework` (string, optional): Framework filter
-- `license` (string, optional): SPDX license identifier
-- `minStars` (number, optional): Minimum stars filter
-- `userStack` (string, optional): Target stack for compatibility evaluation
-- `sortBy` (string, optional): `relevance` | `stars` | `freshness` | `readiness`
-- `page` (number, optional): Page number (default: 1)
-- `limit` (number, optional): Limit per page (default: 12)
+## Limits
 
-Example Request:
-```bash
-curl -X GET "http://localhost:3000/api/v1/search?q=video&userStack=React%20%2B%20TypeScript"
-```
-
-### 2. Get Repository Intelligence
-`GET /api/v1/repositories/:owner/:repo`
-Returns complete repository metadata, purpose classification, and agent readiness.
-
-### 3. Evaluate Compatibility
-`GET /api/v1/repositories/:owner/:repo/compatibility?stack=Next.js%20%2B%20TypeScript%20%2B%20Tailwind`
-Returns compatibility status (`confirmed_match`, `potential_match`, `conflict`, `unknown`), supporting evidence, and caveats.
-
-### 4. Side-by-Side Comparison
-`POST /api/v1/compare`
-Payload:
-```json
-{
-  "ids": ["remotion-dev/remotion", "ffmpegwasm/ffmpeg.wasm"],
-  "targetStack": "React + TypeScript"
-}
-```
-
-### 5. Ingest GitHub Repository On-Demand
-`POST /api/v1/ingest`
-Payload:
-```json
-{
-  "repoQuery": "tailwindlabs/tailwindcss"
-}
-```
-
-### 6. System Status & Telemetry
-`GET /api/v1/system/status`
-Returns service uptime, total indexed count, classification coverage rate, and GitHub API rate-limit remaining.
+- Request bodies: 64 KB.
+- API keys: 60 calls per minute per key (HTTP 429 beyond).
+- GitHub: results are capped at 1,000 per query by GitHub; rate-limit errors come
+  back as HTTP 429 with the reset time.
