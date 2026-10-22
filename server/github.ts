@@ -3,7 +3,7 @@ import { classifyRepository } from '../src/engines/classification.ts';
 import { evaluateAgentReadiness } from '../src/engines/readiness.ts';
 import { canEncrypt, decryptSecret, sha256 } from './crypto.ts';
 import { env } from './env.ts';
-import { getAdmin, HttpError } from './supabase.ts';
+import { background, getAdmin, HttpError } from './supabase.ts';
 
 const USER_AGENT = 'Replex/1.0 (+https://github.com/Dars2307/ReplexIndex)';
 const FULL_NAME = /^[A-Za-z0-9_.-]{1,100}\/[A-Za-z0-9_.-]{1,100}$/;
@@ -48,7 +48,7 @@ async function cacheSet(key: string, payload: unknown, ttlSeconds: number): Prom
   const admin = getAdmin();
   if (!admin) return;
   // The database is shared with other apps: occasionally drop expired rows.
-  if (Math.random() < 0.02) void admin.rpc('purge_expired');
+  if (Math.random() < 0.02) background(admin.rpc('purge_expired'), 'cache purge');
   await admin
     .from('github_cache')
     .upsert({ cache_key: key, payload, fetched_at: new Date().toISOString(), expires_at: new Date(expires).toISOString() });
@@ -235,7 +235,7 @@ function indexRepositories(repos: Repository[]): void {
     data: r,
     indexed_at: new Date().toISOString(),
   }));
-  void admin.from('repos').upsert(rows, { onConflict: 'full_name' });
+  background(admin.from('repos').upsert(rows, { onConflict: 'full_name' }), 'repository index');
 }
 
 // ---------------------------------------------------------------------------

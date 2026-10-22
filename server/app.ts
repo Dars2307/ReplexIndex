@@ -117,7 +117,7 @@ app.get(
     };
     const result = await searchGithub(query, await githubTokenFor(req.caller?.userId));
     if (req.caller && query.q && (query.page ?? 1) === 1) {
-      void recordSearch(req.caller.userId, query.q, { ...query, page: undefined, perPage: undefined }, req.caller.via === 'session' ? 'web' : 'api', result.total);
+      recordSearch(req.caller.userId, query.q, { ...query, page: undefined, perPage: undefined }, req.caller.via === 'session' ? 'web' : 'api', result.total);
     }
     res.setHeader('Cache-Control', req.caller ? 'private, no-store' : 'public, s-maxage=300, stale-while-revalidate=600');
     res.json(result);

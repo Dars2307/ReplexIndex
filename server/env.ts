@@ -8,7 +8,8 @@ const real = (v?: string) => (v && v.trim() && !isPlaceholder(v) ? v.trim() : ''
 // Local development: .env.local, then .env. Real environment variables (Vercel)
 // always win, and a placeholder in one file never hides a real value in the
 // other. On Vercel these files don't exist.
-for (const file of ['.env.local', '.env']) {
+// Tests run with NODE_ENV=test and must never pick up real local credentials.
+for (const file of process.env.NODE_ENV === 'test' ? [] : ['.env.local', '.env']) {
   if (!existsSync(file)) continue;
   for (const [key, value] of Object.entries(parse(readFileSync(file)))) {
     const current = process.env[key];

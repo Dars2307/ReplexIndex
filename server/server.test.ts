@@ -3,8 +3,12 @@ import { randomBytes } from 'node:crypto';
 import type { AddressInfo } from 'node:net';
 import { after, before, describe, test } from 'node:test';
 
-// Configure before importing modules that read env at load time.
+// Configure before importing modules that read env at load time. NODE_ENV=test
+// stops server/env.ts from loading .env.local, so tests never reach live data.
+process.env.NODE_ENV = 'test';
 process.env.TOKEN_ENCRYPTION_KEY = randomBytes(32).toString('base64');
+delete process.env.SUPABASE_SECRET_KEY;
+delete process.env.GITHUB_TOKEN;
 delete process.env.SUPABASE_URL;
 delete process.env.VITE_SUPABASE_URL;
 delete process.env.SUPABASE_SERVICE_ROLE_KEY;

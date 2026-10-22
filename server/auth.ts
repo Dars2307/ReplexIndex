@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
 import { looksLikeApiKey, sha256 } from './crypto.ts';
-import { getAdmin, HttpError, requireAdmin } from './supabase.ts';
+import { background, getAdmin, HttpError, requireAdmin } from './supabase.ts';
 
 export interface Caller {
   userId: string;
@@ -48,7 +48,7 @@ async function callerFromApiKey(raw: string): Promise<Caller> {
 
   // Throttle last_used_at writes to once a minute per key.
   if (!data.last_used_at || Date.parse(data.last_used_at) < Date.now() - 60_000) {
-    void admin.from('api_keys').update({ last_used_at: new Date().toISOString() }).eq('id', data.id);
+    background(admin.from('api_keys').update({ last_used_at: new Date().toISOString() }).eq('id', data.id), 'api key last_used_at');
   }
   return { userId: data.user_id, via: 'api_key', apiKeyId: data.id, scopes: data.scopes ?? [] };
 }

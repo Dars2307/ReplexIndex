@@ -1,5 +1,5 @@
 import type { Repository } from '../src/types/index.ts';
-import { HttpError, requireAdmin, getAdmin } from './supabase.ts';
+import { background, HttpError, requireAdmin, getAdmin } from './supabase.ts';
 
 // All functions use the service-role client, so each query is explicitly
 // scoped to userId. Never accept a user id from request input.
@@ -22,16 +22,20 @@ export function summarizeRepository(r: Repository) {
   };
 }
 
-export async function recordSearch(
+/** Adds a search to the user's history in the background (doesn't delay the response). */
+export function recordSearch(
   userId: string,
   query: string,
   filters: Record<string, unknown>,
   source: 'web' | 'mcp' | 'api',
   resultCount: number,
-): Promise<void> {
+): void {
   const admin = getAdmin();
   if (!admin) return;
-  await admin.from('searches').insert({ user_id: userId, query: query.slice(0, 500), filters, source, result_count: resultCount });
+  background(
+    admin.from('searches').insert({ user_id: userId, query: query.slice(0, 500), filters, source, result_count: resultCount }),
+    'search history',
+  );
 }
 
 export async function recentSearches(userId: string, limit = 10) {
@@ -133,22 +137,23 @@ export async function targetStackFor(userId: string): Promise<string> {
   return data?.target_stack || '';
 }
 
-export async function logAgentEvent(event: {
+/** Logs an agent call in the background (doesn't delay the response). */
+export function logAgentEvent(event: {
   userId: string;
   apiKeyId?: string;
   method: string;
   tool?: string;
   ok: boolean;
   durationMs: number;
-}): Promise<void> {
+}): void {
   const admin = getAdmin();
   if (!admin) return;
-  await admin.from('agent_events').insert({
+  background(admin.from('agent_events').insert({
     user_id: event.userId,
     api_key_id: event.apiKeyId ?? null,
     method: event.method,
     tool: event.tool ?? null,
     ok: event.ok,
     duration_ms: event.durationMs,
-  });
+  }), 'agent activity log');
 }

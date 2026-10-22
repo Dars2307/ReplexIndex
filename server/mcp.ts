@@ -78,7 +78,7 @@ export const TOOLS: ToolDef[] = [
         perPage: limit,
       };
       const result = await searchGithub(query, await githubTokenFor(caller.userId));
-      void recordSearch(caller.userId, query.q || result.query, { ...query, perPage: undefined }, 'mcp', result.total);
+      recordSearch(caller.userId, query.q || result.query, { ...query, perPage: undefined }, 'mcp', result.total);
       return { githubQuery: result.query, total: result.total, results: result.items.map(summarizeRepository) };
     },
   },
@@ -289,7 +289,7 @@ export async function handleMessage(msg: RpcMessage, caller: Caller) {
       try {
         if (!caller.scopes.includes(tool.scope)) throw new ToolInputError(`This API key is missing the "${tool.scope}" scope`);
         const output = await tool.run(args, caller);
-        void logAgentEvent({ userId: caller.userId, apiKeyId: caller.apiKeyId, method, tool: name, ok: true, durationMs: Date.now() - started });
+        logAgentEvent({ userId: caller.userId, apiKeyId: caller.apiKeyId, method, tool: name, ok: true, durationMs: Date.now() - started });
         const structured = Array.isArray(output) ? { items: output } : (output as Record<string, unknown>);
         return {
           jsonrpc: '2.0',
@@ -297,7 +297,7 @@ export async function handleMessage(msg: RpcMessage, caller: Caller) {
           result: { content: [{ type: 'text', text: JSON.stringify(output, null, 2) }], structuredContent: structured },
         };
       } catch (err) {
-        void logAgentEvent({ userId: caller.userId, apiKeyId: caller.apiKeyId, method, tool: name, ok: false, durationMs: Date.now() - started });
+        logAgentEvent({ userId: caller.userId, apiKeyId: caller.apiKeyId, method, tool: name, ok: false, durationMs: Date.now() - started });
         // Only expected, user-meaningful errors reach the agent; anything else
         // is logged server-side and reported generically.
         const safe = err instanceof ToolInputError || err instanceof HttpError;

@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { waitUntil } from '@vercel/functions';
 import { env, supabaseConfigured } from './env.ts';
 
 // Service-role client: bypasses RLS, so every query through it must scope by
@@ -23,6 +24,23 @@ export function requireAdmin() {
   const client = getAdmin();
   if (!client) throw new HttpError(503, 'Accounts are not configured on this server yet.');
   return client;
+}
+
+/**
+ * Run a best-effort write without blocking the response.
+ * - Supabase query builders are lazy (they only send when awaited/.then()'d),
+ *   so `void builder` would silently do nothing; Promise.resolve() runs it.
+ * - waitUntil keeps a Vercel function alive until the write settles, so it
+ *   isn't cut off after the response is sent. Outside Vercel it's a no-op.
+ */
+export function background(query: PromiseLike<{ error: { message: string } | null } | void>, label: string): void {
+  const done = Promise.resolve(query).then(
+    (res) => {
+      if (res && res.error) console.error(`[replex] ${label} failed:`, res.error.message);
+    },
+    (err) => console.error(`[replex] ${label} failed:`, err),
+  );
+  waitUntil(done);
 }
 
 export class HttpError extends Error {
