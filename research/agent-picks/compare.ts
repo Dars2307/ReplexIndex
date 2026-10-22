@@ -1,5 +1,5 @@
-// Combines checked runs into results/COMPARISON.md.
-// Usage: npx tsx compare.ts   (reads every results/*-chat-*.json)
+// Combines checked runs into results/COMPARISON.md (or COMPARISON-ROUND2.md).
+// Usage: npx tsx compare.ts [--round hard]   (reads results/*-chat-N.json, or *-hard-N.json)
 import { readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -11,14 +11,15 @@ interface Run {
   results: { id: string; picks: { rank: number; package: string; facts: PackageFacts }[] }[];
 }
 
+const round = process.argv.includes('--round') ? process.argv[process.argv.indexOf('--round') + 1] : 'chat';
 const DEAD: Verdict[] = ['missing', 'deprecated', 'archived', 'stale'];
 const runs = readdirSync(dir)
-  .filter((f) => /-chat-\d+\.json$/.test(f))
+  .filter((f) => new RegExp(`-${round}-\\d+\\.json$`).test(f))
   .map((f) => JSON.parse(readFileSync(join(dir, f), 'utf8')) as Run);
 
 const byModel = new Map<string, Run[]>();
 for (const run of runs) {
-  const name = run.model.replace(/-chat-\d+$/, '');
+  const name = run.model.replace(new RegExp(`-${round}-\\d+$`), '');
   byModel.set(name, [...(byModel.get(name) ?? []), run]);
 }
 
@@ -55,9 +56,12 @@ const offenderRows = [...offenders.values()]
   .map((o) => `| \`${o.facts.name}\` | ${o.facts.verdict} | ${o.facts.reason.replace(/\|/g, '/')} | ${[...o.by].join(', ')} | ${Math.min(...o.ranks)} | ${fmt(o.facts.weeklyDownloads)} |`);
 
 const md = [
-  '# Which libraries do AI chat assistants pick?',
+  round === 'hard' ? '# Which libraries do AI chat assistants pick? Round 2: less common tasks' : '# Which libraries do AI chat assistants pick?',
   '',
-  `Chat apps with web search off, the prompt in \`PROMPT.md\`, 26 everyday tasks × top 3 picks, ${runs.length} runs. Every pick checked against npm / PyPI / GitHub on ${new Date().toISOString().slice(0, 10)}.`,
+  round === 'hard'
+    ? `Chat apps with web search off, the prompt in \`PROMPT-ROUND2.md\`, 30 less common tasks × top 3 picks, ${runs.length} runs.`
+    : `Chat apps with web search off, the prompt in \`PROMPT.md\`, 26 everyday tasks × top 3 picks, ${runs.length} runs.`,
+  `Every pick checked against npm / PyPI / GitHub on ${new Date().toISOString().slice(0, 10)}.`,
   '',
   '**Dead** = made-up name, deprecated, archived, or no release for 2+ years and no commit for 1+ year. **Dormant** = no release for 3+ years while the repository stays active (often renamed or superseded).',
   '',
@@ -72,5 +76,5 @@ const md = [
   ...offenderRows,
   '',
 ];
-writeFileSync(join(dir, 'COMPARISON.md'), md.join('\n'));
+writeFileSync(join(dir, round === 'hard' ? 'COMPARISON-ROUND2.md' : 'COMPARISON.md'), md.join('\n'));
 console.log(md.join('\n'));

@@ -1,6 +1,7 @@
 # Which libraries do AI chat assistants pick?
 
-Chat apps with web search off, the prompt in `PROMPT.md`, 26 everyday tasks × top 3 picks, 6 runs. Every pick checked against npm / PyPI / GitHub on 2026-10-22.
+Chat apps with web search off, the prompt in `PROMPT.md`, 26 everyday tasks × top 3 picks, 6 runs.
+Every pick checked against npm / PyPI / GitHub on 2026-10-22.
 
 **Dead** = made-up name, deprecated, archived, or no release for 2+ years and no commit for 1+ year. **Dormant** = no release for 3+ years while the repository stays active (often renamed or superseded).
 
