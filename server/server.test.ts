@@ -15,7 +15,7 @@ delete process.env.VITE_SUPABASE_URL;
 delete process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 const { mintApiKey, sha256, encryptSecret, decryptSecret, looksLikeApiKey, safeEqual } = await import('./crypto.ts');
-const { buildGithubQuery, isValidFullName } = await import('./github.ts');
+const { buildGithubQuery, isValidFullName, toRepository } = await import('./github.ts');
 const { handleMessage, TOOLS } = await import('./mcp.ts');
 const { classifyRepository } = await import('../src/engines/classification.ts');
 const { app } = await import('./app.ts');
@@ -89,6 +89,16 @@ describe('GitHub query builder', () => {
     assert.ok(!isValidFullName('../etc/passwd'));
     assert.ok(!isValidFullName('owner/repo/extra'));
     assert.ok(!isValidFullName('owner'));
+  });
+
+  test('install command comes from the README, never guessed from the name', () => {
+    const data = {
+      name: 'next.js', full_name: 'vercel/next.js', owner: { login: 'vercel', avatar_url: '', html_url: '' }, html_url: 'https://github.com/vercel/next.js',
+      language: 'TypeScript', topics: [], stargazers_count: 1, forks_count: 0, open_issues_count: 0, created_at: '2016-10-05T00:00:00Z', pushed_at: '2026-10-22T00:00:00Z',
+    };
+    assert.equal(toRepository(data, '# Next.js\nThe React framework.').installCommand, '');
+    assert.equal(toRepository(data, 'Get started:\n\n```bash\nnpx create-next-app@latest\n```').installCommand, 'npx create-next-app@latest');
+    assert.equal(toRepository(data, '```\n$ pip install httpx\n```').installCommand, 'pip install httpx');
   });
 
   test('dot segments cannot reach other GitHub API paths', () => {
@@ -255,6 +265,13 @@ describe('HTTP API', () => {
     const status = await (await fetch(`${base}/api/v1/ai/status`)).json();
     assert.equal(status.signedIn, false);
     assert.equal(typeof status.limit, 'number');
+  });
+
+  test('AI repository review requires sign-in', async () => {
+    const get = await fetch(`${base}/api/v1/repos/skylot/jadx/review`);
+    assert.equal(get.status, 401);
+    const post = await fetch(`${base}/api/v1/repos/skylot/jadx/review`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
+    assert.equal(post.status, 401);
   });
 
   test('unknown API routes are JSON 404s', async () => {

@@ -1,7 +1,7 @@
 import express, { type NextFunction, type Request, type Response } from 'express';
 import type { TrendingWindow } from '../src/types/index.ts';
 import { evaluateCompatibility } from '../src/engines/compatibility.ts';
-import { AI_DAILY_LIMIT, aiConfigured, aiSearchesToday, smartSearch } from './ai.ts';
+import { AI_DAILY_LIMIT, aiConfigured, aiSearchesToday, cachedReview, reviewRepository, smartSearch } from './ai.ts';
 import { authenticate } from './auth.ts';
 import { canEncrypt, encryptSecret, mintApiKey } from './crypto.ts';
 import { env, supabaseConfigured } from './env.ts';
@@ -201,6 +201,45 @@ app.post(
     recordSearch(req.caller!.userId, prompt, { mode: 'ai' }, req.caller!.via === 'session' ? 'web' : 'api', result.results.length);
     res.setHeader('Cache-Control', 'private, no-store');
     res.json({ ...result, remaining: Math.max(0, AI_DAILY_LIMIT - used - 1) });
+  }),
+);
+
+// AI repository review. GET returns a stored review without spending the
+// allowance; POST generates one (cached reviews are still free).
+async function reviewTarget(req: Request) {
+  const fullName = `${req.params.owner}/${req.params.repo}`;
+  if (!isValidFullName(fullName)) throw new HttpError(400, 'Use the "owner/repo" format');
+  const token = await githubTokenFor(req.caller!.userId);
+  const repo = await getRepository(fullName, token);
+  const stack = text(req.body?.targetStack ?? req.query.stack, 200) || (await targetStackFor(req.caller!.userId));
+  return { repo, stack, token };
+}
+
+app.get(
+  '/api/v1/repos/:owner/:repo/review',
+  authenticate('required', 'repositories:read'),
+  route(async (req, res) => {
+    const { repo, stack } = await reviewTarget(req);
+    const used = await aiSearchesToday(req.caller!.userId);
+    res.setHeader('Cache-Control', 'private, no-store');
+    res.json({ enabled: aiConfigured(), review: await cachedReview(repo, stack), remaining: Math.max(0, AI_DAILY_LIMIT - used), limit: AI_DAILY_LIMIT });
+  }),
+);
+
+app.post(
+  '/api/v1/repos/:owner/:repo/review',
+  authenticate('required', 'repositories:read'),
+  route(async (req, res) => {
+    const { repo, stack, token } = await reviewTarget(req);
+    const used = await aiSearchesToday(req.caller!.userId);
+    const remaining = Math.max(0, AI_DAILY_LIMIT - used);
+    res.setHeader('Cache-Control', 'private, no-store');
+    const stored = await cachedReview(repo, stack);
+    if (stored) return void res.json({ review: stored, remaining });
+    if (used >= AI_DAILY_LIMIT) throw new HttpError(429, `You've used all ${AI_DAILY_LIMIT} AI requests for today`, 'ai_daily_limit');
+    const review = await reviewRepository(repo, stack, token);
+    recordSearch(req.caller!.userId, repo.fullName, { mode: 'review', stack: stack || undefined }, req.caller!.via === 'session' ? 'web' : 'api', 1);
+    res.json({ review, remaining: remaining - 1 });
   }),
 );
 

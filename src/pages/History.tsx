@@ -1,4 +1,4 @@
-import { Bot, Clock, Globe, Pin, PinOff, Search, Terminal, Trash2 } from 'lucide-react';
+import { Bot, Clock, Globe, Pin, PinOff, Search, Sparkles, Terminal, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { Dialog } from '../components/Dialog.tsx';
 import { RequireAuth } from '../components/RequireAuth.tsx';
@@ -15,7 +15,10 @@ const SOURCE: Record<SearchRecord['source'], { label: string; icon: typeof Globe
   api: { label: 'API', icon: Terminal },
 };
 
+const isReview = (s: SearchRecord) => (s.filters as Record<string, unknown>)?.mode === 'review';
+
 function searchHref(s: SearchRecord) {
+  if (isReview(s) && /^[\w.-]+\/[\w.-]+$/.test(s.query)) return `/repo/${s.query}`;
   const params = new URLSearchParams({ q: s.query });
   const f = s.filters as Record<string, unknown>;
   if (typeof f.language === 'string') params.set('language', f.language);
@@ -123,12 +126,16 @@ function HistoryList() {
                   const src = SOURCE[s.source];
                   return (
                     <li key={s.id} className="group flex items-center gap-3 px-4 py-2.5">
-                      <Search className="size-4 shrink-0 text-fg-subtle" aria-hidden />
+                      {isReview(s) ? (
+                        <Sparkles className="size-4 shrink-0 text-accent" aria-hidden />
+                      ) : (
+                        <Search className="size-4 shrink-0 text-fg-subtle" aria-hidden />
+                      )}
                       <Link to={searchHref(s)} className="min-w-0 flex-1 truncate font-medium text-fg hover:underline">
                         {s.name || s.query}
                       </Link>
                       <span className="hidden text-[12px] tabular text-fg-subtle sm:inline">
-                        {s.result_count !== null ? `${formatNumber(s.result_count)} results` : ''}
+                        {isReview(s) ? 'AI review' : s.result_count !== null ? `${formatNumber(s.result_count)} results` : ''}
                       </span>
                       <Badge tone={s.source === 'web' ? 'neutral' : 'accent'}>
                         <src.icon className="size-3" aria-hidden />
