@@ -1,11 +1,20 @@
-import { config } from 'dotenv';
+import { parse } from 'dotenv';
+import { existsSync, readFileSync } from 'node:fs';
 
-// Local development reads .env.local first; on Vercel, variables come from the
-// project settings and these files don't exist.
-config({ path: ['.env.local', '.env'], quiet: true });
+// Template placeholders ("paste-…", "your-…", "sb_secret_...") count as unset.
+const isPlaceholder = (v: string) => /^(paste-|your-)|\.\.\.$/i.test(v.trim());
+const real = (v?: string) => (v && v.trim() && !isPlaceholder(v) ? v.trim() : '');
 
-// Treat template placeholders ("paste-…", "your-…") as unset.
-const real = (v?: string) => (v && !/^(paste-|your-|sb_(publishable|secret)_\.\.\.$)/i.test(v.trim()) ? v.trim() : '');
+// Local development: .env.local, then .env. Real environment variables (Vercel)
+// always win, and a placeholder in one file never hides a real value in the
+// other. On Vercel these files don't exist.
+for (const file of ['.env.local', '.env']) {
+  if (!existsSync(file)) continue;
+  for (const [key, value] of Object.entries(parse(readFileSync(file)))) {
+    const current = process.env[key];
+    if (current === undefined || (isPlaceholder(current) && !isPlaceholder(value))) process.env[key] = value;
+  }
+}
 
 export const env = {
   supabaseUrl: real(process.env.SUPABASE_URL) || real(process.env.VITE_SUPABASE_URL),
