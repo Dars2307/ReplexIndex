@@ -287,8 +287,12 @@ export async function searchGithub(query: DiscoveryQuery, token: string): Promis
 
   const params = new URLSearchParams({ q, per_page: String(perPage), page: String(page) });
   if (sort) params.set('sort', sort);
-  const res = await github(`/search/repositories?${params}`, token);
-  const json = await res.json();
+  let json = await (await github(`/search/repositories?${params}`, token)).json();
+  // GitHub's search times out under load and answers "0 results, incomplete";
+  // one retry usually returns the real results.
+  if (json.incomplete_results && !json.items?.length) {
+    json = await (await github(`/search/repositories?${params}`, token)).json();
+  }
   // Results are cached for everyone and indexed publicly, so never let a
   // private repository through, whatever scopes the token happens to have.
   const items: Repository[] = (json.items || []).filter(isPublic).map((item: unknown) => toRepository(item));
@@ -300,7 +304,8 @@ export async function searchGithub(query: DiscoveryQuery, token: string): Promis
     perPage,
     items,
   };
-  await cacheSet(key, result, 600);
+  // Keep empty or partial answers briefly so a GitHub hiccup isn't served for ten minutes.
+  await cacheSet(key, result, items.length && !result.incomplete ? 600 : 60);
   indexRepositories(items);
   return result;
 }
