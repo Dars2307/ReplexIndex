@@ -9,7 +9,8 @@ const real = (v?: string) => (v && !/^(paste-|your-|sb_(publishable|secret)_\.\.
 
 export const env = {
   supabaseUrl: real(process.env.SUPABASE_URL) || real(process.env.VITE_SUPABASE_URL),
-  supabaseServiceKey: real(process.env.SUPABASE_SERVICE_ROLE_KEY),
+  // New-format secret key (sb_secret_…); the legacy service_role JWT also works.
+  supabaseServiceKey: real(process.env.SUPABASE_SECRET_KEY) || real(process.env.SUPABASE_SERVICE_ROLE_KEY),
   githubToken: real(process.env.GITHUB_TOKEN),
   tokenEncryptionKey: real(process.env.TOKEN_ENCRYPTION_KEY),
   appUrl: process.env.APP_URL || 'http://localhost:3000',

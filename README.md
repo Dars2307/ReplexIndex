@@ -38,7 +38,7 @@ Discovery works without any keys. Accounts need Supabase (below).
 | Variable | Where | Purpose |
 |---|---|---|
 | `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY` | browser | Supabase project URL and publishable key |
-| `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` | server only | service-role access for keys, MCP and caching |
+| `SUPABASE_URL`, `SUPABASE_SECRET_KEY` | server only | Supabase secret key (`sb_secret_…`; legacy `SUPABASE_SERVICE_ROLE_KEY` also accepted) for keys, MCP and caching |
 | `TOKEN_ENCRYPTION_KEY` | server only | 32 random bytes (base64); encrypts users' GitHub tokens at rest |
 | `GITHUB_TOKEN` | server only, optional | fallback token for signed-out visitors |
 | `APP_URL` | server | public URL; pins CORS for account routes |
