@@ -16,7 +16,7 @@ const STACKS = ['Next.js + TypeScript + Tailwind', 'React + Vite + TypeScript', 
 
 function Section({ title, description, children }: { title: string; description: string; children: ReactNode }) {
   return (
-    <section className="grid gap-4 border-b border-border py-8 first:pt-0 last:border-0 md:grid-cols-3 md:gap-10">
+    <section className="grid grid-cols-1 gap-4 border-b border-border py-8 first:pt-0 last:border-0 md:grid-cols-3 md:gap-10">
       <div>
         <h2 className="font-semibold text-fg">{title}</h2>
         <p className="mt-1 text-[13px] text-fg-muted">{description}</p>

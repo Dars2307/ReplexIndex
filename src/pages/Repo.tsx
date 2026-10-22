@@ -139,7 +139,7 @@ export function RepoPage({ owner, name }: { owner: string; name: string }) {
           </div>
         </div>
         <Skeleton className="mt-8 h-20" />
-        <div className="mt-6 grid gap-6 lg:grid-cols-3">
+        <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
           <Skeleton className="h-64 lg:col-span-2" />
           <Skeleton className="h-64" />
         </div>
@@ -219,7 +219,7 @@ export function RepoPage({ owner, name }: { owner: string; name: string }) {
         </Stat>
       </Card>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-3">
+      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
           <Card className="p-5">
             <div className="flex items-start gap-4">
@@ -232,7 +232,7 @@ export function RepoPage({ owner, name }: { owner: string; name: string }) {
                 {readiness.confidence[0].toUpperCase() + readiness.confidence.slice(1)} confidence
               </Badge>
             </div>
-            <ul className="mt-5 grid gap-x-6 gap-y-3 sm:grid-cols-2">
+            <ul className="mt-5 grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-2">
               {checklist.map((item) => (
                 <li key={item.label}>
                   <div className="flex items-center justify-between gap-2 text-[13px]">
@@ -257,7 +257,7 @@ export function RepoPage({ owner, name }: { owner: string; name: string }) {
 
           <Card className="p-5">
             <h2 className="text-base font-semibold">What it is</h2>
-            <dl className="mt-4 grid gap-4 sm:grid-cols-2">
+            <dl className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
                 <dt className="text-[12px] text-fg-subtle">Purpose</dt>
                 <dd className="mt-0.5 text-fg">{repo.purpose.functionalPurpose}</dd>

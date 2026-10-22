@@ -169,7 +169,7 @@ export function LandingPage() {
             <h2 id="why" className="max-w-xl text-2xl font-semibold tracking-tight">
               Everything you need to pick the right dependency — and let your agent pick it too.
             </h2>
-            <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
               <Feature icon={<Search aria-hidden />} title="All of GitHub, live">
                 Not a curated list. Every public repository, searchable by keyword, language, topic, age and stars.
               </Feature>
@@ -186,7 +186,7 @@ export function LandingPage() {
           </div>
         </section>
 
-        <section id="agents" aria-labelledby="agents-heading" className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-20 sm:px-6 lg:grid-cols-2">
+        <section id="agents" aria-labelledby="agents-heading" className="mx-auto grid grid-cols-1 max-w-6xl items-center gap-10 px-4 py-20 sm:px-6 lg:grid-cols-2">
           <div>
             <p className="text-[13px] font-medium text-link">For agents</p>
             <h2 id="agents-heading" className="mt-2 text-3xl font-semibold tracking-tight">

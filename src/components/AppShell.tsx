@@ -67,7 +67,7 @@ const THEME_ICON: Record<ThemePreference, ReactNode> = {
   system: <Monitor aria-hidden />,
 };
 
-function AccountMenu({ collapsed, side = 'top' }: { collapsed?: boolean; side?: 'top' | 'bottom' }) {
+function AccountMenu({ collapsed, side = 'top', align = 'start' }: { collapsed?: boolean; side?: 'top' | 'bottom'; align?: 'start' | 'end' }) {
   const { user, profile, signOut, signInWithGitHub, ready } = useAuth();
   const { preference, setPreference } = useTheme();
   const { navigate } = useRouter();
@@ -106,7 +106,7 @@ function AccountMenu({ collapsed, side = 'top' }: { collapsed?: boolean; side?: 
   return (
     <Menu
       side={side}
-      align="start"
+      align={align}
       header={
         <div className="min-w-0">
           <p className="truncate font-medium text-fg">{name}</p>
@@ -259,7 +259,8 @@ function MobileBar({ onSearch }: { onSearch: () => void }) {
           <Search className="size-5" aria-hidden />
         </IconButton>
         <div className="w-11">
-          <AccountMenu collapsed side="bottom" />
+          {/* The avatar sits at the right edge on phones, so open leftward. */}
+          <AccountMenu collapsed side="bottom" align="end" />
         </div>
       </div>
     </header>
@@ -354,6 +355,8 @@ export function AppShell({ children }: { children: ReactNode }) {
   });
   const [paletteOpen, setPaletteOpen] = useState(false);
   const { location } = useRouter();
+  const { items: compared } = useCompare();
+  const trayVisible = compared.length > 0 && !location.pathname.startsWith('/compare');
 
   const toggle = useCallback(() => {
     setCollapsed((c) => {
@@ -401,7 +404,14 @@ export function AppShell({ children }: { children: ReactNode }) {
       <Sidebar collapsed={collapsed} onToggle={toggle} onSearch={() => setPaletteOpen(true)} />
       <div className="flex min-w-0 flex-1 flex-col">
         <MobileBar onSearch={() => setPaletteOpen(true)} />
-        <main id="main" className="mx-auto w-full max-w-7xl flex-1 px-4 pb-28 pt-6 sm:px-6 md:pb-16 lg:px-10 lg:pt-10">
+        {/* Extra bottom room when the floating compare tray is showing, so it never covers content. */}
+        <main
+          id="main"
+          className={cn(
+            'mx-auto w-full max-w-7xl flex-1 px-4 pt-6 sm:px-6 lg:px-10 lg:pt-10',
+            trayVisible ? 'pb-44 md:pb-28' : 'pb-28 md:pb-16',
+          )}
+        >
           {children}
         </main>
       </div>
