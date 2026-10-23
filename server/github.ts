@@ -284,12 +284,51 @@ export function buildGithubQuery(query: DiscoveryQuery): string {
   return parts.join(' ');
 }
 
+// ---------------------------------------------------------------------------
+// Search quality: spam and relevance
+// ---------------------------------------------------------------------------
+// GitHub's editor caps descriptions at 350 characters, but some repositories
+// carry 25,000-65,000 character descriptions (pasted READMEs, political
+// tracts) that match almost any keywords and so rank for everything.
+const MAX_DESCRIPTION = 1000;
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function isKeywordStuffed(item: any): boolean {
+  return typeof item?.description === 'string' && item.description.length > MAX_DESCRIPTION;
+}
+
+const STOP_WORDS = new Set(['a', 'an', 'the', 'and', 'or', 'for', 'with', 'in', 'of', 'to', 'on', 'my', 'app']);
+
+/** Words of the free-text query worth matching (qualifiers like language:x are skipped). */
+export function queryTerms(text: string): string[] {
+  return [...new Set(text.toLowerCase().split(/\s+/))]
+    .filter((w) => !w.includes(':'))
+    .map((w) => w.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, ''))
+    .filter((w) => w.length >= 2 && !STOP_WORDS.has(w));
+}
+
+/**
+ * Best-match only: repositories whose name, description and topics contain none
+ * of the search words (GitHub matched them on something else) move below the
+ * ones that do. Order is otherwise GitHub's.
+ */
+export function demoteUnrelated(items: Repository[], text: string): Repository[] {
+  const terms = queryTerms(text);
+  if (!terms.length) return items;
+  const related = (r: Repository) => {
+    const haystack = `${r.fullName} ${r.description} ${r.topics.join(' ')}`.toLowerCase();
+    return terms.some((t) => haystack.includes(t));
+  };
+  return [...items.filter(related), ...items.filter((r) => !related(r))];
+}
+
 export async function searchGithub(query: DiscoveryQuery, token: string): Promise<DiscoverySearchResult> {
   const page = Math.min(Math.max(1, Math.floor(query.page || 1)), 10);
   const perPage = Math.min(Math.max(1, Math.floor(query.perPage || 24)), 50);
   const q = buildGithubQuery(query);
   const sort = query.sort && query.sort !== 'best' ? query.sort : '';
-  const key = `search:${sha256(JSON.stringify([q, sort, page, perPage]))}`;
+  // v2: results filtered for keyword stuffing; older cached pages may contain spam.
+  const key = `search:v2:${sha256(JSON.stringify([q, sort, page, perPage]))}`;
 
   const cached = await cacheGet<DiscoverySearchResult>(key);
   if (cached) return cached;
@@ -307,7 +346,10 @@ export async function searchGithub(query: DiscoveryQuery, token: string): Promis
   }
   // Results are cached for everyone and indexed publicly, so never let a
   // private repository through, whatever scopes the token happens to have.
-  const items: Repository[] = (json.items || []).filter(isPublic).map((item: unknown) => toRepository(item));
+  const found: Repository[] = (json.items || [])
+    .filter((item: unknown) => isPublic(item) && !isKeywordStuffed(item))
+    .map((item: unknown) => toRepository(item));
+  const items = sort ? found : demoteUnrelated(found, query.q);
   const result: DiscoverySearchResult = {
     query: q,
     total: Math.min(json.total_count || 0, 1000),

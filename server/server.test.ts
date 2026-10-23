@@ -15,7 +15,7 @@ delete process.env.VITE_SUPABASE_URL;
 delete process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 const { mintApiKey, sha256, encryptSecret, decryptSecret, looksLikeApiKey, safeEqual } = await import('./crypto.ts');
-const { buildGithubQuery, isValidFullName, toRepository } = await import('./github.ts');
+const { buildGithubQuery, demoteUnrelated, isKeywordStuffed, isValidFullName, queryTerms, toRepository } = await import('./github.ts');
 const { handleMessage, TOOLS } = await import('./mcp.ts');
 const { classifyRepository } = await import('../src/engines/classification.ts');
 const { app } = await import('./app.ts');
@@ -90,6 +90,25 @@ describe('GitHub query builder', () => {
     assert.ok(!isValidFullName('../etc/passwd'));
     assert.ok(!isValidFullName('owner/repo/extra'));
     assert.ok(!isValidFullName('owner'));
+  });
+
+  test('keyword-stuffed repositories are recognised by their giant descriptions', () => {
+    assert.ok(isKeywordStuffed({ description: '反中共政治宣传库 ui kit dashboard '.repeat(3000) }));
+    assert.ok(!isKeywordStuffed({ description: 'React Dashboard made with Material UI components.' }));
+    assert.ok(!isKeywordStuffed({ description: null }));
+  });
+
+  test('search words skip qualifiers, punctuation and filler words', () => {
+    assert.deepEqual(queryTerms('Field service app, UI kit language:TypeScript'), ['field', 'service', 'ui', 'kit']);
+  });
+
+  test('results unrelated to the search words move below related ones', () => {
+    const repo = (fullName: string, description: string, topics: string[] = []) => ({ fullName, description, topics }) as never;
+    const ranked = demoteUnrelated(
+      [repo('gege-circle/.github', 'GitHub grassland community'), repo('devias-io/material-kit-react', 'React Dashboard with Material UI'), repo('x/y', 'Admin', ['ui-kit'])],
+      'react dashboard ui kit',
+    ) as { fullName: string }[];
+    assert.deepEqual(ranked.map((r) => r.fullName), ['devias-io/material-kit-react', 'x/y', 'gege-circle/.github']);
   });
 
   test('install command comes from the README, never guessed from the name', () => {
