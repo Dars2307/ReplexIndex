@@ -15,7 +15,8 @@ import {
   searchGithub,
   type DiscoveryQuery,
 } from './github.ts';
-import { recordSearch, targetStackFor } from './library.ts';
+import { logAgentEvent, recordSearch, targetStackFor } from './library.ts';
+import { checkPackages } from './packages.ts';
 import { mcpHandler, SERVER_INFO, TOOLS } from './mcp.ts';
 import { HttpError, requireAdmin } from './supabase.ts';
 
@@ -171,6 +172,27 @@ app.post(
       targetStack: stack || null,
       repositories: repos.map((r) => ({ repository: r, compatibility: stack ? evaluateCompatibility(r, stack) : null })),
     });
+  }),
+);
+
+// Package health check: the same as the check_packages MCP tool, for install
+// hooks (Claude Code, Cursor) that run before an agent installs dependencies.
+app.post(
+  '/api/v1/packages/check',
+  authenticate('required', 'repositories:read'),
+  route(async (req, res) => {
+    const started = Date.now();
+    const ecosystem = req.body?.ecosystem;
+    const packages: unknown[] = Array.isArray(req.body?.packages) ? req.body.packages : [];
+    if (ecosystem !== 'npm' && ecosystem !== 'pypi') throw new HttpError(400, 'ecosystem must be "npm" or "pypi"');
+    const names = packages.filter((p): p is string => typeof p === 'string');
+    if (names.length < 1 || names.length > 20) throw new HttpError(400, 'Send 1–20 package names in packages');
+    const result = await checkPackages(ecosystem, names, await githubTokenFor(req.caller!.userId));
+    if (req.caller!.via === 'api_key') {
+      logAgentEvent({ userId: req.caller!.userId, apiKeyId: req.caller!.apiKeyId, method: 'packages/check', tool: 'check_packages', ok: true, durationMs: Date.now() - started });
+    }
+    res.setHeader('Cache-Control', 'private, no-store');
+    res.json(result);
   }),
 );
 

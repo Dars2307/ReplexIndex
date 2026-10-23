@@ -155,6 +155,24 @@ describe('package checks', () => {
     assert.equal(judgePackage(null, 'pypi', 'argparse', now).verdict, 'ok');
   });
 
+  test('install hook finds packages in real install commands', async () => {
+    const { findInstalls } = await import('../public/hooks/replex-check.mjs');
+    const npm = (cmd: string) => findInstalls(cmd).npm;
+    const pypi = (cmd: string) => findInstalls(cmd).pypi;
+    assert.deepEqual(npm('npm i -D vitest @types/node'), ['vitest', '@types/node']);
+    assert.deepEqual(npm('cd app && pnpm add react-beautiful-dnd --filter web'), ['react-beautiful-dnd']);
+    assert.deepEqual(npm('yarn add "zod@^4"'), ['zod@^4']);
+    assert.deepEqual(npm('NODE_ENV=dev bun add visx'), ['visx']);
+    assert.deepEqual(npm('npm install'), [], 'lockfile installs are not checked');
+    assert.deepEqual(npm('npm install ./local-pkg ../x.tgz github:user/repo user/repo https://x.dev/a.tgz'), []);
+    assert.deepEqual(npm('npm run build && npx create-next-app'), [], 'running is not installing');
+    assert.deepEqual(pypi('pip install "requests>=2" fuzzywuzzy -r requirements.txt'), ['requests>=2', 'fuzzywuzzy']);
+    assert.deepEqual(pypi('python3 -m pip install --upgrade requests-html'), ['requests-html']);
+    assert.deepEqual(pypi('uv add httpx; uv pip install -e . PyPDF2'), ['httpx', 'PyPDF2']);
+    assert.deepEqual(pypi('poetry add typer && pipx install ruff'), ['typer', 'ruff']);
+    assert.deepEqual(findInstalls('git status'), { npm: [], pypi: [] });
+  });
+
   test('check_packages validates its input', async () => {
     const res = (await handleMessage(
       { jsonrpc: '2.0', id: 11, method: 'tools/call', params: { name: 'check_packages', arguments: { ecosystem: 'cargo', packages: ['serde'] } } },

@@ -306,7 +306,8 @@ export function CodeBlock({ code, label, className }: { code: string; label?: st
       <pre className="overflow-x-auto p-3 pr-20 font-mono text-[12.5px] leading-5 text-fg scrollbar-thin" translate="no">
         <code>{code}</code>
       </pre>
-      <CopyButton value={code} className={cn('absolute right-1.5', label ? 'top-9' : 'top-1.5')} />
+      {/* Solid background so long lines scroll under the button instead of through it. */}
+      <CopyButton value={code} className={cn('absolute right-1.5 border border-border bg-surface shadow-sm hover:bg-muted', label ? 'top-9' : 'top-1.5')} />
     </div>
   );
 }

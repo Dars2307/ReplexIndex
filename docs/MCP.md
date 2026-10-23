@@ -51,6 +51,30 @@ vendor's documentation in October 2026.
 | Replit Agent | replit.com/integrations → MCP Servers → + Add MCP server → URL → Advanced settings → `Authorization` header → Test & save | docs.replit.com/features/mcp/overview |
 | Custom agent | Any MCP client: `{ "mcpServers": { "replex": { "url": "<url>", "headers": { "Authorization": "Bearer rpx_…" } } } }`. Your own server sends the same header; keep the key server-side | — |
 
+## Install check (Claude Code and Cursor)
+
+`public/hooks/replex-check.mjs` (served at `/hooks/replex-check.mjs`) is a
+pre-command hook. Before the agent runs a shell command that installs npm or
+PyPI packages (`npm i`, `pnpm add`, `yarn add`, `bun add`, `pip install`,
+`python -m pip install`, `uv add`, `uv pip install`, `poetry add`, `pdm add`,
+`pipx install`), it calls `POST /api/v1/packages/check`. Packages that are
+`missing`, `deprecated` or `archived` are denied with a reason the agent sees;
+`stale` and `dormant` ones go through with a note. Lockfile installs, local
+paths, URLs and git specs are not checked.
+
+- Claude Code: `PreToolUse` hook on `Bash` in `~/.claude/settings.json`;
+  denies with `hookSpecificOutput.permissionDecision: "deny"`. It never returns
+  `"allow"`, so normal permission prompts are unchanged.
+- Cursor: `beforeShellExecution` in `~/.cursor/hooks.json`; always prints an
+  explicit `{"permission": ...}` with `agent_message` / `user_message`.
+- Config: `REPLEX_API_KEY` / `REPLEX_URL`, or `~/.replex.json`
+  (`{"url", "apiKey", "allow"}`). `REPLEX_ALLOW` skips private packages;
+  `REPLEX_DEBUG=1` explains each decision on stderr.
+- Fails open: if Replex is unreachable or no key is set, the command runs.
+- Windows: reads stdin as a stream (Cursor pipes it through PowerShell), uses
+  `node:http` without keep-alive (exiting with pooled sockets crashes Node on
+  Windows), and strips the BOM Windows PowerShell 5.1 writes into JSON files.
+
 Test from a terminal:
 
 ```bash

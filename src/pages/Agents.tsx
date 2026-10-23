@@ -1,6 +1,7 @@
 import { Activity, Bot, CircleCheck, CircleX, KeyRound, Plus, ShieldAlert, Wrench } from 'lucide-react';
 import { useState, type FormEvent } from 'react';
 import { Dialog } from '../components/Dialog.tsx';
+import { InstallCheck } from '../components/InstallCheck.tsx';
 import { RequireAuth } from '../components/RequireAuth.tsx';
 import { Badge, Button, Card, CodeBlock, cn, CopyButton, EmptyState, ErrorState, Field, Input, PageHeader, Skeleton } from '../components/ui.tsx';
 import { api, del, post } from '../lib/api.ts';
@@ -208,6 +209,8 @@ function Agents() {
               </dl>
             </div>
           </Card>
+
+          <InstallCheck key={client.id === 'cursor' ? 'cursor' : 'claude-code'} initial={client.id === 'cursor' ? 'cursor' : 'claude-code'} origin={window.location.origin} apiKey={key} />
 
           <Card>
             <h2 className="flex items-center gap-2 border-b border-border px-5 py-3 font-semibold">
