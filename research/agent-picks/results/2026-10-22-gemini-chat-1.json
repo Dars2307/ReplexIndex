@@ -1,0 +1,1775 @@
+{
+  "provider": "gemini",
+  "model": "gemini-chat-1",
+  "runAt": "2026-10-22T20:11:34.848Z",
+  "results": [
+    {
+      "id": "node-http",
+      "ecosystem": "npm",
+      "task": "Make HTTP requests from a Node.js backend",
+      "question": "I'm working on a JavaScript/TypeScript project (npm). I need to: Make HTTP requests from a Node.js backend.\nWhich package should I install? Give your top 3 picks, best first, as exact npm package names, each with a one-line reason.",
+      "picks": [
+        {
+          "rank": 1,
+          "package": "axios",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "axios",
+            "exists": true,
+            "latestVersion": "1.20.0",
+            "lastReleaseAt": "2026-08-26T08:20:14.517Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 66557149,
+            "repo": "axios/axios",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-22T14:44:28Z",
+            "repoStars": 109307,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 2,
+          "package": "node-fetch",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "node-fetch",
+            "exists": true,
+            "latestVersion": "3.3.2",
+            "lastReleaseAt": "2023-07-25T11:50:17.626Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 121168475,
+            "repo": "node-fetch/node-fetch",
+            "repoArchived": false,
+            "repoPushedAt": "2026-05-12T09:33:16Z",
+            "repoStars": 8846,
+            "verdict": "dormant",
+            "reason": "No release for 3.2 years (repository still active)"
+          }
+        },
+        {
+          "rank": 3,
+          "package": "got",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "got",
+            "exists": true,
+            "latestVersion": "16.1.0",
+            "lastReleaseAt": "2026-10-13T06:36:01.850Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 23949040,
+            "repo": "sindresorhus/got",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-13T06:34:45Z",
+            "repoStars": 14951,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        }
+      ]
+    },
+    {
+      "id": "js-dates",
+      "ecosystem": "npm",
+      "task": "Parse, format and do arithmetic on dates in JavaScript",
+      "question": "I'm working on a JavaScript/TypeScript project (npm). I need to: Parse, format and do arithmetic on dates in JavaScript.\nWhich package should I install? Give your top 3 picks, best first, as exact npm package names, each with a one-line reason.",
+      "picks": [
+        {
+          "rank": 1,
+          "package": "dayjs",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "dayjs",
+            "exists": true,
+            "latestVersion": "1.11.23",
+            "lastReleaseAt": "2026-08-17T11:52:35.217Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 44268397,
+            "repo": "iamkun/dayjs",
+            "repoArchived": false,
+            "repoPushedAt": "2026-09-15T11:35:36Z",
+            "repoStars": 48653,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 2,
+          "package": "date-fns",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "date-fns",
+            "exists": true,
+            "latestVersion": "4.4.0",
+            "lastReleaseAt": "2026-05-29T23:23:42.628Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 56000589,
+            "repo": "date-fns/date-fns",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-22T10:51:05Z",
+            "repoStars": 36646,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 3,
+          "package": "luxon",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "luxon",
+            "exists": true,
+            "latestVersion": "3.7.2",
+            "lastReleaseAt": "2025-09-05T10:14:55.814Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 24245871,
+            "repo": "moment/luxon",
+            "repoArchived": false,
+            "repoPushedAt": "2026-08-09T12:44:46Z",
+            "repoStars": 16453,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ts-validation",
+      "ecosystem": "npm",
+      "task": "Validate API request bodies with a schema in TypeScript",
+      "question": "I'm working on a JavaScript/TypeScript project (npm). I need to: Validate API request bodies with a schema in TypeScript.\nWhich package should I install? Give your top 3 picks, best first, as exact npm package names, each with a one-line reason.",
+      "picks": [
+        {
+          "rank": 1,
+          "package": "zod",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "zod",
+            "exists": true,
+            "latestVersion": "4.6.7",
+            "lastReleaseAt": "2026-10-12T16:29:37.778Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 207048213,
+            "repo": "colinhacks/zod",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-19T22:46:10Z",
+            "repoStars": 44171,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 2,
+          "package": "valibot",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "valibot",
+            "exists": true,
+            "latestVersion": "1.5.0",
+            "lastReleaseAt": "2026-09-09T12:58:23.503Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 13126908,
+            "repo": "open-circle/valibot",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-17T09:19:34Z",
+            "repoStars": 9047,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 3,
+          "package": "yup",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "yup",
+            "exists": true,
+            "latestVersion": "1.7.1",
+            "lastReleaseAt": "2025-09-21T13:59:55.107Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 6795500,
+            "repo": "jquense/yup",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-22T16:15:36Z",
+            "repoStars": 23656,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ts-orm",
+      "ecosystem": "npm",
+      "task": "Talk to a PostgreSQL database from TypeScript with an ORM or query builder",
+      "question": "I'm working on a JavaScript/TypeScript project (npm). I need to: Talk to a PostgreSQL database from TypeScript with an ORM or query builder.\nWhich package should I install? Give your top 3 picks, best first, as exact npm package names, each with a one-line reason.",
+      "picks": [
+        {
+          "rank": 1,
+          "package": "prisma",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "prisma",
+            "exists": true,
+            "latestVersion": "8.0.0-rc.26",
+            "lastReleaseAt": "2026-10-22T19:22:21.868Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 11694602,
+            "repo": "prisma/prisma-cli",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-22T19:22:58Z",
+            "repoStars": 24,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 2,
+          "package": "drizzle-orm",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "drizzle-orm",
+            "exists": true,
+            "latestVersion": "0.45.4",
+            "lastReleaseAt": "2026-10-08T10:50:41.953Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 18338838,
+            "repo": "drizzle-team/drizzle-orm",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-21T18:54:47Z",
+            "repoStars": 36118,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 3,
+          "package": "typeorm",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "typeorm",
+            "exists": true,
+            "latestVersion": "1.1.2",
+            "lastReleaseAt": "2026-10-08T07:24:58.261Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 2842581,
+            "repo": "typeorm/typeorm",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-22T06:45:49Z",
+            "repoStars": 36660,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        }
+      ]
+    },
+    {
+      "id": "react-state",
+      "ecosystem": "npm",
+      "task": "Manage global client state in a React app",
+      "question": "I'm working on a JavaScript/TypeScript project (npm). I need to: Manage global client state in a React app.\nWhich package should I install? Give your top 3 picks, best first, as exact npm package names, each with a one-line reason.",
+      "picks": [
+        {
+          "rank": 1,
+          "package": "zustand",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "zustand",
+            "exists": true,
+            "latestVersion": "5.0.16",
+            "lastReleaseAt": "2026-10-22T04:32:02.337Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 37735389,
+            "repo": "pmndrs/zustand",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-22T04:23:23Z",
+            "repoStars": 58857,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 2,
+          "package": "@reduxjs/toolkit",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "@reduxjs/toolkit",
+            "exists": true,
+            "latestVersion": "2.13.0",
+            "lastReleaseAt": "2026-09-29T02:48:23.306Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 19869881,
+            "repo": "reduxjs/redux-toolkit",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-06T22:42:40Z",
+            "repoStars": 11229,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 3,
+          "package": "jotai",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "jotai",
+            "exists": true,
+            "latestVersion": "3.0.1",
+            "lastReleaseAt": "2026-09-29T14:18:19.043Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 3777019,
+            "repo": "pmndrs/jotai",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-19T00:31:38Z",
+            "repoStars": 21299,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        }
+      ]
+    },
+    {
+      "id": "react-data",
+      "ecosystem": "npm",
+      "task": "Fetch and cache server data in a React app",
+      "question": "I'm working on a JavaScript/TypeScript project (npm). I need to: Fetch and cache server data in a React app.\nWhich package should I install? Give your top 3 picks, best first, as exact npm package names, each with a one-line reason.",
+      "picks": [
+        {
+          "rank": 1,
+          "package": "@tanstack/react-query",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "@tanstack/react-query",
+            "exists": true,
+            "latestVersion": "5.104.5",
+            "lastReleaseAt": "2026-10-19T16:57:50.440Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 40112338,
+            "repo": "TanStack/query",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-22T12:48:44Z",
+            "repoStars": 50464,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 2,
+          "package": "swr",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "swr",
+            "exists": true,
+            "latestVersion": "2.5.1",
+            "lastReleaseAt": "2026-08-12T13:53:07.470Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 11391409,
+            "repo": "vercel/swr",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-16T17:57:58Z",
+            "repoStars": 32494,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 3,
+          "package": "apollo-client",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "apollo-client",
+            "exists": true,
+            "latestVersion": "2.6.10",
+            "lastReleaseAt": "2020-05-14T11:53:35.911Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 243477,
+            "repo": "apollographql/apollo-client",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-21T22:34:00Z",
+            "repoStars": 19785,
+            "verdict": "dormant",
+            "reason": "No release for 6.4 years (repository still active)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "react-forms",
+      "ecosystem": "npm",
+      "task": "Build forms with validation in React",
+      "question": "I'm working on a JavaScript/TypeScript project (npm). I need to: Build forms with validation in React.\nWhich package should I install? Give your top 3 picks, best first, as exact npm package names, each with a one-line reason.",
+      "picks": [
+        {
+          "rank": 1,
+          "package": "react-hook-form",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "react-hook-form",
+            "exists": true,
+            "latestVersion": "7.90.0",
+            "lastReleaseAt": "2026-10-11T12:13:46.090Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 32173754,
+            "repo": "react-hook-form/react-hook-form",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-22T09:48:20Z",
+            "repoStars": 44873,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 2,
+          "package": "formik",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "formik",
+            "exists": true,
+            "latestVersion": "2.4.9",
+            "lastReleaseAt": "2025-11-10T17:02:05.434Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 2486438,
+            "repo": "jaredpalmer/formik",
+            "repoArchived": false,
+            "repoPushedAt": "2025-11-10T17:02:06Z",
+            "repoStars": 34308,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 3,
+          "package": "final-form",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "final-form",
+            "exists": true,
+            "latestVersion": "5.0.1",
+            "lastReleaseAt": "2026-05-05T07:57:52.816Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 361687,
+            "repo": "final-form/final-form",
+            "repoArchived": false,
+            "repoPushedAt": "2026-05-30T16:11:40Z",
+            "repoStars": 3048,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ts-unit-tests",
+      "ecosystem": "npm",
+      "task": "Write unit tests for a TypeScript project",
+      "question": "I'm working on a JavaScript/TypeScript project (npm). I need to: Write unit tests for a TypeScript project.\nWhich package should I install? Give your top 3 picks, best first, as exact npm package names, each with a one-line reason.",
+      "picks": [
+        {
+          "rank": 1,
+          "package": "vitest",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "vitest",
+            "exists": true,
+            "latestVersion": "5.0.5",
+            "lastReleaseAt": "2026-10-15T14:29:01.396Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 77531558,
+            "repo": "vitest-dev/vitest",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-22T17:28:25Z",
+            "repoStars": 17272,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 2,
+          "package": "jest",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "jest",
+            "exists": true,
+            "latestVersion": "30.5.2",
+            "lastReleaseAt": "2026-09-18T13:58:07.141Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 25791387,
+            "repo": "jestjs/jest",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-22T12:04:34Z",
+            "repoStars": 45469,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 3,
+          "package": "mocha",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "mocha",
+            "exists": true,
+            "latestVersion": "12.0.3",
+            "lastReleaseAt": "2026-10-01T04:37:57.410Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 7253337,
+            "repo": "mochajs/mocha",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-22T17:14:09Z",
+            "repoStars": 22907,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        }
+      ]
+    },
+    {
+      "id": "e2e-tests",
+      "ecosystem": "npm",
+      "task": "Write end-to-end browser tests for a web app",
+      "question": "I'm working on a JavaScript/TypeScript project (npm). I need to: Write end-to-end browser tests for a web app.\nWhich package should I install? Give your top 3 picks, best first, as exact npm package names, each with a one-line reason.",
+      "picks": [
+        {
+          "rank": 1,
+          "package": "playwright",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "playwright",
+            "exists": true,
+            "latestVersion": "1.64.1",
+            "lastReleaseAt": "2026-10-14T11:54:49.998Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 69843408,
+            "repo": "microsoft/playwright",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-22T19:42:15Z",
+            "repoStars": 98303,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 2,
+          "package": "cypress",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "cypress",
+            "exists": true,
+            "latestVersion": "16.2.0",
+            "lastReleaseAt": "2026-10-14T15:45:39.102Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 3192949,
+            "repo": "cypress-io/cypress",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-22T18:33:03Z",
+            "repoStars": 51014,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 3,
+          "package": "puppeteer",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "puppeteer",
+            "exists": true,
+            "latestVersion": "25.16.0",
+            "lastReleaseAt": "2026-10-22T11:53:03.649Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 6668927,
+            "repo": "puppeteer/puppeteer",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-22T17:08:54Z",
+            "repoStars": 95736,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        }
+      ]
+    },
+    {
+      "id": "lib-bundler",
+      "ecosystem": "npm",
+      "task": "Bundle a TypeScript library for publishing to npm",
+      "question": "I'm working on a JavaScript/TypeScript project (npm). I need to: Bundle a TypeScript library for publishing to npm.\nWhich package should I install? Give your top 3 picks, best first, as exact npm package names, each with a one-line reason.",
+      "picks": [
+        {
+          "rank": 1,
+          "package": "tsup",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "tsup",
+            "exists": true,
+            "latestVersion": "9.0.0",
+            "lastReleaseAt": "2026-10-14T13:47:00.379Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 5531221,
+            "repo": "egoist/tsup",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-22T14:41:03Z",
+            "repoStars": 11298,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 2,
+          "package": "vite",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "vite",
+            "exists": true,
+            "latestVersion": "8.3.5",
+            "lastReleaseAt": "2026-10-21T06:38:54.907Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 119005168,
+            "repo": "vitejs/vite",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-22T13:57:02Z",
+            "repoStars": 83458,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 3,
+          "package": "rollup",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "rollup",
+            "exists": true,
+            "latestVersion": "4.65.0",
+            "lastReleaseAt": "2026-10-22T09:00:17.921Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 75240776,
+            "repo": "rollup/rollup",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-22T19:35:53Z",
+            "repoStars": 26305,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        }
+      ]
+    },
+    {
+      "id": "next-auth",
+      "ecosystem": "npm",
+      "task": "Add user authentication to a Next.js app",
+      "question": "I'm working on a JavaScript/TypeScript project (npm). I need to: Add user authentication to a Next.js app.\nWhich package should I install? Give your top 3 picks, best first, as exact npm package names, each with a one-line reason.",
+      "picks": [
+        {
+          "rank": 1,
+          "package": "next-auth",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "next-auth",
+            "exists": true,
+            "latestVersion": "4.24.15",
+            "lastReleaseAt": "2026-07-20T23:19:38.021Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 3991213,
+            "repo": "nextauthjs/next-auth",
+            "repoArchived": false,
+            "repoPushedAt": "2026-07-22T19:42:19Z",
+            "repoStars": 28365,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 2,
+          "package": "@auth/nextjs",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "@auth/nextjs",
+            "exists": true,
+            "latestVersion": "0.0.0-380f8d56",
+            "lastReleaseAt": "2023-04-18T10:20:51.900Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 881,
+            "repo": "nextauthjs/next-auth",
+            "repoArchived": false,
+            "repoPushedAt": "2026-07-22T19:42:19Z",
+            "repoStars": 28365,
+            "verdict": "dormant",
+            "reason": "No release for 3.5 years (repository still active)"
+          }
+        },
+        {
+          "rank": 3,
+          "package": "lucia",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "lucia",
+            "exists": true,
+            "latestVersion": "3.2.2",
+            "lastReleaseAt": "2024-10-20T12:40:32.030Z",
+            "deprecatedMessage": "This package has been deprecated. Please see https://lucia-auth.com/lucia-v3/migrate.",
+            "weeklyDownloads": 276061,
+            "repo": "lucia-auth/lucia",
+            "repoArchived": false,
+            "repoPushedAt": "2026-08-08T13:42:42Z",
+            "repoStars": 10452,
+            "verdict": "deprecated",
+            "reason": "This package has been deprecated. Please see https://lucia-auth.com/lucia-v3/migrate."
+          }
+        }
+      ]
+    },
+    {
+      "id": "node-queue",
+      "ecosystem": "npm",
+      "task": "Run background jobs with retries in a Node.js app",
+      "question": "I'm working on a JavaScript/TypeScript project (npm). I need to: Run background jobs with retries in a Node.js app.\nWhich package should I install? Give your top 3 picks, best first, as exact npm package names, each with a one-line reason.",
+      "picks": [
+        {
+          "rank": 1,
+          "package": "bullmq",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "bullmq",
+            "exists": true,
+            "latestVersion": "6.4.0",
+            "lastReleaseAt": "2026-10-21T10:06:29.554Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 5801653,
+            "repo": "taskforcesh/bullmq",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-22T19:26:06Z",
+            "repoStars": 9529,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 2,
+          "package": "bull",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "bull",
+            "exists": true,
+            "latestVersion": "4.16.5",
+            "lastReleaseAt": "2024-12-18T20:36:37.132Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 918168,
+            "repo": "OptimalBits/bull",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-17T10:17:16Z",
+            "repoStars": 16255,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 3,
+          "package": "agenda",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "agenda",
+            "exists": true,
+            "latestVersion": "6.2.6",
+            "lastReleaseAt": "2026-07-21T05:04:21.993Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 82696,
+            "repo": "agenda/agenda",
+            "repoArchived": false,
+            "repoPushedAt": "2026-07-21T07:56:40Z",
+            "repoStars": 9709,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        }
+      ]
+    },
+    {
+      "id": "node-logging",
+      "ecosystem": "npm",
+      "task": "Structured logging in a Node.js server",
+      "question": "I'm working on a JavaScript/TypeScript project (npm). I need to: Structured logging in a Node.js server.\nWhich package should I install? Give your top 3 picks, best first, as exact npm package names, each with a one-line reason.",
+      "picks": [
+        {
+          "rank": 1,
+          "package": "pino",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "pino",
+            "exists": true,
+            "latestVersion": "10.4.0",
+            "lastReleaseAt": "2026-10-02T18:18:54.863Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 32672587,
+            "repo": "pinojs/pino",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-06T15:34:15Z",
+            "repoStars": 18260,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 2,
+          "package": "winston",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "winston",
+            "exists": true,
+            "latestVersion": "3.19.0",
+            "lastReleaseAt": "2025-12-07T07:37:16.009Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 15135230,
+            "repo": "winstonjs/winston",
+            "repoArchived": false,
+            "repoPushedAt": "2026-07-20T19:12:28Z",
+            "repoStars": 24527,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 3,
+          "package": "bunyan",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "bunyan",
+            "exists": true,
+            "latestVersion": "1.8.15",
+            "lastReleaseAt": "2021-01-08T23:26:28.125Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 2364904,
+            "repo": "trentm/node-bunyan",
+            "repoArchived": false,
+            "repoPushedAt": "2023-09-18T16:20:50Z",
+            "repoStars": 7208,
+            "verdict": "stale",
+            "reason": "Last release 5.8 years ago, last commit 3.1 years ago"
+          }
+        }
+      ]
+    },
+    {
+      "id": "node-cli-args",
+      "ecosystem": "npm",
+      "task": "Parse command-line arguments for a Node.js CLI tool",
+      "question": "I'm working on a JavaScript/TypeScript project (npm). I need to: Parse command-line arguments for a Node.js CLI tool.\nWhich package should I install? Give your top 3 picks, best first, as exact npm package names, each with a one-line reason.",
+      "picks": [
+        {
+          "rank": 1,
+          "package": "commander",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "commander",
+            "exists": true,
+            "latestVersion": "15.0.0",
+            "lastReleaseAt": "2026-05-29T09:16:23.076Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 313640187,
+            "repo": "tj/commander.js",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-19T21:30:54Z",
+            "repoStars": 28429,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 2,
+          "package": "yargs",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "yargs",
+            "exists": true,
+            "latestVersion": "18.2.0",
+            "lastReleaseAt": "2026-09-20T22:34:11.798Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 159672891,
+            "repo": "yargs/yargs",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-20T13:16:52Z",
+            "repoStars": 11505,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 3,
+          "package": "cac",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "cac",
+            "exists": true,
+            "latestVersion": "7.1.0",
+            "lastReleaseAt": "2026-10-11T19:26:23.044Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 30212859,
+            "repo": "cacjs/cac",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-11T19:23:34Z",
+            "repoStars": 3141,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        }
+      ]
+    },
+    {
+      "id": "node-pdf",
+      "ecosystem": "npm",
+      "task": "Generate PDF documents in Node.js",
+      "question": "I'm working on a JavaScript/TypeScript project (npm). I need to: Generate PDF documents in Node.js.\nWhich package should I install? Give your top 3 picks, best first, as exact npm package names, each with a one-line reason.",
+      "picks": [
+        {
+          "rank": 1,
+          "package": "pdfkit",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "pdfkit",
+            "exists": true,
+            "latestVersion": "0.20.2",
+            "lastReleaseAt": "2026-08-30T01:59:10.699Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 6603086,
+            "repo": "foliojs/pdfkit",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-22T12:20:34Z",
+            "repoStars": 10722,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 2,
+          "package": "pdfmake",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "pdfmake",
+            "exists": true,
+            "latestVersion": "0.3.12",
+            "lastReleaseAt": "2026-10-17T11:56:38.994Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 1617455,
+            "repo": "bpampuch/pdfmake",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-19T15:27:06Z",
+            "repoStars": 12352,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 3,
+          "package": "puppeteer",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "puppeteer",
+            "exists": true,
+            "latestVersion": "25.16.0",
+            "lastReleaseAt": "2026-10-22T11:53:03.649Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 6668927,
+            "repo": "puppeteer/puppeteer",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-22T17:08:54Z",
+            "repoStars": 95736,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        }
+      ]
+    },
+    {
+      "id": "react-charts",
+      "ecosystem": "npm",
+      "task": "Draw charts in a React app",
+      "question": "I'm working on a JavaScript/TypeScript project (npm). I need to: Draw charts in a React app.\nWhich package should I install? Give your top 3 picks, best first, as exact npm package names, each with a one-line reason.",
+      "picks": [
+        {
+          "rank": 1,
+          "package": "recharts",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "recharts",
+            "exists": true,
+            "latestVersion": "3.10.1",
+            "lastReleaseAt": "2026-07-25T15:23:05.240Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 33269434,
+            "repo": "recharts/recharts",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-22T13:56:19Z",
+            "repoStars": 27650,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 2,
+          "package": "react-chartjs-2",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "react-chartjs-2",
+            "exists": true,
+            "latestVersion": "5.3.1",
+            "lastReleaseAt": "2025-10-27T16:41:52.213Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 2527935,
+            "repo": "reactchartjs/react-chartjs-2",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-14T17:03:33Z",
+            "repoStars": 6935,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 3,
+          "package": "visx",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "visx",
+            "exists": false,
+            "latestVersion": null,
+            "lastReleaseAt": null,
+            "deprecatedMessage": null,
+            "weeklyDownloads": null,
+            "repo": null,
+            "repoArchived": null,
+            "repoPushedAt": null,
+            "repoStars": null,
+            "verdict": "missing",
+            "reason": "No package named \"visx\" on npm"
+          }
+        }
+      ]
+    },
+    {
+      "id": "react-rich-text",
+      "ecosystem": "npm",
+      "task": "Add a rich text editor to a React app",
+      "question": "I'm working on a JavaScript/TypeScript project (npm). I need to: Add a rich text editor to a React app.\nWhich package should I install? Give your top 3 picks, best first, as exact npm package names, each with a one-line reason.",
+      "picks": [
+        {
+          "rank": 1,
+          "package": "@tiptap/react",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "@tiptap/react",
+            "exists": true,
+            "latestVersion": "3.32.0",
+            "lastReleaseAt": "2026-10-13T12:07:36.770Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 11348991,
+            "repo": "ueberdosis/tiptap",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-22T13:00:31Z",
+            "repoStars": 38818,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 2,
+          "package": "slate",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "slate",
+            "exists": true,
+            "latestVersion": "0.146.0",
+            "lastReleaseAt": "2026-10-18T02:08:45.282Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 1721402,
+            "repo": "ianstormtaylor/slate",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-22T03:41:57Z",
+            "repoStars": 31740,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 3,
+          "package": "quill",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "quill",
+            "exists": true,
+            "latestVersion": "2.0.3",
+            "lastReleaseAt": "2024-11-30T12:19:39.819Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 3803710,
+            "repo": "slab/quill",
+            "repoArchived": false,
+            "repoPushedAt": "2025-07-25T06:09:23Z",
+            "repoStars": 47369,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        }
+      ]
+    },
+    {
+      "id": "react-dnd",
+      "ecosystem": "npm",
+      "task": "Add drag and drop to a React app",
+      "question": "I'm working on a JavaScript/TypeScript project (npm). I need to: Add drag and drop to a React app.\nWhich package should I install? Give your top 3 picks, best first, as exact npm package names, each with a one-line reason.",
+      "picks": [
+        {
+          "rank": 1,
+          "package": "@dnd-kit/core",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "@dnd-kit/core",
+            "exists": true,
+            "latestVersion": "6.3.1",
+            "lastReleaseAt": "2024-12-05T17:10:19.974Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 17050828,
+            "repo": "clauderic/dnd-kit",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-15T12:09:13Z",
+            "repoStars": 17741,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 2,
+          "package": "react-beautiful-dnd",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "react-beautiful-dnd",
+            "exists": true,
+            "latestVersion": "13.1.1",
+            "lastReleaseAt": "2022-08-30T04:15:39.512Z",
+            "deprecatedMessage": "react-beautiful-dnd is now deprecated. Context and options: https://github.com/atlassian/react-beautiful-dnd/issues/2672",
+            "weeklyDownloads": 1044429,
+            "repo": "atlassian/react-beautiful-dnd",
+            "repoArchived": true,
+            "repoPushedAt": "2025-08-18T04:35:31Z",
+            "repoStars": 33906,
+            "verdict": "deprecated",
+            "reason": "react-beautiful-dnd is now deprecated. Context and options: https://github.com/atlassian/react-beautiful-dnd/issues/2672"
+          }
+        },
+        {
+          "rank": 3,
+          "package": "react-dnd",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "react-dnd",
+            "exists": true,
+            "latestVersion": "16.0.1",
+            "lastReleaseAt": "2022-04-19T18:05:21.375Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 3101915,
+            "repo": "react-dnd/react-dnd",
+            "repoArchived": false,
+            "repoPushedAt": "2025-07-06T10:22:50Z",
+            "repoStars": 21625,
+            "verdict": "stale",
+            "reason": "Last release 4.5 years ago, last commit 1.3 years ago"
+          }
+        }
+      ]
+    },
+    {
+      "id": "md-to-html",
+      "ecosystem": "npm",
+      "task": "Convert Markdown to HTML in Node.js",
+      "question": "I'm working on a JavaScript/TypeScript project (npm). I need to: Convert Markdown to HTML in Node.js.\nWhich package should I install? Give your top 3 picks, best first, as exact npm package names, each with a one-line reason.",
+      "picks": [
+        {
+          "rank": 1,
+          "package": "marked",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "marked",
+            "exists": true,
+            "latestVersion": "18.1.1",
+            "lastReleaseAt": "2026-10-12T12:29:51.405Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 51183938,
+            "repo": "markedjs/marked",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-21T04:13:53Z",
+            "repoStars": 37257,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 2,
+          "package": "markdown-it",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "markdown-it",
+            "exists": true,
+            "latestVersion": "15.0.3",
+            "lastReleaseAt": "2026-10-16T01:25:15.267Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 16608434,
+            "repo": "markdown-it/markdown-it",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-16T01:44:32Z",
+            "repoStars": 21994,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 3,
+          "package": "showdown",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "showdown",
+            "exists": true,
+            "latestVersion": "2.1.0",
+            "lastReleaseAt": "2022-04-21T00:33:05.614Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 691278,
+            "repo": "showdownjs/showdown",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-20T21:41:49Z",
+            "repoStars": 14872,
+            "verdict": "dormant",
+            "reason": "No release for 4.5 years (repository still active)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "node-scraping",
+      "ecosystem": "npm",
+      "task": "Scrape JavaScript-rendered web pages from Node.js",
+      "question": "I'm working on a JavaScript/TypeScript project (npm). I need to: Scrape JavaScript-rendered web pages from Node.js.\nWhich package should I install? Give your top 3 picks, best first, as exact npm package names, each with a one-line reason.",
+      "picks": [
+        {
+          "rank": 1,
+          "package": "puppeteer",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "puppeteer",
+            "exists": true,
+            "latestVersion": "25.16.0",
+            "lastReleaseAt": "2026-10-22T11:53:03.649Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 6668927,
+            "repo": "puppeteer/puppeteer",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-22T17:08:54Z",
+            "repoStars": 95736,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 2,
+          "package": "playwright",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "playwright",
+            "exists": true,
+            "latestVersion": "1.64.1",
+            "lastReleaseAt": "2026-10-14T11:54:49.998Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 69843408,
+            "repo": "microsoft/playwright",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-22T19:42:15Z",
+            "repoStars": 98303,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 3,
+          "package": "cheerio",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "cheerio",
+            "exists": true,
+            "latestVersion": "1.2.0",
+            "lastReleaseAt": "2026-01-23T16:29:49.559Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 15509393,
+            "repo": "cheeriojs/cheerio",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-22T03:25:56Z",
+            "repoStars": 30527,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        }
+      ]
+    },
+    {
+      "id": "node-websocket",
+      "ecosystem": "npm",
+      "task": "Run a WebSocket server in Node.js",
+      "question": "I'm working on a JavaScript/TypeScript project (npm). I need to: Run a WebSocket server in Node.js.\nWhich package should I install? Give your top 3 picks, best first, as exact npm package names, each with a one-line reason.",
+      "picks": [
+        {
+          "rank": 1,
+          "package": "ws",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "ws",
+            "exists": true,
+            "latestVersion": "8.22.0",
+            "lastReleaseAt": "2026-09-26T15:00:57.748Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 173402500,
+            "repo": "websockets/ws",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-13T19:57:37Z",
+            "repoStars": 22807,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 2,
+          "package": "socket.io",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "socket.io",
+            "exists": true,
+            "latestVersion": "4.8.4",
+            "lastReleaseAt": "2026-09-25T08:51:53.015Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 11034879,
+            "repo": "socketio/socket.io",
+            "repoArchived": false,
+            "repoPushedAt": "2026-09-29T09:18:54Z",
+            "repoStars": 63221,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 3,
+          "package": "uWebSockets.js",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "uWebSockets.js",
+            "exists": false,
+            "latestVersion": null,
+            "lastReleaseAt": null,
+            "deprecatedMessage": null,
+            "weeklyDownloads": null,
+            "repo": null,
+            "repoArchived": null,
+            "repoPushedAt": null,
+            "repoStars": null,
+            "verdict": "missing",
+            "reason": "Real project (uNetworking/uWebSockets.js) but not on npm under this name; the install command fails"
+          }
+        }
+      ]
+    },
+    {
+      "id": "py-http",
+      "ecosystem": "pypi",
+      "task": "Make HTTP requests in Python, including async",
+      "question": "I'm working on a Python project (PyPI). I need to: Make HTTP requests in Python, including async.\nWhich package should I install? Give your top 3 picks, best first, as exact PyPI package names, each with a one-line reason.",
+      "picks": [
+        {
+          "rank": 1,
+          "package": "requests",
+          "why": "",
+          "facts": {
+            "ecosystem": "pypi",
+            "name": "requests",
+            "exists": true,
+            "latestVersion": "2.34.2",
+            "lastReleaseAt": "2026-05-14T19:25:26.443000Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 320567487,
+            "repo": "psf/requests",
+            "repoArchived": false,
+            "repoPushedAt": "2026-09-28T16:55:48Z",
+            "repoStars": 54609,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 2,
+          "package": "httpx",
+          "why": "",
+          "facts": {
+            "ecosystem": "pypi",
+            "name": "httpx",
+            "exists": true,
+            "latestVersion": "0.28.1",
+            "lastReleaseAt": "2024-12-06T15:37:21.509172Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 169924477,
+            "repo": "encode/httpx",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-02T12:53:43Z",
+            "repoStars": 15716,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 3,
+          "package": "aiohttp",
+          "why": "",
+          "facts": {
+            "ecosystem": "pypi",
+            "name": "aiohttp",
+            "exists": true,
+            "latestVersion": "3.14.5",
+            "lastReleaseAt": "2026-10-11T00:59:07.668168Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 123169230,
+            "repo": "aio-libs/aiohttp",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-22T11:04:29Z",
+            "repoStars": 16587,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        }
+      ]
+    },
+    {
+      "id": "py-validation",
+      "ecosystem": "pypi",
+      "task": "Validate and parse data into typed objects in Python",
+      "question": "I'm working on a Python project (PyPI). I need to: Validate and parse data into typed objects in Python.\nWhich package should I install? Give your top 3 picks, best first, as exact PyPI package names, each with a one-line reason.",
+      "picks": [
+        {
+          "rank": 1,
+          "package": "pydantic",
+          "why": "",
+          "facts": {
+            "ecosystem": "pypi",
+            "name": "pydantic",
+            "exists": true,
+            "latestVersion": "2.14.1",
+            "lastReleaseAt": "2026-10-11T18:37:53.437059Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 243239322,
+            "repo": "sponsors/samuelcolvin",
+            "repoArchived": null,
+            "repoPushedAt": null,
+            "repoStars": null,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 2,
+          "package": "marshmallow",
+          "why": "",
+          "facts": {
+            "ecosystem": "pypi",
+            "name": "marshmallow",
+            "exists": true,
+            "latestVersion": "4.3.1",
+            "lastReleaseAt": "2026-08-08T14:27:28.078717Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 20465205,
+            "repo": "marshmallow-code/marshmallow",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-19T16:57:44Z",
+            "repoStars": 7246,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 3,
+          "package": "voluptuous",
+          "why": "",
+          "facts": {
+            "ecosystem": "pypi",
+            "name": "voluptuous",
+            "exists": true,
+            "latestVersion": "0.16.0",
+            "lastReleaseAt": "2025-12-18T23:18:44.694481Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 1292730,
+            "repo": "alecthomas/voluptuous",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-12T03:48:20Z",
+            "repoStars": 1853,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        }
+      ]
+    },
+    {
+      "id": "py-web-api",
+      "ecosystem": "pypi",
+      "task": "Build a JSON web API in Python",
+      "question": "I'm working on a Python project (PyPI). I need to: Build a JSON web API in Python.\nWhich package should I install? Give your top 3 picks, best first, as exact PyPI package names, each with a one-line reason.",
+      "picks": [
+        {
+          "rank": 1,
+          "package": "fastapi",
+          "why": "",
+          "facts": {
+            "ecosystem": "pypi",
+            "name": "fastapi",
+            "exists": true,
+            "latestVersion": "0.161.0",
+            "lastReleaseAt": "2026-10-22T18:30:41.955112Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 114043444,
+            "repo": "fastapi/fastapi",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-22T19:13:04Z",
+            "repoStars": 103638,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 2,
+          "package": "flask",
+          "why": "",
+          "facts": {
+            "ecosystem": "pypi",
+            "name": "flask",
+            "exists": true,
+            "latestVersion": "3.1.3",
+            "lastReleaseAt": "2026-02-19T05:00:56.027585Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 39921210,
+            "repo": "pallets/flask",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-07T14:02:59Z",
+            "repoStars": 75011,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 3,
+          "package": "django",
+          "why": "",
+          "facts": {
+            "ecosystem": "pypi",
+            "name": "django",
+            "exists": true,
+            "latestVersion": "6.1.2",
+            "lastReleaseAt": "2026-10-06T12:53:17.381365Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 10982206,
+            "repo": "django/django",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-22T17:46:07Z",
+            "repoStars": 91552,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        }
+      ]
+    },
+    {
+      "id": "py-cli",
+      "ecosystem": "pypi",
+      "task": "Build a command-line tool in Python",
+      "question": "I'm working on a Python project (PyPI). I need to: Build a command-line tool in Python.\nWhich package should I install? Give your top 3 picks, best first, as exact PyPI package names, each with a one-line reason.",
+      "picks": [
+        {
+          "rank": 1,
+          "package": "typer",
+          "why": "",
+          "facts": {
+            "ecosystem": "pypi",
+            "name": "typer",
+            "exists": true,
+            "latestVersion": "0.27.3",
+            "lastReleaseAt": "2026-10-06T17:24:15.054699Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 66015567,
+            "repo": "fastapi/typer",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-15T15:22:01Z",
+            "repoStars": 20168,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 2,
+          "package": "click",
+          "why": "",
+          "facts": {
+            "ecosystem": "pypi",
+            "name": "click",
+            "exists": true,
+            "latestVersion": "8.5.0",
+            "lastReleaseAt": "2026-08-26T13:33:12.928043Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 226835880,
+            "repo": "pallets/click",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-06T20:58:59Z",
+            "repoStars": 17800,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 3,
+          "package": "argparse",
+          "why": "",
+          "facts": {
+            "ecosystem": "pypi",
+            "name": "argparse",
+            "exists": true,
+            "latestVersion": "1.4.0",
+            "lastReleaseAt": "2015-09-14T16:03:16.137978Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 2556501,
+            "repo": "ThomasWaldmann/argparse",
+            "repoArchived": true,
+            "repoPushedAt": "2021-05-13T08:12:48Z",
+            "repoStars": 57,
+            "verdict": "ok",
+            "reason": "Built into Python (standard library)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "py-dataframes",
+      "ecosystem": "pypi",
+      "task": "Load and analyse a large CSV as a dataframe in Python",
+      "question": "I'm working on a Python project (PyPI). I need to: Load and analyse a large CSV as a dataframe in Python.\nWhich package should I install? Give your top 3 picks, best first, as exact PyPI package names, each with a one-line reason.",
+      "picks": [
+        {
+          "rank": 1,
+          "package": "pandas",
+          "why": "",
+          "facts": {
+            "ecosystem": "pypi",
+            "name": "pandas",
+            "exists": true,
+            "latestVersion": "3.1.0",
+            "lastReleaseAt": "2026-10-22T11:54:48.330970Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 147035060,
+            "repo": "pandas-dev/pandas",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-22T14:16:14Z",
+            "repoStars": 50243,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 2,
+          "package": "polars",
+          "why": "",
+          "facts": {
+            "ecosystem": "pypi",
+            "name": "polars",
+            "exists": true,
+            "latestVersion": "2.0.0",
+            "lastReleaseAt": "2026-10-06T11:44:04.327938Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 14183522,
+            "repo": "pola-rs/polars",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-22T20:04:57Z",
+            "repoStars": 40156,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 3,
+          "package": "modin",
+          "why": "",
+          "facts": {
+            "ecosystem": "pypi",
+            "name": "modin",
+            "exists": true,
+            "latestVersion": "0.37.1",
+            "lastReleaseAt": "2025-10-02T19:20:27.559996Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 280727,
+            "repo": "modin-project/modin",
+            "repoArchived": false,
+            "repoPushedAt": "2026-02-10T20:52:42Z",
+            "repoStars": 10391,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        }
+      ]
+    }
+  ]
+}

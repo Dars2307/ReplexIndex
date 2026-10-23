@@ -8,7 +8,7 @@ Browser (React SPA)                     AI agents (Claude, Cursor, …)
 ┌──────────────────────── Express API (one Vercel function) ───────────────────────┐
 │ auth.ts     session JWT → user, or rpx_ key → sha256 lookup → user + scopes      │
 │ github.ts   search / rising / breakout / repo detail · token per user · cache     │
-│ mcp.ts      initialize · tools/list · tools/call (10 tools) · activity log        │
+│ mcp.ts      initialize · tools/list · tools/call (9 tools) · activity log         │
 │ library.ts  collections · history · profile (always scoped to caller.userId)      │
 └──────────────────────────────────────────────────────────────────────────────────┘
         │ service role                                   │ user / server token

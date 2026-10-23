@@ -19,8 +19,9 @@ const { buildGithubQuery, isValidFullName, toRepository } = await import('./gith
 const { handleMessage, TOOLS } = await import('./mcp.ts');
 const { classifyRepository } = await import('../src/engines/classification.ts');
 const { app } = await import('./app.ts');
+const { API_KEY_SCOPES } = await import('./auth.ts');
 
-// A read-only key: everything except library:write.
+// An API key caller: agents only ever get read scopes.
 const caller = {
   userId: '00000000-0000-0000-0000-000000000001',
   via: 'api_key' as const,
@@ -165,13 +166,14 @@ describe('MCP protocol', () => {
     assert.match(res.result.content[0].text, /owner\/repo/);
   });
 
-  test('save_to_collection requires the library:write scope', async () => {
+  test('agent access is read-only: no write tools, no write scopes for keys', async () => {
+    for (const t of TOOLS) assert.match(t.scope, /:read$/, `${t.name} must be read-only`);
     const res = (await handleMessage(
       { jsonrpc: '2.0', id: 7, method: 'tools/call', params: { name: 'save_to_collection', arguments: { collection: 'x', full_name: 'a/b' } } },
       caller,
     )) as any;
-    assert.equal(res.result.isError, true);
-    assert.match(res.result.content[0].text, /library:write/);
+    assert.equal(res.error.code, -32602);
+    assert.ok(API_KEY_SCOPES.every((s) => !s.endsWith(':write') && s !== 'keys:manage'));
   });
 
   test('every tool declares a scope and read tools enforce theirs', async () => {

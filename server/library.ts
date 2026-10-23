@@ -100,36 +100,6 @@ export async function getCollection(userId: string, idOrName: string) {
   };
 }
 
-export async function saveToCollection(userId: string, collectionName: string, repo: Repository, notes = '') {
-  const admin = requireAdmin();
-  const name = collectionName.trim().slice(0, 120);
-  if (!name) throw new HttpError(400, 'Collection name is required');
-  let collection = await findCollection(userId, name);
-  let created = false;
-  if (!collection) {
-    const { data, error } = await admin
-      .from('collections')
-      .insert({ user_id: userId, name, description: '', is_private: true })
-      .select('id, name, description, is_private')
-      .single();
-    if (error) throw new HttpError(500, 'Could not create collection');
-    collection = data;
-    created = true;
-  }
-  const { error } = await admin.from('collection_items').upsert(
-    {
-      collection_id: collection.id,
-      repo_full_name: repo.fullName,
-      repo_snapshot: summarizeRepository(repo),
-      notes: notes.slice(0, 2000),
-    },
-    { onConflict: 'collection_id,repo_full_name' },
-  );
-  if (error) throw new HttpError(500, 'Could not save repository');
-  await admin.from('collections').update({ updated_at: new Date().toISOString() }).eq('id', collection.id);
-  return { collection: collection.name, collectionId: collection.id, createdCollection: created, saved: repo.fullName };
-}
-
 export async function targetStackFor(userId: string): Promise<string> {
   const admin = getAdmin();
   if (!admin) return '';

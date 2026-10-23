@@ -12,7 +12,7 @@ Claude, Cursor and any MCP client a private, per-user line into your library.
 - **Agent readiness** — a transparent 0–100 score (licence, docs, install instructions, types, maintenance).
 - **Stack compatibility** — evidence-based fit against your stack (e.g. Next.js + TypeScript + Tailwind).
 - **Your library** — collections with notes, search history and pinned searches, synced to your account.
-- **Personal MCP server** — revocable API keys; agents search on your GitHub quota and read/write only your collections.
+- **Personal MCP server** — one revocable API key per agent; agents search on your GitHub quota and get read-only access to your collections and history.
 
 ## Stack
 
@@ -80,7 +80,7 @@ Create a key under **Agents & MCP**, then for Claude Code:
 claude mcp add --transport http replex https://<your-domain>/api/mcp --header "Authorization: Bearer rpx_..."
 ```
 
-See [docs/MCP.md](docs/MCP.md) for every client and tool.
+See [docs/MCP.md](docs/MCP.md) for every agent and tool.
 
 ## Docs
 
