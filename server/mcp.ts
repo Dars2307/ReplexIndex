@@ -11,7 +11,6 @@ import {
   logAgentEvent,
   recentSearches,
   recordSearch,
-  saveToCollection,
   summarizeRepository,
   targetStackFor,
 } from './library.ts';
@@ -233,26 +232,6 @@ export const TOOLS: ToolDef[] = [
     inputSchema: { type: 'object', properties: { collection: { type: 'string' } }, required: ['collection'] },
     annotations: { readOnlyHint: true },
     run: (args, caller) => getCollection(caller.userId, str(args.collection, 120)),
-  },
-  {
-    name: 'save_to_collection',
-    scope: 'library:write',
-    title: 'Save to collection',
-    description: 'Save a repository to one of my collections. Creates the collection if it does not exist.',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        collection: { type: 'string', description: 'Collection name' },
-        full_name: { type: 'string' },
-        notes: { type: 'string', description: 'Why this repository matters' },
-      },
-      required: ['collection', 'full_name'],
-    },
-    annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true },
-    async run(args, caller) {
-      const repo = await getRepository(fullNameArg(args.full_name), await githubTokenFor(caller.userId));
-      return saveToCollection(caller.userId, str(args.collection, 120), repo, str(args.notes, 2000));
-    },
   },
   {
     name: 'recent_searches',

@@ -19,6 +19,8 @@ declare global {
 }
 
 const SESSION_SCOPES = ['search:read', 'repositories:read', 'library:read', 'library:write', 'keys:manage', 'mcp:invoke'];
+/** Everything an API key (an agent) may do: read only, whatever older keys have stored. */
+export const API_KEY_SCOPES = ['search:read', 'repositories:read', 'library:read', 'mcp:invoke'];
 const API_KEY_CALLS_PER_MINUTE = 60;
 
 function bearer(req: Request): string | null {
@@ -50,7 +52,8 @@ async function callerFromApiKey(raw: string): Promise<Caller> {
   if (!data.last_used_at || Date.parse(data.last_used_at) < Date.now() - 60_000) {
     background(admin.from('api_keys').update({ last_used_at: new Date().toISOString() }).eq('id', data.id), 'api key last_used_at');
   }
-  return { userId: data.user_id, via: 'api_key', apiKeyId: data.id, scopes: data.scopes ?? [] };
+  const scopes = ((data.scopes ?? []) as string[]).filter((s) => API_KEY_SCOPES.includes(s));
+  return { userId: data.user_id, via: 'api_key', apiKeyId: data.id, scopes };
 }
 
 async function callerFromSession(jwt: string): Promise<Caller> {

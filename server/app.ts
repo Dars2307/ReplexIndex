@@ -2,7 +2,7 @@ import express, { type NextFunction, type Request, type Response } from 'express
 import type { TrendingWindow } from '../src/types/index.ts';
 import { evaluateCompatibility } from '../src/engines/compatibility.ts';
 import { AI_DAILY_LIMIT, aiConfigured, aiSearchesToday, cachedReview, reviewRepository, smartSearch } from './ai.ts';
-import { authenticate } from './auth.ts';
+import { API_KEY_SCOPES, authenticate } from './auth.ts';
 import { canEncrypt, encryptSecret, mintApiKey } from './crypto.ts';
 import { env, supabaseConfigured } from './env.ts';
 import {
@@ -293,7 +293,7 @@ app.post(
     const key = mintApiKey();
     const { data, error } = await admin
       .from('api_keys')
-      .insert({ user_id: req.caller!.userId, name, prefix: key.prefix, key_hash: key.hash })
+      .insert({ user_id: req.caller!.userId, name, prefix: key.prefix, key_hash: key.hash, scopes: API_KEY_SCOPES })
       .select('id, name, prefix, scopes, created_at, last_used_at, revoked_at')
       .single();
     if (error) throw new HttpError(500, 'Could not create key');

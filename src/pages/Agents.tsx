@@ -7,7 +7,7 @@ import { api, del, post } from '../lib/api.ts';
 import { timeAgo } from '../lib/format.ts';
 import { listAgentEvents, listKeys, type AgentEvent, type ApiKeyRecord } from '../lib/library.ts';
 import { invalidate, useQuery } from '../lib/query.ts';
-import { CLIENT_GROUPS, MCP_CLIENTS } from '../lib/mcpClients.ts';
+import { MCP_CLIENTS } from '../lib/mcpClients.ts';
 import { useSearchParams } from '../lib/router.tsx';
 import { useToast } from '../lib/toast.tsx';
 
@@ -19,7 +19,7 @@ interface ToolInfo {
 
 export function AgentsPage() {
   return (
-    <RequireAuth title="Agents & MCP" description="Give Claude, Cursor and any MCP client a private line into Replex and your library.">
+    <RequireAuth title="Agents & MCP" description="Connect Claude, Codex, Cursor and other agents to Replex with read-only access.">
       <Agents />
     </RequireAuth>
   );
@@ -40,7 +40,8 @@ function Agents() {
   const url = `${window.location.origin}/api/mcp`;
   const active = keys.data?.filter((k) => !k.revoked_at) ?? [];
   const keyNames = new Map((keys.data ?? []).map((k) => [k.id, k.name]));
-  const code = client.snippet(url, newKey ?? 'rpx_YOUR_KEY');
+  const key = newKey ?? 'rpx_YOUR_KEY';
+  const header = `Authorization: Bearer ${key}`;
 
   const create = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -78,10 +79,10 @@ function Agents() {
     <>
       <PageHeader
         title="Agents & MCP"
-        description="Give Claude, Cursor and any MCP client a private line into Replex. Agents search GitHub on your quota and read and write your collections — nobody else’s."
+        description="Connect an agent to Replex with its own API key. Agents search GitHub on your quota and read your collections and history. Access is read-only: they can’t change your library or any repository."
         actions={
           <Button variant="primary" icon={<Plus className="size-4" aria-hidden />} onClick={() => setCreating(true)}>
-            New API key
+            New key for {client.name}
           </Button>
         }
       />
@@ -112,16 +113,15 @@ function Agents() {
           <Card>
             <div className="flex items-center justify-between gap-3 border-b border-border px-5 py-3">
               <h2 className="flex items-center gap-2 font-semibold">
-                <Bot className="size-4 text-fg-subtle" aria-hidden /> Connect a client
+                <Bot className="size-4 text-fg-subtle" aria-hidden /> Connect an agent
               </h2>
               <Badge tone="success">
-                <span className="size-1.5 rounded-full bg-success" aria-hidden /> MCP server live
+                <span className="size-1.5 rounded-full bg-success" aria-hidden /> Read-only
               </Badge>
             </div>
-            {/* Phones: one compact grouped picker instead of 22 touch-size chips. */}
             <div className="px-5 pt-4 sm:hidden">
               <label htmlFor="mcp-client" className="mb-1.5 block text-[12px] font-medium text-fg-subtle">
-                Your client
+                Your agent
               </label>
               <select
                 id="mcp-client"
@@ -129,66 +129,81 @@ function Agents() {
                 onChange={(e) => setParams({ client: e.target.value })}
                 className="h-11 w-full rounded-sm border border-input bg-surface px-3 text-fg"
               >
-                {CLIENT_GROUPS.map((group) => (
-                  <optgroup key={group} label={group}>
-                    {MCP_CLIENTS.filter((c) => c.group === group).map((c) => (
-                      <option key={c.id} value={c.id}>
-                        {c.name}
-                        {c.unsupported ? ' (not yet)' : ''}
-                      </option>
-                    ))}
-                  </optgroup>
+                {MCP_CLIENTS.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
                 ))}
               </select>
             </div>
-            <div role="radiogroup" aria-label="MCP client" className="hidden gap-3 px-5 pt-4 sm:grid">
-              {CLIENT_GROUPS.map((group) => (
-                <div key={group}>
-                  <h3 className="mb-1.5 text-[12px] font-medium text-fg-subtle">{group}</h3>
-                  <div className="flex flex-wrap gap-1.5">
-                    {MCP_CLIENTS.filter((c) => c.group === group).map((c) => (
-                      <button
-                        key={c.id}
-                        type="button"
-                        role="radio"
-                        aria-checked={client.id === c.id}
-                        onClick={() => setParams({ client: c.id })}
-                        className={cn(
-                          'h-7 rounded-full border px-2.5 text-[12.5px] font-medium transition-colors pointer-coarse:h-10 pointer-coarse:px-3.5',
-                          client.id === c.id
-                            ? 'border-transparent bg-primary text-primary-fg'
-                            : 'border-border bg-surface text-fg-muted hover:border-border-strong hover:text-fg',
-                          c.unsupported && client.id !== c.id && 'opacity-60',
-                        )}
-                      >
-                        {c.name}
-                      </button>
-                    ))}
-                  </div>
-                </div>
+            <div role="radiogroup" aria-label="Agent" className="hidden flex-wrap gap-1.5 px-5 pt-4 sm:flex">
+              {MCP_CLIENTS.map((c) => (
+                <button
+                  key={c.id}
+                  type="button"
+                  role="radio"
+                  aria-checked={client.id === c.id}
+                  onClick={() => setParams({ client: c.id })}
+                  className={cn(
+                    'h-7 rounded-full border px-2.5 text-[12.5px] font-medium transition-colors pointer-coarse:h-10 pointer-coarse:px-3.5',
+                    client.id === c.id ? 'border-transparent bg-primary text-primary-fg' : 'border-border bg-surface text-fg-muted hover:border-border-strong hover:text-fg',
+                  )}
+                >
+                  {c.name}
+                </button>
               ))}
             </div>
             <div className="px-5 pb-5 pt-4" aria-live="polite">
-              <p className="mb-2 text-[13px] text-fg-muted">
-                <span className="font-medium text-fg">{client.name}</span> · {client.where}
-              </p>
-              {client.unsupported ? (
-                <p className="rounded-md soft-warning px-3 py-2.5 text-[13px] whitespace-pre-line">{code}</p>
-              ) : (
-                <CodeBlock code={code} />
+              <ol className="mb-4 space-y-1.5 text-[13px] text-fg-muted">
+                <li className="flex gap-2">
+                  <span className="w-4 shrink-0 font-mono text-fg-subtle">1.</span>
+                  <span className="min-w-0">
+                    {newKey ? (
+                      <>Key created. It’s filled in below.</>
+                    ) : (
+                      <>
+                        <button type="button" onClick={() => setCreating(true)} className="font-medium text-link hover:underline">
+                          Create a key for {client.name}
+                        </button>{' '}
+                        — you name it, it’s tied to your GitHub sign-in, and you can revoke it any time.
+                      </>
+                    )}
+                  </span>
+                </li>
+                <li className="flex gap-2">
+                  <span className="w-4 shrink-0 font-mono text-fg-subtle">2.</span>
+                  <span className="min-w-0">
+                    Set it up: <span className="text-fg">{client.where}</span>
+                  </span>
+                </li>
+              </ol>
+              {client.steps && (
+                <ol className="mb-3 space-y-1.5 rounded-md border border-border px-4 py-3 text-[13px] text-fg">
+                  {client.steps(url, key).map((step, i) => (
+                    <li key={i} className="flex gap-2">
+                      <span className="w-4 shrink-0 font-mono text-fg-subtle">{i + 1}.</span>
+                      <span className="min-w-0 break-words">{step}</span>
+                    </li>
+                  ))}
+                </ol>
               )}
+              <CodeBlock code={client.snippet(url, key)} />
+              {client.extra && <CodeBlock className="mt-3" label={client.extra.label} code={client.extra.code(url, key)} />}
               {client.note && <p className="mt-2 text-[12.5px] text-fg-subtle">{client.note}</p>}
-              <dl className="mt-4 grid grid-cols-1 gap-2 text-[13px] sm:grid-cols-2">
+              <dl className="mt-4 grid grid-cols-1 gap-2 text-[13px]">
                 <div className="flex items-center gap-2 rounded-md border border-border px-3 py-2">
-                  <dt className="text-fg-subtle">Endpoint</dt>
+                  <dt className="w-24 shrink-0 text-fg-subtle">Server URL</dt>
                   <dd className="min-w-0 flex-1 truncate font-mono text-[12px]" translate="no">
                     {url}
                   </dd>
                   <CopyButton value={url} label="Copy" />
                 </div>
                 <div className="flex items-center gap-2 rounded-md border border-border px-3 py-2">
-                  <dt className="text-fg-subtle">Transport</dt>
-                  <dd className="text-fg">Streamable HTTP · Bearer key</dd>
+                  <dt className="w-24 shrink-0 text-fg-subtle">Auth header</dt>
+                  <dd className="min-w-0 flex-1 truncate font-mono text-[12px]" translate="no">
+                    {header}
+                  </dd>
+                  <CopyButton value={header} label="Copy" />
                 </div>
               </dl>
             </div>
@@ -271,7 +286,7 @@ function Agents() {
               <Activity className="size-4 text-fg-subtle" aria-hidden /> Recent agent activity
             </h2>
             {events.loading && !events.data && <Skeleton className="m-5 h-24" />}
-            {events.data?.length === 0 && <p className="px-5 py-6 text-center text-fg-muted">No calls yet. Connect a client and ask it to search Replex.</p>}
+            {events.data?.length === 0 && <p className="px-5 py-6 text-center text-fg-muted">No calls yet. Connect an agent and ask it to search Replex.</p>}
             {events.data && events.data.length > 0 && (
               <ul className="divide-y divide-border">
                 {events.data.map((e) => (
@@ -289,10 +304,16 @@ function Agents() {
         </div>
       </div>
 
-      <Dialog open={creating} onClose={() => setCreating(false)} title="New API key" description="Name it after the agent or machine that will use it." size="sm">
+      <Dialog
+        open={creating}
+        onClose={() => setCreating(false)}
+        title={client.id === 'custom' ? 'New key for a custom agent' : `New key for ${client.name}`}
+        description="Name the agent that will use this key. It gets read-only access and is shown only once."
+        size="sm"
+      >
         <form onSubmit={create} className="grid gap-4">
-          <Field label="Key name" htmlFor="key-name" hint="e.g. “Claude Code — laptop”">
-            <Input id="key-name" name="name" maxLength={80} autoComplete="off" required data-autofocus />
+          <Field label="Agent name" htmlFor="key-name" hint={client.id === 'custom' ? 'e.g. “Design app server”' : `e.g. “${client.keyName} — laptop”`}>
+            <Input id="key-name" name="name" key={client.id} defaultValue={client.keyName} maxLength={80} autoComplete="off" required data-autofocus />
           </Field>
           <div className="flex justify-end gap-2">
             <Button onClick={() => setCreating(false)}>Cancel</Button>
