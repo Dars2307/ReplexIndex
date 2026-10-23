@@ -499,3 +499,15 @@ export async function getHealthSignals(fullName: string, token: string): Promise
   await cacheSet(key, signals, 3 * 3600);
   return signals;
 }
+
+/** Archive and activity status of one public repository, or null if it can't be read. */
+export async function repoStatus(fullName: string, token: string): Promise<{ fullName: string; archived: boolean; pushedAt: string | null; stars: number; description: string } | null> {
+  if (!isValidFullName(fullName)) return null;
+  try {
+    const data = await (await github(`/repos/${repoPath(fullName)}`, token)).json();
+    if (!data?.full_name || !isPublic(data)) return null;
+    return { fullName: data.full_name, archived: Boolean(data.archived), pushedAt: data.pushed_at ?? null, stars: data.stargazers_count ?? 0, description: data.description ?? '' };
+  } catch {
+    return null;
+  }
+}

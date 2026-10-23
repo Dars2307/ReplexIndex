@@ -17,6 +17,7 @@ delete process.env.SUPABASE_SERVICE_ROLE_KEY;
 const { mintApiKey, sha256, encryptSecret, decryptSecret, looksLikeApiKey, safeEqual } = await import('./crypto.ts');
 const { buildGithubQuery, demoteUnrelated, isKeywordStuffed, isValidFullName, queryTerms, toRepository } = await import('./github.ts');
 const { handleMessage, TOOLS } = await import('./mcp.ts');
+const { judgePackage, normalizePackageName } = await import('./packages.ts');
 const { classifyRepository } = await import('../src/engines/classification.ts');
 const { app } = await import('./app.ts');
 const { API_KEY_SCOPES } = await import('./auth.ts');
@@ -127,6 +128,40 @@ describe('GitHub query builder', () => {
     assert.ok(!isValidFullName('./x'));
     assert.ok(isValidFullName('owner/.github'));
     assert.ok(isValidFullName('vercel/next.js'));
+  });
+});
+
+describe('package checks', () => {
+  test('names are cleaned of versions and invalid names are refused', () => {
+    assert.equal(normalizePackageName('npm', 'react@18.3.1'), 'react');
+    assert.equal(normalizePackageName('npm', '@types/node@latest'), '@types/node');
+    assert.equal(normalizePackageName('npm', '@hello-pangea/dnd'), '@hello-pangea/dnd');
+    assert.equal(normalizePackageName('pypi', 'requests==2.31'), 'requests');
+    assert.equal(normalizePackageName('pypi', 'uvicorn[standard]>=0.30'), 'uvicorn');
+    assert.equal(normalizePackageName('npm', '../../etc/passwd'), null);
+    assert.equal(normalizePackageName('npm', 'rm -rf /'), null);
+    assert.equal(normalizePackageName('pypi', 'https://evil.example/x'), null);
+  });
+
+  test('verdicts follow the evidence', () => {
+    const now = Date.parse('2026-10-23T00:00:00Z');
+    const base = { ecosystem: 'npm' as const, name: 'x', latestVersion: '1.0.0', weeklyDownloads: 1, deprecationNotice: null, repository: 'o/x', repositoryArchived: false, lastCommitAt: '2026-10-01T00:00:00Z', registryUrl: null };
+    assert.equal(judgePackage(null, 'npm', 'made-up-pkg', now).verdict, 'missing');
+    assert.equal(judgePackage({ ...base, lastReleaseAt: '2026-09-01T00:00:00Z', deprecationNotice: 'use y instead' }, 'npm', 'x', now).verdict, 'deprecated');
+    assert.equal(judgePackage({ ...base, lastReleaseAt: '2026-09-01T00:00:00Z', repositoryArchived: true }, 'npm', 'x', now).verdict, 'archived');
+    assert.equal(judgePackage({ ...base, lastReleaseAt: '2021-11-06T00:00:00Z', lastCommitAt: '2024-07-01T00:00:00Z' }, 'npm', 'x', now).verdict, 'stale');
+    assert.equal(judgePackage({ ...base, lastReleaseAt: '2023-02-09T00:00:00Z' }, 'npm', 'x', now).verdict, 'dormant');
+    assert.equal(judgePackage({ ...base, lastReleaseAt: '2026-10-12T00:00:00Z' }, 'npm', 'x', now).verdict, 'ok');
+    assert.equal(judgePackage(null, 'pypi', 'argparse', now).verdict, 'ok');
+  });
+
+  test('check_packages validates its input', async () => {
+    const res = (await handleMessage(
+      { jsonrpc: '2.0', id: 11, method: 'tools/call', params: { name: 'check_packages', arguments: { ecosystem: 'cargo', packages: ['serde'] } } },
+      caller,
+    )) as any;
+    assert.equal(res.result.isError, true);
+    assert.match(res.result.content[0].text, /npm|pypi/);
   });
 });
 

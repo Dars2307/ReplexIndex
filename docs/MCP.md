@@ -27,6 +27,7 @@ a SHA-256 hash, and revocable.
 | `get_repository` | Full intelligence for one repository, including readiness and latest release |
 | `compare_repositories` | 2–4 repositories side by side, scored against a stack |
 | `check_compatibility` | Evidence for/against fitting a target stack |
+| `check_packages` | Call before adding dependencies: for 1–20 npm or PyPI names, the live registry and GitHub decide `ok`, `missing` (possible malware trap), `deprecated`, `archived`, `stale` (no release 2+ years, no commit 1+ year) or `dormant` (no release 3+ years), with version, last release, weekly downloads, the deprecation notice and repository status. Cached 6 hours per package |
 | `review_repository` | Gemini review grounded in GitHub evidence (CI, commits, bugs, issues, README): verdict, health, known issues, stack fit, setup steps and a Markdown `agentBrief`. Uses the 25/day AI allowance unless cached |
 | `list_collections` | The user's collections with counts |
 | `get_collection` | Repositories in one collection (by name or id) |
