@@ -54,13 +54,30 @@ vendor's documentation in October 2026.
 ## Install check (Claude Code and Cursor)
 
 `public/hooks/replex-check.mjs` (served at `/hooks/replex-check.mjs`) is a
-pre-command hook. Before the agent runs a shell command that installs npm or
-PyPI packages (`npm i`, `pnpm add`, `yarn add`, `bun add`, `pip install`,
-`python -m pip install`, `uv add`, `uv pip install`, `poetry add`, `pdm add`,
-`pipx install`), it calls `POST /api/v1/packages/check`. Packages that are
+pre-command hook. Before the agent runs a shell command that fetches npm or
+PyPI packages, it calls `POST /api/v1/packages/check`. Packages that are
 `missing`, `deprecated` or `archived` are denied with a reason the agent sees;
-`stale` and `dormant` ones go through with a note. Lockfile installs, local
-paths, URLs and git specs are not checked.
+`stale` and `dormant` ones go through with a note. Covered:
+
+- installs: `npm i`, `pnpm add`, `yarn add`, `yarn global add`, `bun add`,
+  `pip install`, `python -m pip install`, `uv add`, `uv pip install`,
+  `uv tool install`, `poetry add`, `pdm add`, `pipx install`
+- runners that download: `npx` (unless the project has that binary in
+  `node_modules/.bin`), `npm exec`, `pnpm dlx`, `yarn dlx`, `bunx`, `uvx`,
+  `uv tool run`, `pipx run`, and `npm`/`pnpm`/`yarn`/`bun create`
+- bare installs (`npm install`, `pnpm i`, `yarn`, `bun install`): dependencies
+  in `package.json` that the lockfile doesn't have yet, so a dependency the
+  agent wrote into `package.json` is still checked
+- commands wrapped in `bash -c`, `sh -c`, `cmd /c` or `powershell -Command`,
+  after `cd`, and behind `sudo`, `env` or `VAR=value`
+
+Not checked: `npm ci` (exact lockfile), `pip install -r requirements.txt`,
+local paths, URLs and git specs. The hook is a guard rail for agents, not a
+sandbox: a command built at run time (`npm i $(cat list)`) is not parsed.
+
+The API key is only ever sent over HTTPS (plain `http://` is allowed for
+`localhost` only). Deprecation notices and repository descriptions are written
+by package authors, so they reach the agent flattened to one quoted line.
 
 - Claude Code: `PreToolUse` hook on `Bash` in `~/.claude/settings.json`;
   denies with `hookSpecificOutput.permissionDecision: "deny"`. It never returns

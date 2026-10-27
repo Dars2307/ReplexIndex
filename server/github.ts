@@ -97,6 +97,10 @@ async function request(path: string, token: string, accept = 'application/vnd.gi
   return res;
 }
 
+// The same answer for missing and private repositories, so nobody can use the
+// server's token to test whether a private repository exists.
+const NOT_PUBLIC = 'No public repository with that name on GitHub';
+
 async function github(path: string, token: string, accept?: string): Promise<Response> {
   let res = await request(path, token, accept);
   // A user's token may have been revoked on GitHub; retry with the server token.
@@ -104,7 +108,7 @@ async function github(path: string, token: string, accept?: string): Promise<Res
     res = await request(path, env.githubToken, accept);
   }
   if (res.ok) return res;
-  if (res.status === 404) throw new HttpError(404, 'Not found on GitHub', 'not_found');
+  if (res.status === 404) throw new HttpError(404, NOT_PUBLIC, 'not_found');
   if (res.status === 403 || res.status === 429) {
     const reset = res.headers.get('x-ratelimit-reset');
     const when = reset ? new Date(Number(reset) * 1000).toLocaleTimeString('en-GB') : 'shortly';
@@ -194,7 +198,8 @@ export function toRepository(data: any, readmeText = ''): Repository {
     },
     htmlUrl: data.html_url,
     description,
-    homepageUrl: data.homepage || null,
+    // Owner-supplied: only web links, never javascript: or other schemes.
+    homepageUrl: /^https?:\/\//i.test(data.homepage ?? '') ? data.homepage : null,
     primaryLanguage,
     languages: [primaryLanguage],
     topics,
@@ -416,7 +421,7 @@ export async function getRepository(fullName: string, token: string): Promise<Re
   const res = await github(`/repos/${repoPath(fullName)}`, token);
   const data = await res.json();
   if (!data?.full_name || !isValidFullName(data.full_name) || !isPublic(data)) {
-    throw new HttpError(404, 'Replex only shows public repositories', 'not_found');
+    throw new HttpError(404, NOT_PUBLIC, 'not_found');
   }
 
   let readme = '';

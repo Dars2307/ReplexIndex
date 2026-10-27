@@ -26,7 +26,7 @@ const SETUP: Record<Agent, { dir: string; file: string; config: string; hook: ()
       json({
         version: 1,
         hooks: {
-          beforeShellExecution: [{ command: 'node ./hooks/replex-check.mjs', timeout: 15, matcher: 'npm|pnpm|yarn|bun|pip|python|uv|poetry|pdm|pipx' }],
+          beforeShellExecution: [{ command: 'node ./hooks/replex-check.mjs', timeout: 15, matcher: 'npm|npx|pnpm|yarn|bun|pip|python|uv|poetry|pdm|pipx' }],
         },
       }),
   },

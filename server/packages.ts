@@ -36,7 +36,14 @@ const PYTHON_STDLIB = new Set(['argparse', 'asyncio', 'json', 'csv', 'sqlite3', 
 // Real projects that deliberately don't publish to npm.
 const GITHUB_ONLY: Record<string, string> = { 'uwebsockets.js': 'uNetworking/uWebSockets.js' };
 
-const NPM_NAME =/^(@[a-z0-9-~][a-z0-9-._~]*\/)?[a-z0-9-~][a-z0-9-._~]*$/i;
+// Deprecation notices and repository descriptions are written by package
+// authors and reach coding agents verbatim: flatten them to one line and quote
+// them so they read as evidence, not as instructions.
+const CONTROL_CHARS = /[\u0000-\u001f\u007f\u2028\u2029]+/g;
+export const quote = (text: string, max: number) =>
+  `"${text.replace(CONTROL_CHARS, ' ').replace(/\s+/g, ' ').trim().slice(0, max).replace(/"/g, "'")}"`;
+
+const NPM_NAME = /^(@[a-z0-9-~][a-z0-9-._~]*\/)?[a-z0-9-~][a-z0-9-._~]*$/i;
 const PYPI_NAME = /^[A-Za-z0-9](?:[A-Za-z0-9._-]*[A-Za-z0-9])?$/;
 
 /** "react@18", "requests==2.31", "Flask>=2" → the bare package name, or null if it isn't a valid name. */
@@ -101,7 +108,8 @@ async function npmFacts(name: string): Promise<Facts | null> {
   facts.registryUrl = `https://www.npmjs.com/package/${name}`;
   if (!latest.body) return facts;
   facts.latestVersion = latest.body.version ?? null;
-  facts.deprecationNotice = typeof latest.body.deprecated === 'string' && latest.body.deprecated ? latest.body.deprecated.slice(0, 300) : null;
+  facts.deprecationNotice =
+    typeof latest.body.deprecated === 'string' && latest.body.deprecated.trim() ? `npm deprecation notice from the maintainers: ${quote(latest.body.deprecated, 300)}` : null;
   const repoField = latest.body.repository;
   facts.repository = githubRepoFrom(typeof repoField === 'string' ? repoField : repoField?.url);
 
@@ -161,7 +169,7 @@ export function judgePackage(f: Facts | null, ecosystem: Ecosystem, name: string
 }
 
 async function checkOne(ecosystem: Ecosystem, name: string, githubToken: string): Promise<PackageCheck> {
-  const key = `pkg:v1:${ecosystem}:${name.toLowerCase()}`;
+  const key = `pkg:v2:${ecosystem}:${name.toLowerCase()}`;
   const cached = await cacheGet<PackageCheck>(key);
   if (cached) return cached;
 
@@ -173,7 +181,7 @@ async function checkOne(ecosystem: Ecosystem, name: string, githubToken: string)
       facts.repositoryArchived = repo.archived;
       facts.lastCommitAt = repo.pushedAt;
       if (!facts.deprecationNotice && /\b(deprecated|no longer maintained|unmaintained)\b/i.test(repo.description)) {
-        facts.deprecationNotice = `GitHub description: "${repo.description.slice(0, 200)}"`;
+        facts.deprecationNotice = `GitHub description: ${quote(repo.description, 200)}`;
       }
     }
   }

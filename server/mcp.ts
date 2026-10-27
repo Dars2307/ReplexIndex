@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express';
 import type { TrendingWindow } from '../src/types/index.ts';
 import { evaluateCompatibility } from '../src/engines/compatibility.ts';
-import { AI_DAILY_LIMIT, aiSearchesToday, cachedReview, reviewRepository } from './ai.ts';
+import { AI_DAILY_LIMIT, cachedReview, reviewRepository, useAiAllowance } from './ai.ts';
 import type { Caller } from './auth.ts';
 import { checkPackages } from './packages.ts';
 import { HttpError } from './supabase.ts';
@@ -229,9 +229,12 @@ export const TOOLS: ToolDef[] = [
       const stack = str(args.target_stack, 200) || (await targetStackFor(caller.userId));
       let review = await cachedReview(repo, stack);
       if (!review) {
-        if ((await aiSearchesToday(caller.userId)) >= AI_DAILY_LIMIT) {
-          throw new ToolInputError(`Daily AI limit reached (${AI_DAILY_LIMIT}). Use get_repository and check_compatibility instead.`);
-        }
+        await useAiAllowance(caller.userId).catch((err) => {
+          if (err instanceof HttpError && err.status === 429) {
+            throw new ToolInputError(`Daily AI limit reached (${AI_DAILY_LIMIT}). Use get_repository and check_compatibility instead.`);
+          }
+          throw err;
+        });
         review = await reviewRepository(repo, stack, token);
         recordSearch(caller.userId, repo.fullName, { mode: 'review', stack: stack || undefined }, 'mcp', 1);
       }
