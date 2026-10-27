@@ -55,9 +55,9 @@ export function normalizePackageName(ecosystem: Ecosystem, raw: string): string 
   return (ecosystem === 'npm' ? NPM_NAME : PYPI_NAME).test(name) ? name : null;
 }
 
-async function getJson(url: string, maxBytes = 2_000_000): Promise<{ status: number; body: any }> {
+async function getJson(url: string, maxBytes = 2_000_000, headers: Record<string, string> = {}): Promise<{ status: number; body: any }> {
   try {
-    const res = await fetch(url, { headers: UA, signal: AbortSignal.timeout(8000) });
+    const res = await fetch(url, { headers: { ...UA, ...headers }, signal: AbortSignal.timeout(8000) });
     if (!res.ok || !res.body) return { status: res.status, body: null };
     // Read with a size cap: some packuments are tens of megabytes.
     const reader = res.body.getReader();
@@ -102,8 +102,15 @@ const empty = (ecosystem: Ecosystem, name: string): Facts => ({
 
 async function npmFacts(name: string): Promise<Facts | null> {
   const path = name.replace('/', '%2F');
-  const latest = await getJson(`https://registry.npmjs.org/${path}/latest`);
-  if (latest.status === 404) return null;
+  let latest = await getJson(`https://registry.npmjs.org/${path}/latest`);
+  if (latest.status === 404) {
+    // A package published only under another tag (npm publish --tag beta) has
+    // no "latest" but does exist: ask for the compact packument instead.
+    const doc = await getJson(`https://registry.npmjs.org/${path}`, 3_000_000, { Accept: 'application/vnd.npm.install-v1+json' });
+    if (doc.status === 404) return null;
+    const tag = Object.values(doc.body?.['dist-tags'] ?? {})[0];
+    latest = { status: doc.status, body: typeof tag === 'string' ? (doc.body.versions?.[tag] ?? null) : null };
+  }
   const facts = empty('npm', name);
   facts.registryUrl = `https://www.npmjs.com/package/${name}`;
   if (!latest.body) return facts;
@@ -168,6 +175,15 @@ export function judgePackage(f: Facts | null, ecosystem: Ecosystem, name: string
   return { verdict: 'ok', reason: 'Exists and is maintained' };
 }
 
+// "DEPRECATED: use x" or "This project is no longer maintained" count; a
+// description that merely mentions another deprecated project does not.
+export function describesItselfAsDeprecated(description: string): boolean {
+  return (
+    /^\W*(deprecated|unmaintained|no longer (maintained|supported))\b/i.test(description) ||
+    /\b(this|the) (project|package|library|module|repo(sitory)?) (is|has been) (now )?(deprecated|unmaintained|archived|no longer (maintained|supported))\b/i.test(description)
+  );
+}
+
 async function checkOne(ecosystem: Ecosystem, name: string, githubToken: string): Promise<PackageCheck> {
   const key = `pkg:v2:${ecosystem}:${name.toLowerCase()}`;
   const cached = await cacheGet<PackageCheck>(key);
@@ -180,7 +196,7 @@ async function checkOne(ecosystem: Ecosystem, name: string, githubToken: string)
       facts.repository = repo.fullName; // follows renames and transfers
       facts.repositoryArchived = repo.archived;
       facts.lastCommitAt = repo.pushedAt;
-      if (!facts.deprecationNotice && /\b(deprecated|no longer maintained|unmaintained)\b/i.test(repo.description)) {
+      if (!facts.deprecationNotice && describesItselfAsDeprecated(repo.description)) {
         facts.deprecationNotice = `GitHub description: ${quote(repo.description, 200)}`;
       }
     }

@@ -62,6 +62,14 @@ const VALUE_FLAGS = new Set([
   '--registry', '--prefix', '--workspace', '-w', '--filter', '-F', '--tag', '--cwd', '-C', '--save-prefix',
   '-r', '--requirement', '-c', '--constraint', '-e', '--editable', '-i', '--index-url', '--extra-index-url',
   '-f', '--find-links', '-t', '--target', '--python', '-p', '--group', '-G', '--source', '--platform', '--root',
+  // npm / pnpm / yarn / bun
+  '--omit', '--include', '--install-strategy', '--loglevel', '--userconfig', '--cache', '--before', '--os', '--cpu',
+  '--libc', '--network-concurrency', '--network-timeout', '--modules-folder', '--cache-folder', '--backend',
+  // pip / uv / poetry / pdm
+  '--upgrade-strategy', '--only-binary', '--no-binary', '--progress-bar', '--cache-dir', '--src', '--log', '--proxy',
+  '--timeout', '--retries', '--trusted-host', '--report', '--python-version', '--implementation', '--abi', '--prefix',
+  '--config-settings', '--index', '--default-index', '--extra', '--extras', '-E', '--resolution', '--prerelease',
+  '--exclude-newer', '--keyring-provider', '--index-strategy', '--link-mode', '--compile-bytecode-for',
 ]);
 // Words that run the rest of the line as a command.
 const PREFIXES = new Set(['sudo', 'env', 'time', 'nohup', 'command', 'exec', 'call']);
@@ -79,11 +87,12 @@ function positionals(tokens) {
 
 /** Keeps registry packages; drops URLs, git specs, local paths and archives. */
 function registryNames(names, ecosystem) {
+  // An alias (my-react@npm:react@18) installs its target from the registry.
+  if (ecosystem === 'npm') names = names.map((t) => t.match(/^(?:@[^/@]+\/)?[^@]+@npm:(.+)$/)?.[1] ?? t);
   return names.filter((t) => {
     if (/:\/\/|^(git\+|github:|gitlab:|bitbucket:|file:|link:|workspace:|portal:|patch:)/i.test(t)) return false;
     if (/^[.~/\\]|^[a-z]:[\\/]/i.test(t) || /\.(tgz|tar\.gz|whl|zip)$/i.test(t)) return false;
     if (ecosystem === 'npm' && !t.startsWith('@') && t.includes('/')) return false; // GitHub shorthand user/repo
-    if (ecosystem === 'npm' && /@npm:/.test(t)) return false; // aliases
     if (ecosystem === 'pypi' && /[/\\]/.test(t)) return false;
     return true;
   });
@@ -238,7 +247,7 @@ function scan(command, cwd, found, depth) {
 export function findInstalls(command, cwd = null) {
   const found = { npm: [], pypi: [] };
   scan(String(command), cwd, found, 0);
-  return { npm: [...new Set(found.npm)].slice(0, 20), pypi: [...new Set(found.pypi)].slice(0, 20) };
+  return { npm: [...new Set(found.npm)], pypi: [...new Set(found.pypi)] };
 }
 
 // --- Asking Replex -------------------------------------------------------------
@@ -281,6 +290,14 @@ function check(cfg, ecosystem, packages) {
   });
 }
 
+const chunk = (list, size) => Array.from({ length: Math.ceil(list.length / size) }, (_, i) => list.slice(i * size, i * size + size));
+
+/** "left-pad@1.3.0" → "left-pad", "Flask[async]>=2" → "flask": what REPLEX_ALLOW entries are compared with. */
+export function bareName(ecosystem, spec) {
+  const name = ecosystem === 'npm' ? spec.replace(/(.)@.*$/, '$1') : spec.replace(/\s*[[=<>!~;@].*$/, '');
+  return name.trim().toLowerCase();
+}
+
 // --- Answering in each agent's format -------------------------------------------
 function respond(input, decision, agentText, userText) {
   if (input.hook_event_name === 'beforeShellExecution') {
@@ -304,14 +321,23 @@ async function main() {
   const command = input.tool_input?.command ?? input.command ?? '';
   const installs = findInstalls(command, input.cwd || process.cwd());
   const cfg = config();
-  const skip = (name) => cfg.allow.some((a) => (a.endsWith('/') ? name.toLowerCase().startsWith(a) : name.toLowerCase() === a));
-  const wanted = [['npm', installs.npm.filter((n) => !skip(n))], ['pypi', installs.pypi.filter((n) => !skip(n))]].filter(([, list]) => list.length);
+  const skip = (ecosystem, spec) => {
+    const name = bareName(ecosystem, spec);
+    return cfg.allow.some((a) => (a.endsWith('/') ? name.startsWith(a) : name === a));
+  };
+  const wanted = [
+    ['npm', installs.npm.filter((n) => !skip('npm', n))],
+    ['pypi', installs.pypi.filter((n) => !skip('pypi', n))],
+  ].filter(([, list]) => list.length);
   debug(`event=${input.hook_event_name ?? 'none'} url=${cfg.url} key=${cfg.apiKey ? 'set' : 'MISSING'} installs=${JSON.stringify(installs)}`);
   if (!wanted.length || !cfg.apiKey) return respond(input, 'allow');
 
+  // The API takes 20 names per request; larger sets go in parallel batches so
+  // nothing is skipped and the hook stays inside the agent's timeout.
   let results = [];
   try {
-    for (const [ecosystem, packages] of wanted) results.push(...(await check(cfg, ecosystem, packages)).results);
+    const requests = wanted.flatMap(([ecosystem, list]) => chunk(list, 20).map((packages) => check(cfg, ecosystem, packages)));
+    results = (await Promise.all(requests)).flatMap((r) => r.results);
   } catch (err) {
     debug(`check failed, allowing: ${err.message}`);
     return respond(input, 'allow'); // fail open: an outage must not block work

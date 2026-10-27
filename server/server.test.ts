@@ -17,7 +17,7 @@ delete process.env.SUPABASE_SERVICE_ROLE_KEY;
 const { mintApiKey, sha256, encryptSecret, decryptSecret, looksLikeApiKey, safeEqual } = await import('./crypto.ts');
 const { buildGithubQuery, demoteUnrelated, isKeywordStuffed, isValidFullName, queryTerms, toRepository } = await import('./github.ts');
 const { handleMessage, TOOLS } = await import('./mcp.ts');
-const { judgePackage, normalizePackageName, quote } = await import('./packages.ts');
+const { describesItselfAsDeprecated, judgePackage, normalizePackageName, quote } = await import('./packages.ts');
 const { classifyRepository } = await import('../src/engines/classification.ts');
 const { app } = await import('./app.ts');
 const { API_KEY_SCOPES } = await import('./auth.ts');
@@ -227,6 +227,31 @@ describe('package checks', () => {
     assert.equal(run.status, 0);
     assert.equal(run.stdout, '', 'fails open: the install is not blocked');
     assert.match(run.stderr, /must start with https/);
+  });
+
+  test('install hook: aliases, option values, large installs and the allow-list', async () => {
+    const { mkdtempSync, writeFileSync } = await import('node:fs');
+    const { tmpdir } = await import('node:os');
+    const { join } = await import('node:path');
+    const { bareName, findInstalls } = await import('../public/hooks/replex-check.mjs');
+    assert.deepEqual(findInstalls('npm i my-react@npm:react@18 @x/y@npm:lucia').npm, ['react@18', 'lucia'], 'an alias installs its target');
+    assert.deepEqual(findInstalls('pip install --upgrade-strategy only-if-needed --no-binary :all: httpx').pypi, ['httpx']);
+    const dir = mkdtempSync(join(tmpdir(), 'replex-hook-'));
+    writeFileSync(join(dir, 'package.json'), JSON.stringify({ dependencies: { visx: '*' } }));
+    assert.deepEqual(findInstalls('npm install --omit dev --install-strategy hoisted', dir).npm, ['visx'], 'option values are not packages');
+    const many = Array.from({ length: 45 }, (_, i) => `pkg-${i}`);
+    assert.equal(findInstalls(`npm i ${many.join(' ')}`).npm.length, 45, 'nothing is silently dropped');
+    assert.equal(bareName('npm', 'internal-lib@1.2.3'), 'internal-lib');
+    assert.equal(bareName('npm', '@corp/ui@^2'), '@corp/ui');
+    assert.equal(bareName('pypi', 'Internal-Lib[extra]==1.2.3'), 'internal-lib');
+  });
+
+  test('only self-deprecating repository descriptions count as deprecation', () => {
+    assert.ok(describesItselfAsDeprecated('DEPRECATED: use @scope/new instead'));
+    assert.ok(describesItselfAsDeprecated('[Unmaintained] A tiny router'));
+    assert.ok(describesItselfAsDeprecated('A date library. This project is no longer maintained.'));
+    assert.ok(!describesItselfAsDeprecated('Maintained replacement for the deprecated request library'));
+    assert.ok(!describesItselfAsDeprecated('Find unmaintained dependencies in your project'));
   });
 
   test('author-written notices reach agents as one quoted line', () => {

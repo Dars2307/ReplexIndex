@@ -371,7 +371,9 @@ app.post(
 );
 
 // Deletes everything Replex stores for this user. The shared sign-in account
-// itself is left intact because the user's other apps rely on it.
+// itself is left intact because the user's other apps rely on it. The AI usage
+// meter (user id, day, count) is kept on purpose so deleting data can't reset
+// the daily allowance; purge_expired erases it after two days.
 app.delete(
   '/api/v1/me/data',
   authenticate('session-only'),

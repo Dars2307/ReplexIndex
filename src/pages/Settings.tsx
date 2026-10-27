@@ -196,7 +196,7 @@ function Settings() {
         open={confirmDelete}
         onClose={() => setConfirmDelete(false)}
         title="Delete all of your Replex data?"
-        description="Collections, notes, search history, API keys and agent activity are permanently deleted. Agents using your keys stop working."
+        description="Collections, notes, search history, API keys and agent activity are permanently deleted. Agents using your keys stop working. Only today's AI request count is kept, and it is erased within two days."
         size="sm"
         footer={
           <>
