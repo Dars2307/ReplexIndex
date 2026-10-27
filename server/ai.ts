@@ -166,19 +166,30 @@ export interface SmartSearchResult {
   cached?: boolean;
 }
 
+// The allowance is metered in replex.ai_usage, which clients can't touch (it
+// used to be counted from search history, which users can delete). Like the
+// API-key limiter, it fails closed: if usage can't be metered, AI is refused.
+// No refunds: a failed request may already have used the model.
+const utcDay = () => new Date().toISOString().slice(0, 10);
+
 export async function aiSearchesToday(userId: string): Promise<number> {
   const admin = getAdmin();
   if (!admin) return 0;
-  const since = new Date();
-  since.setUTCHours(0, 0, 0, 0);
-  const { count } = await admin
-    .from('searches')
-    .select('id', { count: 'exact', head: true })
-    .eq('user_id', userId)
-    // AI searches and repository reviews share one daily allowance.
-    .in('filters->>mode', ['ai', 'review'])
-    .gte('created_at', since.toISOString());
-  return count ?? 0;
+  const { data } = await admin.from('ai_usage').select('count').eq('user_id', userId).eq('day', utcDay()).maybeSingle();
+  return data?.count ?? 0;
+}
+
+/** Takes one request from today's AI allowance (throws 429 when used up) and returns how many are left. */
+export async function useAiAllowance(userId: string): Promise<number> {
+  if (!aiConfigured()) throw new HttpError(503, 'AI is not configured on this server', 'ai_not_configured');
+  const admin = getAdmin();
+  if (!admin) return AI_DAILY_LIMIT;
+  const { data, error } = await admin.rpc('use_ai_allowance', { p_user: userId, p_limit: AI_DAILY_LIMIT });
+  if (error) throw new HttpError(503, `AI usage can't be checked right now — try again shortly`, 'ai_meter_unavailable');
+  if (data === null) {
+    throw new HttpError(429, `You've used all ${AI_DAILY_LIMIT} AI requests for today — regular search is unlimited`, 'ai_daily_limit');
+  }
+  return Math.max(0, AI_DAILY_LIMIT - Number(data));
 }
 
 const memory = new Map<string, { at: number; value: SmartSearchResult }>();

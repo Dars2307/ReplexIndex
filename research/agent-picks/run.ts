@@ -7,7 +7,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { checkPackage, type PackageFacts, type Verdict } from './check.ts';
 import { ask, question, type Provider } from './models.ts';
-import { ALL_TASKS, HARD_TASKS, TASKS } from './tasks.ts';
+import { ALL_TASKS, AUTH_TASKS, HARD_TASKS, TASKS } from './tasks.ts';
 
 const here = dirname(fileURLToPath(import.meta.url));
 for (const f of ['../../.env.local', '../../.env']) {
@@ -32,7 +32,7 @@ if (from) {
 }
 const only = arg('only').split(',').filter(Boolean);
 // --set hard: round 2 tasks. Pasted answers match tasks from either round by id.
-const pool = from ? ALL_TASKS : arg('set') === 'hard' ? HARD_TASKS : TASKS;
+const pool = from ? ALL_TASKS : arg('set') === 'hard' ? HARD_TASKS : arg('set') === 'auth' ? AUTH_TASKS : TASKS;
 const tasks = (only.length ? pool.filter((t) => only.includes(t.id)) : pool).filter((t) => !from || pasted.has(t.id));
 
 interface TaskResult {

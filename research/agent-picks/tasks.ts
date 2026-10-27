@@ -72,4 +72,21 @@ export const HARD_TASKS: Task[] = [
   { id: 'py-mock-http', ecosystem: 'pypi', task: 'Mock HTTP requests in Python tests' },
 ];
 
-export const ALL_TASKS = [...TASKS, ...HARD_TASKS];
+// Category deep dive: one category asked many ways, so a company's visibility
+// can be measured across realistic requests rather than one prompt.
+export const AUTH_TASKS: Task[] = [
+  { id: 'auth-next-app', ecosystem: 'npm', task: 'Add sign-in and sign-up to a Next.js App Router app' },
+  { id: 'auth-react-spa', ecosystem: 'npm', task: 'Add login to a React single-page app that talks to a separate API' },
+  { id: 'auth-express-password', ecosystem: 'npm', task: 'Add email and password login to an Express API' },
+  { id: 'auth-github-oauth', ecosystem: 'npm', task: 'Let users sign in with GitHub in a Node.js web app' },
+  { id: 'auth-magic-link', ecosystem: 'npm', task: 'Add passwordless magic-link email sign-in to a web app' },
+  { id: 'auth-passkeys', ecosystem: 'npm', task: 'Add passkey (WebAuthn) sign-in to a web app' },
+  { id: 'auth-saas-orgs', ecosystem: 'npm', task: 'Multi-tenant SaaS authentication with organizations, invites and roles' },
+  { id: 'auth-jwt-api', ecosystem: 'npm', task: 'Issue and verify JWTs for a REST API in Node.js' },
+  { id: 'auth-sessions', ecosystem: 'npm', task: 'Cookie-based login sessions for a Node.js server' },
+  { id: 'auth-2fa', ecosystem: 'npm', task: 'Add TOTP two-factor authentication to a Node.js app' },
+  { id: 'auth-expo', ecosystem: 'npm', task: 'Add authentication to a React Native (Expo) app' },
+  { id: 'auth-sveltekit', ecosystem: 'npm', task: 'Add authentication to a SvelteKit app' },
+];
+
+export const ALL_TASKS = [...TASKS, ...HARD_TASKS, ...AUTH_TASKS];

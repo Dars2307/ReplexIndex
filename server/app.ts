@@ -1,7 +1,7 @@
 import express, { type NextFunction, type Request, type Response } from 'express';
 import type { TrendingWindow } from '../src/types/index.ts';
 import { evaluateCompatibility } from '../src/engines/compatibility.ts';
-import { AI_DAILY_LIMIT, aiConfigured, aiSearchesToday, cachedReview, reviewRepository, smartSearch } from './ai.ts';
+import { AI_DAILY_LIMIT, aiConfigured, aiSearchesToday, cachedReview, reviewRepository, smartSearch, useAiAllowance } from './ai.ts';
 import { API_KEY_SCOPES, authenticate } from './auth.ts';
 import { canEncrypt, encryptSecret, mintApiKey } from './crypto.ts';
 import { env, supabaseConfigured } from './env.ts';
@@ -15,7 +15,8 @@ import {
   searchGithub,
   type DiscoveryQuery,
 } from './github.ts';
-import { recordSearch, targetStackFor } from './library.ts';
+import { logAgentEvent, recordSearch, targetStackFor } from './library.ts';
+import { checkPackages } from './packages.ts';
 import { mcpHandler, SERVER_INFO, TOOLS } from './mcp.ts';
 import { HttpError, requireAdmin } from './supabase.ts';
 
@@ -45,26 +46,29 @@ const int = (v: unknown) => {
   const n = Number(v);
   return Number.isFinite(n) && n > 0 ? Math.floor(n) : undefined;
 };
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const windowOf = (v: unknown): TrendingWindow => (v === 'day' || v === 'month' ? v : 'week');
 
-// Signed-out traffic shares the server's GitHub quota, so throttle it per IP.
-// In-memory and per instance: a first line of defence; production should also
-// add a Vercel Firewall rate-limit rule on /api/v1/*.
-const ANON_PER_MINUTE = 40;
-const anonHits = new Map<string, { windowStart: number; count: number }>();
-function throttleAnonymous(req: Request, _res: Response, next: NextFunction) {
-  if (req.caller) return next();
+// Browser traffic shares the server's GitHub quota, so throttle it: per IP when
+// signed out, per user when signed in. API keys are metered in the database
+// (auth.ts). In-memory and per instance: a first line of defence; production
+// should also add a Vercel Firewall rate-limit rule on /api/v1/*.
+const PER_MINUTE = { anonymous: 40, session: 120 };
+const hits = new Map<string, { windowStart: number; count: number }>();
+function throttle(req: Request, _res: Response, next: NextFunction) {
+  if (req.caller?.via === 'api_key') return next();
   const now = Date.now();
-  const key = req.ip || 'unknown';
-  const entry = anonHits.get(key);
+  const key = req.caller ? `user:${req.caller.userId}` : `ip:${req.ip || 'unknown'}`;
+  const entry = hits.get(key);
   if (!entry || now - entry.windowStart >= 60_000) {
-    if (anonHits.size > 10_000) anonHits.clear();
-    anonHits.set(key, { windowStart: now, count: 1 });
+    if (hits.size > 10_000) hits.clear();
+    hits.set(key, { windowStart: now, count: 1 });
     return next();
   }
   entry.count += 1;
-  if (entry.count > ANON_PER_MINUTE) {
-    return next(new HttpError(429, 'Too many requests — sign in for higher limits, or try again in a minute', 'rate_limited'));
+  if (entry.count > (req.caller ? PER_MINUTE.session : PER_MINUTE.anonymous)) {
+    const hint = req.caller ? 'try again in a minute' : 'sign in for higher limits, or try again in a minute';
+    return next(new HttpError(429, `Too many requests — ${hint}`, 'rate_limited'));
   }
   next();
 }
@@ -103,7 +107,7 @@ app.get('/api/health', (_req, res) => {
 app.get(
   '/api/v1/discover/search',
   authenticate('optional', 'search:read'),
-  throttleAnonymous,
+  throttle,
   route(async (req, res) => {
     const sort = text(req.query.sort, 10);
     const query: DiscoveryQuery = {
@@ -129,7 +133,7 @@ app.get(
 app.get(
   '/api/v1/discover/trending',
   authenticate('optional', 'search:read'),
-  throttleAnonymous,
+  throttle,
   route(async (req, res) => {
     const window = windowOf(req.query.window);
     const language = text(req.query.language, 50) || undefined;
@@ -147,7 +151,7 @@ app.get(
 app.get(
   '/api/v1/repos/:owner/:repo',
   authenticate('optional', 'repositories:read'),
-  throttleAnonymous,
+  throttle,
   route(async (req, res) => {
     const fullName = `${req.params.owner}/${req.params.repo}`;
     if (!isValidFullName(fullName)) throw new HttpError(400, 'Use the "owner/repo" format');
@@ -160,7 +164,7 @@ app.get(
 app.post(
   '/api/v1/compare',
   authenticate('optional', 'repositories:read'),
-  throttleAnonymous,
+  throttle,
   route(async (req, res) => {
     const names: string[] = Array.isArray(req.body?.fullNames) ? req.body.fullNames.slice(0, 4).map((n: unknown) => text(n, 201)) : [];
     if (names.length < 2 || !names.every(isValidFullName)) throw new HttpError(400, 'Send 2–4 repositories as "owner/repo"');
@@ -171,6 +175,28 @@ app.post(
       targetStack: stack || null,
       repositories: repos.map((r) => ({ repository: r, compatibility: stack ? evaluateCompatibility(r, stack) : null })),
     });
+  }),
+);
+
+// Package health check: the same as the check_packages MCP tool, for install
+// hooks (Claude Code, Cursor) that run before an agent installs dependencies.
+app.post(
+  '/api/v1/packages/check',
+  authenticate('required', 'repositories:read'),
+  throttle,
+  route(async (req, res) => {
+    const started = Date.now();
+    const ecosystem = req.body?.ecosystem;
+    const packages: unknown[] = Array.isArray(req.body?.packages) ? req.body.packages : [];
+    if (ecosystem !== 'npm' && ecosystem !== 'pypi') throw new HttpError(400, 'ecosystem must be "npm" or "pypi"');
+    const names = packages.filter((p): p is string => typeof p === 'string');
+    if (names.length < 1 || names.length > 20) throw new HttpError(400, 'Send 1–20 package names in packages');
+    const result = await checkPackages(ecosystem, names, await githubTokenFor(req.caller!.userId));
+    if (req.caller!.via === 'api_key') {
+      logAgentEvent({ userId: req.caller!.userId, apiKeyId: req.caller!.apiKeyId, method: 'packages/check', tool: 'check_packages', ok: true, durationMs: Date.now() - started });
+    }
+    res.setHeader('Cache-Control', 'private, no-store');
+    res.json(result);
   }),
 );
 
@@ -190,17 +216,16 @@ app.get(
 app.post(
   '/api/v1/ai/search',
   authenticate('required', 'search:read'),
+  throttle,
   route(async (req, res) => {
     const prompt = text(req.body?.prompt, 400);
     if (prompt.length < 3) throw new HttpError(400, 'Describe what you are looking for in a few words');
-    const used = await aiSearchesToday(req.caller!.userId);
-    if (used >= AI_DAILY_LIMIT) {
-      throw new HttpError(429, `You've used all ${AI_DAILY_LIMIT} AI searches for today — regular search is unlimited`, 'ai_daily_limit');
-    }
-    const result = await smartSearch(prompt, await githubTokenFor(req.caller!.userId));
-    recordSearch(req.caller!.userId, prompt, { mode: 'ai' }, req.caller!.via === 'session' ? 'web' : 'api', result.results.length);
+    const userId = req.caller!.userId;
+    const remaining = await useAiAllowance(userId);
+    const result = await smartSearch(prompt, await githubTokenFor(userId));
+    recordSearch(userId, prompt, { mode: 'ai' }, req.caller!.via === 'session' ? 'web' : 'api', result.results.length);
     res.setHeader('Cache-Control', 'private, no-store');
-    res.json({ ...result, remaining: Math.max(0, AI_DAILY_LIMIT - used - 1) });
+    res.json({ ...result, remaining });
   }),
 );
 
@@ -218,6 +243,7 @@ async function reviewTarget(req: Request) {
 app.get(
   '/api/v1/repos/:owner/:repo/review',
   authenticate('required', 'repositories:read'),
+  throttle,
   route(async (req, res) => {
     const { repo, stack } = await reviewTarget(req);
     const used = await aiSearchesToday(req.caller!.userId);
@@ -229,17 +255,17 @@ app.get(
 app.post(
   '/api/v1/repos/:owner/:repo/review',
   authenticate('required', 'repositories:read'),
+  throttle,
   route(async (req, res) => {
     const { repo, stack, token } = await reviewTarget(req);
-    const used = await aiSearchesToday(req.caller!.userId);
-    const remaining = Math.max(0, AI_DAILY_LIMIT - used);
+    const userId = req.caller!.userId;
     res.setHeader('Cache-Control', 'private, no-store');
     const stored = await cachedReview(repo, stack);
-    if (stored) return void res.json({ review: stored, remaining });
-    if (used >= AI_DAILY_LIMIT) throw new HttpError(429, `You've used all ${AI_DAILY_LIMIT} AI requests for today`, 'ai_daily_limit');
+    if (stored) return void res.json({ review: stored, remaining: Math.max(0, AI_DAILY_LIMIT - (await aiSearchesToday(userId))) });
+    const remaining = await useAiAllowance(userId);
     const review = await reviewRepository(repo, stack, token);
-    recordSearch(req.caller!.userId, repo.fullName, { mode: 'review', stack: stack || undefined }, req.caller!.via === 'session' ? 'web' : 'api', 1);
-    res.json({ review, remaining: remaining - 1 });
+    recordSearch(userId, repo.fullName, { mode: 'review', stack: stack || undefined }, req.caller!.via === 'session' ? 'web' : 'api', 1);
+    res.json({ review, remaining });
   }),
 );
 
@@ -305,6 +331,7 @@ app.delete(
   '/api/v1/me/keys/:id',
   authenticate('session-only', 'keys:manage'),
   route(async (req, res) => {
+    if (!UUID.test(req.params.id)) throw new HttpError(404, 'Key not found');
     const { data, error } = await requireAdmin()
       .from('api_keys')
       .update({ revoked_at: new Date().toISOString() })
@@ -344,7 +371,9 @@ app.post(
 );
 
 // Deletes everything Replex stores for this user. The shared sign-in account
-// itself is left intact because the user's other apps rely on it.
+// itself is left intact because the user's other apps rely on it. The AI usage
+// meter (user id, day, count) is kept on purpose so deleting data can't reset
+// the daily allowance; purge_expired erases it after two days.
 app.delete(
   '/api/v1/me/data',
   authenticate('session-only'),

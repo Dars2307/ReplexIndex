@@ -1,0 +1,823 @@
+{
+  "provider": "gemini",
+  "model": "claude-auth-2",
+  "runAt": "2026-10-23T12:29:05.300Z",
+  "results": [
+    {
+      "id": "auth-next-app",
+      "ecosystem": "npm",
+      "task": "Add sign-in and sign-up to a Next.js App Router app",
+      "question": "I'm working on a JavaScript/TypeScript project (npm). I need to: Add sign-in and sign-up to a Next.js App Router app.\nWhich package should I install? Give your top 3 picks, best first, as exact npm package names, each with a one-line reason.",
+      "picks": [
+        {
+          "rank": 1,
+          "package": "better-auth",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "better-auth",
+            "exists": true,
+            "latestVersion": "1.7.12",
+            "lastReleaseAt": "2026-10-20T11:59:45.143Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 7801856,
+            "repo": "better-auth/better-auth",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-23T12:21:06Z",
+            "repoStars": 30432,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 2,
+          "package": "next-auth",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "next-auth",
+            "exists": true,
+            "latestVersion": "4.24.15",
+            "lastReleaseAt": "2026-07-20T23:19:38.021Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 3991213,
+            "repo": "nextauthjs/next-auth",
+            "repoArchived": false,
+            "repoPushedAt": "2026-07-22T19:42:19Z",
+            "repoStars": 28368,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 3,
+          "package": "@clerk/nextjs",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "@clerk/nextjs",
+            "exists": true,
+            "latestVersion": "7.9.19",
+            "lastReleaseAt": "2026-10-21T17:12:08.772Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 1724508,
+            "repo": "clerk/javascript",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-23T06:26:32Z",
+            "repoStars": 1769,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        }
+      ]
+    },
+    {
+      "id": "auth-react-spa",
+      "ecosystem": "npm",
+      "task": "Add login to a React single-page app that talks to a separate API",
+      "question": "I'm working on a JavaScript/TypeScript project (npm). I need to: Add login to a React single-page app that talks to a separate API.\nWhich package should I install? Give your top 3 picks, best first, as exact npm package names, each with a one-line reason.",
+      "picks": [
+        {
+          "rank": 1,
+          "package": "react-oidc-context",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "react-oidc-context",
+            "exists": true,
+            "latestVersion": "3.3.1",
+            "lastReleaseAt": "2026-03-13T12:00:02.834Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 406878,
+            "repo": "authts/react-oidc-context",
+            "repoArchived": false,
+            "repoPushedAt": "2026-06-12T22:18:22Z",
+            "repoStars": 1035,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 2,
+          "package": "@auth0/auth0-react",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "@auth0/auth0-react",
+            "exists": true,
+            "latestVersion": "2.28.2",
+            "lastReleaseAt": "2026-10-02T13:09:57.364Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 773147,
+            "repo": "auth0/auth0-react",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-23T12:21:07Z",
+            "repoStars": 991,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 3,
+          "package": "@clerk/clerk-react",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "@clerk/clerk-react",
+            "exists": true,
+            "latestVersion": "5.61.3",
+            "lastReleaseAt": "2026-02-27T19:35:54.174Z",
+            "deprecatedMessage": "This package is no longer supported. Please use @clerk/react instead. See the upgrade guide for more info: https://clerk.com/docs/guides/development/upgrading/upgrade-guides/core-3",
+            "weeklyDownloads": 1126320,
+            "repo": "clerk/javascript",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-23T06:26:32Z",
+            "repoStars": 1769,
+            "verdict": "deprecated",
+            "reason": "This package is no longer supported. Please use @clerk/react instead. See the upgrade guide for more info: https://clerk.com/docs/guides/development/upgrading/upgrade-guides/core-3"
+          }
+        }
+      ]
+    },
+    {
+      "id": "auth-express-password",
+      "ecosystem": "npm",
+      "task": "Add email and password login to an Express API",
+      "question": "I'm working on a JavaScript/TypeScript project (npm). I need to: Add email and password login to an Express API.\nWhich package should I install? Give your top 3 picks, best first, as exact npm package names, each with a one-line reason.",
+      "picks": [
+        {
+          "rank": 1,
+          "package": "passport-local",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "passport-local",
+            "exists": true,
+            "latestVersion": "1.0.0",
+            "lastReleaseAt": "2014-03-08T19:05:10.745Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 1203032,
+            "repo": "jaredhanson/passport-local",
+            "repoArchived": false,
+            "repoPushedAt": "2024-02-09T08:59:23Z",
+            "repoStars": 2754,
+            "verdict": "stale",
+            "reason": "Last release 12.6 years ago, last commit 2.7 years ago"
+          }
+        },
+        {
+          "rank": 2,
+          "package": "better-auth",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "better-auth",
+            "exists": true,
+            "latestVersion": "1.7.12",
+            "lastReleaseAt": "2026-10-20T11:59:45.143Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 7801856,
+            "repo": "better-auth/better-auth",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-23T12:21:06Z",
+            "repoStars": 30432,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 3,
+          "package": "bcrypt",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "bcrypt",
+            "exists": true,
+            "latestVersion": "6.0.0",
+            "lastReleaseAt": "2025-05-11T18:06:24.247Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 3559470,
+            "repo": "kelektiv/node.bcrypt.js",
+            "repoArchived": false,
+            "repoPushedAt": "2026-04-14T10:58:59Z",
+            "repoStars": 7805,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        }
+      ]
+    },
+    {
+      "id": "auth-github-oauth",
+      "ecosystem": "npm",
+      "task": "Let users sign in with GitHub in a Node.js web app",
+      "question": "I'm working on a JavaScript/TypeScript project (npm). I need to: Let users sign in with GitHub in a Node.js web app.\nWhich package should I install? Give your top 3 picks, best first, as exact npm package names, each with a one-line reason.",
+      "picks": [
+        {
+          "rank": 1,
+          "package": "passport-github2",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "passport-github2",
+            "exists": true,
+            "latestVersion": "0.1.12",
+            "lastReleaseAt": "2020-03-27T04:09:29.665Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 158451,
+            "repo": "cfsghost/passport-github",
+            "repoArchived": false,
+            "repoPushedAt": "2023-11-20T04:11:47Z",
+            "repoStars": 236,
+            "verdict": "stale",
+            "reason": "Last release 6.6 years ago, last commit 2.9 years ago"
+          }
+        },
+        {
+          "rank": 2,
+          "package": "arctic",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "arctic",
+            "exists": true,
+            "latestVersion": "3.7.0",
+            "lastReleaseAt": "2025-05-21T10:52:28.145Z",
+            "deprecatedMessage": "Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.",
+            "weeklyDownloads": 790893,
+            "repo": "pilcrowonpaper/arctic",
+            "repoArchived": false,
+            "repoPushedAt": "2026-08-08T13:44:45Z",
+            "repoStars": 1717,
+            "verdict": "deprecated",
+            "reason": "Package no longer supported. Contact Support at https://www.npmjs.com/support for more info."
+          }
+        },
+        {
+          "rank": 3,
+          "package": "grant",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "grant",
+            "exists": true,
+            "latestVersion": "5.4.24",
+            "lastReleaseAt": "2025-02-04T17:31:14.941Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 164145,
+            "repo": "simov/grant",
+            "repoArchived": false,
+            "repoPushedAt": "2025-02-04T17:27:33Z",
+            "repoStars": 4164,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        }
+      ]
+    },
+    {
+      "id": "auth-magic-link",
+      "ecosystem": "npm",
+      "task": "Add passwordless magic-link email sign-in to a web app",
+      "question": "I'm working on a JavaScript/TypeScript project (npm). I need to: Add passwordless magic-link email sign-in to a web app.\nWhich package should I install? Give your top 3 picks, best first, as exact npm package names, each with a one-line reason.",
+      "picks": [
+        {
+          "rank": 1,
+          "package": "better-auth",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "better-auth",
+            "exists": true,
+            "latestVersion": "1.7.12",
+            "lastReleaseAt": "2026-10-20T11:59:45.143Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 7801856,
+            "repo": "better-auth/better-auth",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-23T12:21:06Z",
+            "repoStars": 30432,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 2,
+          "package": "next-auth",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "next-auth",
+            "exists": true,
+            "latestVersion": "4.24.15",
+            "lastReleaseAt": "2026-07-20T23:19:38.021Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 3991213,
+            "repo": "nextauthjs/next-auth",
+            "repoArchived": false,
+            "repoPushedAt": "2026-07-22T19:42:19Z",
+            "repoStars": 28368,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 3,
+          "package": "magic-sdk",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "magic-sdk",
+            "exists": true,
+            "latestVersion": "33.13.0",
+            "lastReleaseAt": "2026-09-01T19:12:43.640Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 18113,
+            "repo": "magiclabs/magic-js",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-23T09:34:04Z",
+            "repoStars": 475,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        }
+      ]
+    },
+    {
+      "id": "auth-passkeys",
+      "ecosystem": "npm",
+      "task": "Add passkey (WebAuthn) sign-in to a web app",
+      "question": "I'm working on a JavaScript/TypeScript project (npm). I need to: Add passkey (WebAuthn) sign-in to a web app.\nWhich package should I install? Give your top 3 picks, best first, as exact npm package names, each with a one-line reason.",
+      "picks": [
+        {
+          "rank": 1,
+          "package": "@simplewebauthn/server",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "@simplewebauthn/server",
+            "exists": true,
+            "latestVersion": "14.0.3",
+            "lastReleaseAt": "2026-09-25T17:10:28.463Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 4162502,
+            "repo": "MasterKale/SimpleWebAuthn",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-11T16:59:45Z",
+            "repoStars": 2373,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 2,
+          "package": "@simplewebauthn/browser",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "@simplewebauthn/browser",
+            "exists": true,
+            "latestVersion": "14.0.0",
+            "lastReleaseAt": "2026-09-02T05:49:26.615Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 4300513,
+            "repo": "MasterKale/SimpleWebAuthn",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-11T16:59:45Z",
+            "repoStars": 2373,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 3,
+          "package": "better-auth",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "better-auth",
+            "exists": true,
+            "latestVersion": "1.7.12",
+            "lastReleaseAt": "2026-10-20T11:59:45.143Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 7801856,
+            "repo": "better-auth/better-auth",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-23T12:21:06Z",
+            "repoStars": 30432,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        }
+      ]
+    },
+    {
+      "id": "auth-saas-orgs",
+      "ecosystem": "npm",
+      "task": "Multi-tenant SaaS authentication with organizations, invites and roles",
+      "question": "I'm working on a JavaScript/TypeScript project (npm). I need to: Multi-tenant SaaS authentication with organizations, invites and roles.\nWhich package should I install? Give your top 3 picks, best first, as exact npm package names, each with a one-line reason.",
+      "picks": [
+        {
+          "rank": 1,
+          "package": "@clerk/nextjs",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "@clerk/nextjs",
+            "exists": true,
+            "latestVersion": "7.9.19",
+            "lastReleaseAt": "2026-10-21T17:12:08.772Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 1724508,
+            "repo": "clerk/javascript",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-23T06:26:32Z",
+            "repoStars": 1769,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 2,
+          "package": "@workos-inc/node",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "@workos-inc/node",
+            "exists": true,
+            "latestVersion": "11.0.0",
+            "lastReleaseAt": "2026-09-28T19:36:54.507Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 2096646,
+            "repo": "workos/workos-node",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-22T21:21:15Z",
+            "repoStars": 226,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 3,
+          "package": "better-auth",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "better-auth",
+            "exists": true,
+            "latestVersion": "1.7.12",
+            "lastReleaseAt": "2026-10-20T11:59:45.143Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 7801856,
+            "repo": "better-auth/better-auth",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-23T12:21:06Z",
+            "repoStars": 30432,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        }
+      ]
+    },
+    {
+      "id": "auth-jwt-api",
+      "ecosystem": "npm",
+      "task": "Issue and verify JWTs for a REST API in Node.js",
+      "question": "I'm working on a JavaScript/TypeScript project (npm). I need to: Issue and verify JWTs for a REST API in Node.js.\nWhich package should I install? Give your top 3 picks, best first, as exact npm package names, each with a one-line reason.",
+      "picks": [
+        {
+          "rank": 1,
+          "package": "jose",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "jose",
+            "exists": true,
+            "latestVersion": "6.2.13",
+            "lastReleaseAt": "2026-10-20T06:21:48.616Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 93410128,
+            "repo": "panva/jose",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-21T09:37:04Z",
+            "repoStars": 7840,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 2,
+          "package": "jsonwebtoken",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "jsonwebtoken",
+            "exists": true,
+            "latestVersion": "9.0.3",
+            "lastReleaseAt": "2025-12-04T10:27:57.257Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 34776777,
+            "repo": "auth0/node-jsonwebtoken",
+            "repoArchived": false,
+            "repoPushedAt": "2026-06-25T15:23:15Z",
+            "repoStars": 18177,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 3,
+          "package": "fast-jwt",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "fast-jwt",
+            "exists": true,
+            "latestVersion": "6.3.5",
+            "lastReleaseAt": "2026-10-15T15:38:50.988Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 789036,
+            "repo": "nearform/fast-jwt",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-22T03:27:14Z",
+            "repoStars": 437,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        }
+      ]
+    },
+    {
+      "id": "auth-sessions",
+      "ecosystem": "npm",
+      "task": "Cookie-based login sessions for a Node.js server",
+      "question": "I'm working on a JavaScript/TypeScript project (npm). I need to: Cookie-based login sessions for a Node.js server.\nWhich package should I install? Give your top 3 picks, best first, as exact npm package names, each with a one-line reason.",
+      "picks": [
+        {
+          "rank": 1,
+          "package": "express-session",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "express-session",
+            "exists": true,
+            "latestVersion": "1.19.0",
+            "lastReleaseAt": "2026-01-22T14:46:26.195Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 2478918,
+            "repo": "expressjs/session",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-08T11:51:08Z",
+            "repoStars": 6355,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 2,
+          "package": "iron-session",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "iron-session",
+            "exists": true,
+            "latestVersion": "9.0.1",
+            "lastReleaseAt": "2026-08-30T21:59:33.131Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 1351411,
+            "repo": "vvo/iron-session",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-12T20:48:31Z",
+            "repoStars": 4151,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 3,
+          "package": "cookie-session",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "cookie-session",
+            "exists": true,
+            "latestVersion": "2.1.1",
+            "lastReleaseAt": "2025-07-17T17:39:03.494Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 249538,
+            "repo": "expressjs/cookie-session",
+            "repoArchived": false,
+            "repoPushedAt": "2026-08-05T13:59:19Z",
+            "repoStars": 1148,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        }
+      ]
+    },
+    {
+      "id": "auth-2fa",
+      "ecosystem": "npm",
+      "task": "Add TOTP two-factor authentication to a Node.js app",
+      "question": "I'm working on a JavaScript/TypeScript project (npm). I need to: Add TOTP two-factor authentication to a Node.js app.\nWhich package should I install? Give your top 3 picks, best first, as exact npm package names, each with a one-line reason.",
+      "picks": [
+        {
+          "rank": 1,
+          "package": "otplib",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "otplib",
+            "exists": true,
+            "latestVersion": "13.5.0",
+            "lastReleaseAt": "2026-08-21T14:48:15.571Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 2204845,
+            "repo": "yeojz/otplib",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-22T17:25:54Z",
+            "repoStars": 2298,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 2,
+          "package": "speakeasy",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "speakeasy",
+            "exists": true,
+            "latestVersion": "2.0.0",
+            "lastReleaseAt": "2016-01-27T06:42:51.677Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 484146,
+            "repo": "speakeasyjs/speakeasy",
+            "repoArchived": false,
+            "repoPushedAt": "2023-09-11T09:33:09Z",
+            "repoStars": 2753,
+            "verdict": "stale",
+            "reason": "Last release 10.7 years ago, last commit 3.1 years ago"
+          }
+        },
+        {
+          "rank": 3,
+          "package": "qrcode",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "qrcode",
+            "exists": true,
+            "latestVersion": "1.5.4",
+            "lastReleaseAt": "2024-08-05T21:52:58.518Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 18476870,
+            "repo": "soldair/node-qrcode",
+            "repoArchived": false,
+            "repoPushedAt": "2024-08-23T14:37:17Z",
+            "repoStars": 8180,
+            "verdict": "stale",
+            "reason": "Last release 2.2 years ago, last commit 2.2 years ago"
+          }
+        }
+      ]
+    },
+    {
+      "id": "auth-expo",
+      "ecosystem": "npm",
+      "task": "Add authentication to a React Native (Expo) app",
+      "question": "I'm working on a JavaScript/TypeScript project (npm). I need to: Add authentication to a React Native (Expo) app.\nWhich package should I install? Give your top 3 picks, best first, as exact npm package names, each with a one-line reason.",
+      "picks": [
+        {
+          "rank": 1,
+          "package": "expo-auth-session",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "expo-auth-session",
+            "exists": true,
+            "latestVersion": "58.0.14",
+            "lastReleaseAt": "2026-10-21T19:18:37.819Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 1523029,
+            "repo": "expo/expo",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-23T12:20:30Z",
+            "repoStars": 53029,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 2,
+          "package": "@clerk/clerk-expo",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "@clerk/clerk-expo",
+            "exists": true,
+            "latestVersion": "2.20.0",
+            "lastReleaseAt": "2026-08-04T18:14:04.686Z",
+            "deprecatedMessage": "@clerk/clerk-expo is deprecated. Migrate to @clerk/expo by following the Core 3 upgrade guide https://clerk.com/docs/guides/development/upgrading/upgrade-guides/core-3",
+            "weeklyDownloads": 143591,
+            "repo": "clerk/javascript",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-23T06:26:32Z",
+            "repoStars": 1769,
+            "verdict": "deprecated",
+            "reason": "@clerk/clerk-expo is deprecated. Migrate to @clerk/expo by following the Core 3 upgrade guide https://clerk.com/docs/guides/development/upgrading/upgrade-guides/core-3"
+          }
+        },
+        {
+          "rank": 3,
+          "package": "expo-secure-store",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "expo-secure-store",
+            "exists": true,
+            "latestVersion": "58.0.2",
+            "lastReleaseAt": "2026-10-01T19:30:00.782Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 4616499,
+            "repo": "expo/expo",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-23T12:20:30Z",
+            "repoStars": 53029,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        }
+      ]
+    },
+    {
+      "id": "auth-sveltekit",
+      "ecosystem": "npm",
+      "task": "Add authentication to a SvelteKit app",
+      "question": "I'm working on a JavaScript/TypeScript project (npm). I need to: Add authentication to a SvelteKit app.\nWhich package should I install? Give your top 3 picks, best first, as exact npm package names, each with a one-line reason.",
+      "picks": [
+        {
+          "rank": 1,
+          "package": "@auth/sveltekit",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "@auth/sveltekit",
+            "exists": true,
+            "latestVersion": "1.11.3",
+            "lastReleaseAt": "2026-07-20T21:52:10.645Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 24459,
+            "repo": "nextauthjs/next-auth",
+            "repoArchived": false,
+            "repoPushedAt": "2026-07-22T19:42:19Z",
+            "repoStars": 28368,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 2,
+          "package": "better-auth",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "better-auth",
+            "exists": true,
+            "latestVersion": "1.7.12",
+            "lastReleaseAt": "2026-10-20T11:59:45.143Z",
+            "deprecatedMessage": null,
+            "weeklyDownloads": 7801856,
+            "repo": "better-auth/better-auth",
+            "repoArchived": false,
+            "repoPushedAt": "2026-10-23T12:21:06Z",
+            "repoStars": 30432,
+            "verdict": "ok",
+            "reason": "Maintained"
+          }
+        },
+        {
+          "rank": 3,
+          "package": "lucia",
+          "why": "",
+          "facts": {
+            "ecosystem": "npm",
+            "name": "lucia",
+            "exists": true,
+            "latestVersion": "3.2.2",
+            "lastReleaseAt": "2024-10-20T12:40:32.030Z",
+            "deprecatedMessage": "This package has been deprecated. Please see https://lucia-auth.com/lucia-v3/migrate.",
+            "weeklyDownloads": 276061,
+            "repo": "lucia-auth/lucia",
+            "repoArchived": false,
+            "repoPushedAt": "2026-08-08T13:42:42Z",
+            "repoStars": 10452,
+            "verdict": "deprecated",
+            "reason": "This package has been deprecated. Please see https://lucia-auth.com/lucia-v3/migrate."
+          }
+        }
+      ]
+    }
+  ]
+}

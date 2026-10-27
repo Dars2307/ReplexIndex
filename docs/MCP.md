@@ -27,6 +27,7 @@ a SHA-256 hash, and revocable.
 | `get_repository` | Full intelligence for one repository, including readiness and latest release |
 | `compare_repositories` | 2–4 repositories side by side, scored against a stack |
 | `check_compatibility` | Evidence for/against fitting a target stack |
+| `check_packages` | Call before adding dependencies: for 1–20 npm or PyPI names, the live registry and GitHub decide `ok`, `missing` (possible malware trap), `deprecated`, `archived`, `stale` (no release 2+ years, no commit 1+ year) or `dormant` (no release 3+ years), with version, last release, weekly downloads, the deprecation notice and repository status. Cached 6 hours per package |
 | `review_repository` | Gemini review grounded in GitHub evidence (CI, commits, bugs, issues, README): verdict, health, known issues, stack fit, setup steps and a Markdown `agentBrief`. Uses the 25/day AI allowance unless cached |
 | `list_collections` | The user's collections with counts |
 | `get_collection` | Repositories in one collection (by name or id) |
@@ -49,6 +50,47 @@ vendor's documentation in October 2026.
 | Devin | Settings → Customize → MCPs → Add custom MCP → HTTP, URL, `Authorization` header (needs Manage MCP Servers). Devin CLI: `mcp_config.json` with `transport: "http"` | docs.devin.ai/work-with-devin/mcp |
 | Replit Agent | replit.com/integrations → MCP Servers → + Add MCP server → URL → Advanced settings → `Authorization` header → Test & save | docs.replit.com/features/mcp/overview |
 | Custom agent | Any MCP client: `{ "mcpServers": { "replex": { "url": "<url>", "headers": { "Authorization": "Bearer rpx_…" } } } }`. Your own server sends the same header; keep the key server-side | — |
+
+## Install check (Claude Code and Cursor)
+
+`public/hooks/replex-check.mjs` (served at `/hooks/replex-check.mjs`) is a
+pre-command hook. Before the agent runs a shell command that fetches npm or
+PyPI packages, it calls `POST /api/v1/packages/check`. Packages that are
+`missing`, `deprecated` or `archived` are denied with a reason the agent sees;
+`stale` and `dormant` ones go through with a note. Covered:
+
+- installs: `npm i`, `pnpm add`, `yarn add`, `yarn global add`, `bun add`,
+  `pip install`, `python -m pip install`, `uv add`, `uv pip install`,
+  `uv tool install`, `poetry add`, `pdm add`, `pipx install`
+- runners that download: `npx` (unless the project has that binary in
+  `node_modules/.bin`), `npm exec`, `pnpm dlx`, `yarn dlx`, `bunx`, `uvx`,
+  `uv tool run`, `pipx run`, and `npm`/`pnpm`/`yarn`/`bun create`
+- bare installs (`npm install`, `pnpm i`, `yarn`, `bun install`): dependencies
+  in `package.json` that the lockfile doesn't have yet, so a dependency the
+  agent wrote into `package.json` is still checked
+- commands wrapped in `bash -c`, `sh -c`, `cmd /c` or `powershell -Command`,
+  after `cd`, and behind `sudo`, `env` or `VAR=value`
+
+Not checked: `npm ci` (exact lockfile), `pip install -r requirements.txt`,
+local paths, URLs and git specs. The hook is a guard rail for agents, not a
+sandbox: a command built at run time (`npm i $(cat list)`) is not parsed.
+
+The API key is only ever sent over HTTPS (plain `http://` is allowed for
+`localhost` only). Deprecation notices and repository descriptions are written
+by package authors, so they reach the agent flattened to one quoted line.
+
+- Claude Code: `PreToolUse` hook on `Bash` in `~/.claude/settings.json`;
+  denies with `hookSpecificOutput.permissionDecision: "deny"`. It never returns
+  `"allow"`, so normal permission prompts are unchanged.
+- Cursor: `beforeShellExecution` in `~/.cursor/hooks.json`; always prints an
+  explicit `{"permission": ...}` with `agent_message` / `user_message`.
+- Config: `REPLEX_API_KEY` / `REPLEX_URL`, or `~/.replex.json`
+  (`{"url", "apiKey", "allow"}`). `REPLEX_ALLOW` skips private packages;
+  `REPLEX_DEBUG=1` explains each decision on stderr.
+- Fails open: if Replex is unreachable or no key is set, the command runs.
+- Windows: reads stdin as a stream (Cursor pipes it through PowerShell), uses
+  `node:http` without keep-alive (exiting with pooled sockets crashes Node on
+  Windows), and strips the BOM Windows PowerShell 5.1 writes into JSON files.
 
 Test from a terminal:
 

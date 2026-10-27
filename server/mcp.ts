@@ -1,8 +1,9 @@
 import type { Request, Response } from 'express';
 import type { TrendingWindow } from '../src/types/index.ts';
 import { evaluateCompatibility } from '../src/engines/compatibility.ts';
-import { AI_DAILY_LIMIT, aiSearchesToday, cachedReview, reviewRepository } from './ai.ts';
+import { AI_DAILY_LIMIT, cachedReview, reviewRepository, useAiAllowance } from './ai.ts';
 import type { Caller } from './auth.ts';
+import { checkPackages } from './packages.ts';
 import { HttpError } from './supabase.ts';
 import { breakoutRepositories, getRepository, githubTokenFor, isValidFullName, risingRepositories, searchGithub } from './github.ts';
 import {
@@ -186,6 +187,28 @@ export const TOOLS: ToolDef[] = [
     },
   },
   {
+    name: 'check_packages',
+    scope: 'repositories:read',
+    title: 'Check packages before installing',
+    description:
+      'Call this before adding dependencies. For each npm or PyPI package name, checks the live registry and GitHub: does it exist (made-up names can be malware traps), is it deprecated or archived, and is it still maintained. Returns a verdict per package (ok, missing, deprecated, archived, stale, dormant, unknown) with evidence: latest version, last release, weekly downloads, the maintainers’ deprecation notice (often naming the replacement) and repository status.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        ecosystem: { type: 'string', enum: ['npm', 'pypi'] },
+        packages: { type: 'array', items: { type: 'string' }, minItems: 1, maxItems: 20, description: 'Package names; version specifiers like "react@18" or "requests==2.31" are ignored' },
+      },
+      required: ['ecosystem', 'packages'],
+    },
+    annotations: READ_ONLY,
+    async run(args, caller) {
+      if (args.ecosystem !== 'npm' && args.ecosystem !== 'pypi') throw new ToolInputError('ecosystem must be "npm" or "pypi"');
+      const names = Array.isArray(args.packages) ? args.packages.filter((p): p is string => typeof p === 'string') : [];
+      if (names.length < 1 || names.length > 20) throw new ToolInputError('Send 1–20 package names in packages');
+      return checkPackages(args.ecosystem, names, await githubTokenFor(caller.userId));
+    },
+  },
+  {
     name: 'review_repository',
     scope: 'repositories:read',
     title: 'AI review and agent brief',
@@ -206,9 +229,12 @@ export const TOOLS: ToolDef[] = [
       const stack = str(args.target_stack, 200) || (await targetStackFor(caller.userId));
       let review = await cachedReview(repo, stack);
       if (!review) {
-        if ((await aiSearchesToday(caller.userId)) >= AI_DAILY_LIMIT) {
-          throw new ToolInputError(`Daily AI limit reached (${AI_DAILY_LIMIT}). Use get_repository and check_compatibility instead.`);
-        }
+        await useAiAllowance(caller.userId).catch((err) => {
+          if (err instanceof HttpError && err.status === 429) {
+            throw new ToolInputError(`Daily AI limit reached (${AI_DAILY_LIMIT}). Use get_repository and check_compatibility instead.`);
+          }
+          throw err;
+        });
         review = await reviewRepository(repo, stack, token);
         recordSearch(caller.userId, repo.fullName, { mode: 'review', stack: stack || undefined }, 'mcp', 1);
       }
